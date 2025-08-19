@@ -8,7 +8,7 @@ import { getNewsArticles, NewsArticleWithReports, allSources } from "@/lib/data"
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { Filter, Search, RefreshCw, ChevronDown, TrendingUp } from "lucide-react";
+import { Filter, Search, RefreshCw, ChevronDown, TrendingUp, Newspaper } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { 
   DropdownMenu, 
@@ -21,6 +21,7 @@ import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { format, formatDistanceToNow } from 'date-fns';
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 
 const allTopics = [
@@ -72,34 +73,31 @@ const stats = {
 
 function StatsCard() {
   return (
-    <Card className="shadow-lg bg-white/10 backdrop-blur-lg border border-white/20 text-white w-full">
-      <CardHeader className="text-center pb-4">
-        <CardTitle className="text-xl font-bold tracking-tight text-white">
-          Gaza Genocide
+    <Card className="bg-black text-white p-6 rounded-lg shadow-2xl border border-gray-800">
+      <CardHeader className="p-0 mb-4 text-left">
+        <CardTitle className="text-2xl font-bold tracking-tight text-white">
+          Gaza genocide
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4 px-6 py-4">
-        <div className="flex justify-between items-baseline">
-          <span className="text-2xl font-bold text-red-400">{stats.killed}</span>
-          <span className="text-md font-light tracking-wider opacity-80">KILLED</span>
+      <CardContent className="p-0 space-y-2 text-left">
+        <div className="flex items-baseline gap-2">
+          <span className="text-lg font-bold text-white">{stats.days}</span>
+          <span className="text-sm font-light tracking-wider opacity-80">DAYS</span>
         </div>
-         <div className="flex justify-between items-baseline">
-          <span className="text-2xl font-bold">{stats.wounded}</span>
-          <span className="text-md font-light tracking-wider opacity-80">WOUNDED</span>
+        <div className="flex items-baseline gap-2">
+          <span className="text-lg font-bold text-red-400">{stats.killed}</span>
+          <span className="text-sm font-light tracking-wider opacity-80">KILLED</span>
         </div>
-         <div className="text-center opacity-80 pt-3 border-t border-white/20 mt-3 text-xs">
+         <div className="flex items-baseline gap-2">
+          <span className="text-lg font-bold text-white">{stats.wounded}</span>
+          <span className="text-sm font-light tracking-wider opacity-80">WOUNDED</span>
+        </div>
+         <div className="flex items-baseline gap-2">
+          <span className="text-lg font-bold text-white">{stats.missing}</span>
+          <span className="text-sm font-light tracking-wider opacity-80">MISSING</span>
+        </div>
+         <div className="text-left opacity-80 pt-3 border-t border-white/20 mt-4 text-xs">
             <p>Last updated: {stats.lastUpdated}</p>
-            <p>
-                Source:{" "}
-                <a
-                    href={stats.sourceLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="underline hover:text-white"
-                >
-                    {stats.source}
-                </a>
-            </p>
          </div>
       </CardContent>
     </Card>
@@ -124,7 +122,7 @@ export default function Home() {
     // Separate out Middle East Monitor for trending
     const trending = fetchedArticles
       .filter(a => a.source === 'Middle East Monitor')
-      .slice(0, 3);
+      .slice(0, 5); // get 5 trending articles
     setTrendingArticles(trending);
 
     setLoading(false);
@@ -264,7 +262,7 @@ export default function Home() {
                                 <Image
                                     src={featuredArticle.image || `https://placehold.co/600x400.png?text=${encodeURIComponent(featuredArticle.source)}`}
                                     alt={featuredArticle.title}
-                                    layout="fill"
+                                    fill
                                     className="object-cover"
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
@@ -307,22 +305,34 @@ export default function Home() {
                 <StatsCard />
                 
                 {/* Trending News */}
-                <Card className="bg-card">
-                    <CardHeader>
-                        <CardTitle className="flex items-center gap-2 text-xl">
-                            <TrendingUp className="w-5 h-5 text-primary" />
-                            Trending News
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                       {loading ? Array.from({length: 3}).map((_, i) => <Skeleton key={i} className="h-16 w-full" />) :
-                        trendingArticles.map(article => (
-                            <Link key={article.id} href={article.link} target="_blank" className="block hover:bg-white/5 p-2 rounded-md transition-colors">
-                                <h4 className="font-semibold text-sm leading-tight line-clamp-2">{article.title}</h4>
-                                <p className="text-xs text-muted-foreground mt-1">{formatDistanceToNow(new Date(article.date), { addSuffix: true })}</p>
-                            </Link>
-                        ))}
-                    </CardContent>
+                <Card className="bg-[#c00] text-white p-6 rounded-lg">
+                  <CardHeader className="p-0 mb-4">
+                      <CardTitle className="text-2xl font-bold text-white">
+                          Trending news
+                      </CardTitle>
+                  </CardHeader>
+                  <Tabs defaultValue="today" className="w-full">
+                      <TabsList className="grid w-full grid-cols-2 bg-transparent p-0 mb-4 border-b-2 border-white/30 rounded-none">
+                          <TabsTrigger value="today" className="text-white/70 data-[state=active]:bg-transparent data-[state=active]:text-white data-[state=active]:shadow-none data-[state=active]:border-b-2 border-white rounded-none">Today</TabsTrigger>
+                          <TabsTrigger value="this-week" className="text-white/70 data-[state=active]:bg-transparent data-[state=active]:text-white data-[state=active]:shadow-none data-[state=active]:border-b-2 border-white rounded-none">This week</TabsTrigger>
+                      </TabsList>
+                      <TabsContent value="today" className="mt-0">
+                         {loading ? Array.from({length: 5}).map((_, i) => <Skeleton key={i} className="h-20 w-full bg-white/20" />) :
+                          <div className="space-y-4">
+                            {trendingArticles.map(article => (
+                                <Link key={article.id} href={article.link} target="_blank" className="block hover:opacity-80 transition-opacity">
+                                    <p className="text-xs font-semibold uppercase opacity-70 mb-1">News</p>
+                                    <h4 className="font-semibold text-base leading-tight line-clamp-3">{article.title}</h4>
+                                </Link>
+                            ))}
+                          </div>
+                         }
+                      </TabsContent>
+                      <TabsContent value="this-week" className="mt-0">
+                        {/* Add logic for "This week" trending news if available */}
+                        <p className="text-center text-sm opacity-70">"This week" trending news not available yet.</p>
+                      </TabsContent>
+                  </Tabs>
                 </Card>
 
                  <div className="flex justify-center">
