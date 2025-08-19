@@ -19,7 +19,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
-import { format, formatDistanceToNow } from 'date-fns';
+import { format, formatDistanceToNow, differenceInDays } from 'date-fns';
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -61,17 +61,25 @@ const sourceColorMap: { [key: string]: string } = {
 };
 
 
-const stats = {
-  days: 681,
+const staticStats = {
   killed: "62,004",
   wounded: "156,230",
   missing: "11,000",
-  lastUpdated: "August 18, 2025",
   source: "Euro-Med Human Rights Monitor",
   sourceLink: "https://euromedmonitor.org/en/",
 };
 
 function StatsCard() {
+    const startDate = new Date('2023-10-07');
+    const today = new Date();
+    const daysDifference = differenceInDays(today, startDate);
+    
+    const stats = {
+        days: daysDifference,
+        ...staticStats,
+        lastUpdated: format(today, "MMMM d, yyyy"),
+    };
+
   return (
     <Card className="bg-black text-white p-6 rounded-lg shadow-2xl border border-gray-800">
       <CardHeader className="p-0 mb-4 text-left">
@@ -337,5 +345,5 @@ export default function Home() {
         </div>
       </div>
     </AppLayout>
-  );
+    );
 }
