@@ -8,7 +8,7 @@ import { getNewsArticles, NewsArticleWithReports, allSources } from "@/lib/data"
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { Filter, Search, RefreshCw, ChevronDown, TrendingUp, Newspaper } from "lucide-react";
+import { Filter, Search, RefreshCw, ChevronDown, TrendingUp, Newspaper, AlertTriangle } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { 
   DropdownMenu, 
@@ -72,10 +72,12 @@ type DailyStats = {
 function StatsCard() {
     const [stats, setStats] = React.useState<DailyStats | null>(null);
     const [loading, setLoading] = React.useState(true);
+    const [error, setError] = React.useState<string | null>(null);
 
     React.useEffect(() => {
         async function fetchLatestStats() {
             setLoading(true);
+            setError(null);
             const { data, error } = await supabase
                 .from('daily_stats')
                 .select('*')
@@ -85,6 +87,7 @@ function StatsCard() {
 
             if (error) {
                 console.error('Error fetching stats:', error);
+                setError("Could not load stats. Please check your Supabase Row Level Security (RLS) settings for the 'daily_stats' table.");
                 setStats(null);
             } else {
                 setStats(data);
@@ -97,17 +100,8 @@ function StatsCard() {
 
     const renderStat = (value: number | undefined, label: string, colorClass: string = "text-white") => (
         <div className="flex items-baseline gap-2">
-            {loading ? (
-                <>
-                    <Skeleton className="h-6 w-20 bg-white/20" />
-                    <Skeleton className="h-4 w-16 bg-white/20" />
-                </>
-            ) : (
-                <>
-                    <span className={`text-lg font-bold ${colorClass}`}>{value?.toLocaleString('en-US') ?? '...'}</span>
-                    <span className="text-sm font-light tracking-wider opacity-80">{label}</span>
-                </>
-            )}
+            <span className={`text-lg font-bold ${colorClass}`}>{value?.toLocaleString('en-US') ?? '...'}</span>
+            <span className="text-sm font-light tracking-wider opacity-80">{label}</span>
         </div>
     );
     
@@ -119,17 +113,33 @@ function StatsCard() {
                 </CardTitle>
             </CardHeader>
             <CardContent className="p-0 space-y-2 text-left">
-                {renderStat(stats?.days, "DAYS")}
-                {renderStat(stats?.killed, "KILLED", "text-red-400")}
-                {renderStat(stats?.wounded, "WOUNDED")}
-                {renderStat(stats?.missing, "MISSING")}
+                {loading ? (
+                    <>
+                        {renderStat(undefined, "DAYS")}
+                        {renderStat(undefined, "KILLED", "text-red-400")}
+                        {renderStat(undefined, "WOUNDED")}
+                        {renderStat(undefined, "MISSING")}
+                    </>
+                ) : error ? (
+                    <div className="text-red-400 text-sm flex items-start gap-2">
+                        <AlertTriangle className="h-4 w-4 mt-0.5"/>
+                        <span>{error}</span>
+                    </div>
+                ) : (
+                    <>
+                        {renderStat(stats?.days, "DAYS")}
+                        {renderStat(stats?.killed, "KILLED", "text-red-400")}
+                        {renderStat(stats?.wounded, "WOUNDED")}
+                        {renderStat(stats?.missing, "MISSING")}
+                    </>
+                )}
 
                 <div className="text-left opacity-80 pt-3 border-t border-white/20 mt-4 text-xs">
                     {loading ? (
                         <Skeleton className="h-4 w-40 bg-white/20" />
                     ) : (
                         <p>
-                            Last updated: {stats ? new Date(stats.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : '...'}
+                            Last updated: {stats ? new Date(stats.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : 'N/A'}
                         </p>
                     )}
                 </div>
