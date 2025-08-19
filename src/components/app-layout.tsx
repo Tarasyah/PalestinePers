@@ -3,21 +3,24 @@
 import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Globe, BarChart, Newspaper, User, LogIn, LogOut, FileText, Image as ImageIcon } from "lucide-react";
+import { Globe, User, LogIn, LogOut, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/lib/supabase";
 import type { User as SupabaseUser } from '@supabase/supabase-js';
-
-const navItems = [
-  { href: "/", label: "News Feed", icon: Newspaper },
-  { href: "/reports", label: "Reports", icon: FileText },
-  { href: "/media", label: "Media", icon: ImageIcon },
-];
+import { 
+  DropdownMenu, 
+  DropdownMenuTrigger, 
+  DropdownMenuContent, 
+  DropdownMenuItem 
+} from "@/components/ui/dropdown-menu";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { navItems } from "@/lib/nav-items";
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [user, setUser] = React.useState<SupabaseUser | null>(null);
   const [loading, setLoading] = React.useState(true);
+  const isMobile = useIsMobile();
 
   React.useEffect(() => {
     const getSession = async () => {
@@ -43,6 +46,48 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     await supabase.auth.signOut();
   };
 
+  const renderNav = () => {
+    if (isMobile) {
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon">
+              <Menu className="h-5 w-5" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            {navItems.map((item) => (
+              <DropdownMenuItem key={item.href} asChild>
+                <Link href={item.href} className="flex items-center gap-2">
+                  <item.icon className="w-4 h-4" />
+                  <span>{item.label}</span>
+                </Link>
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      );
+    }
+
+    return (
+      <nav className="hidden md:flex items-center gap-1">
+        {navItems.map((item) => (
+          <Button
+            key={item.href}
+            asChild
+            variant={pathname === item.href ? "secondary" : "ghost"}
+            className="flex items-center gap-2"
+          >
+            <Link href={item.href}>
+              <item.icon className="w-4 h-4" />
+              <span>{item.label}</span>
+            </Link>
+          </Button>
+        ))}
+      </nav>
+    );
+  };
+
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
       <header className="sticky top-0 z-50 w-full border-b border-white/20 bg-black/30 backdrop-blur-lg">
@@ -56,21 +101,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               </p>
             </div>
           </div>
-          <nav className="hidden md:flex items-center gap-1">
-            {navItems.map((item) => (
-              <Button
-                key={item.href}
-                asChild
-                variant={pathname === item.href ? "secondary" : "ghost"}
-                className="flex items-center gap-2"
-              >
-                <Link href={item.href}>
-                  <item.icon className="w-4 h-4" />
-                  <span>{item.label}</span>
-                </Link>
-              </Button>
-            ))}
-          </nav>
+          {renderNav()}
            <div className="flex items-center gap-2 ml-4">
               {!loading && (
                 user ? (

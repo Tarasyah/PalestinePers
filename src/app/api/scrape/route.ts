@@ -104,6 +104,8 @@ export async function POST() {
         { url: 'https://www.middleeastmonitor.com/section/palestine/', source: 'Middle East Monitor', category: 'Analysis', priority: 'normal', itemSelector: 'div.category-article-item', titleSelector: 'h3.title a', linkSelector: 'h3.title a', imageSelector: 'div.image-wrapper a img', imageAttr: 'src', baseUrl: '' },
         { url: 'https://english.wafa.ps/Pages/Last-News', source: 'WAFA News', category: 'Official News', priority: 'urgent', itemSelector: '.row.news-box', titleSelector: '.news-title a', linkSelector: '.news-title a', imageSelector: '.news-img-container img', imageAttr: 'src', baseUrl: 'https://english.wafa.ps' },
         { url: 'https://www.trtworld.com/middle-east', source: 'TRT World', category: 'International News', priority: 'normal', itemSelector: '.listing-item', titleSelector: '.article-title a', linkSelector: '.article-title a', imageSelector: '.article-image img', imageAttr: 'src', baseUrl: 'https://www.trtworld.com' },
+        { url: 'https://www.reuters.com/world/israel-hamas/', source: 'Reuters', category: 'International News', priority: 'normal', itemSelector: 'li[data-testid="StoryList-story-item"]', titleSelector: 'a[data-testid="StoryCard-title"]', linkSelector: 'a[data-testid="StoryCard-title"]', imageSelector: 'img', imageAttr: 'src', baseUrl: 'https://www.reuters.com' },
+
     ];
 
     const scrapingPromises = sources.map(s => scrapeURL(s.url, s.source, s.category, s.priority, s.itemSelector, s.titleSelector, s.linkSelector, s.imageSelector, s.imageAttr, s.baseUrl));

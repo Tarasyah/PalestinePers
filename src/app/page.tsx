@@ -3,7 +3,7 @@
 import * as React from "react";
 import { AppLayout } from "@/components/app-layout";
 import { NewsCard } from "@/components/news-card";
-import { getNewsArticles, NewsArticleWithReports } from "@/lib/data";
+import { getNewsArticles, NewsArticleWithReports, allSources } from "@/lib/data";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -40,6 +40,21 @@ const topicColorMap: { [key: string]: string } = {
   "Analysis": "bg-yellow-500 text-black",
   "Official News": "bg-gray-500 text-white",
 };
+
+const sourceColorMap: { [key: string]: string } = {
+  "All Sources": "bg-gray-400 text-white",
+  "Al Jazeera": "bg-red-600 text-white",
+  "Middle East Eye": "bg-blue-800 text-white",
+  "Middle East Monitor": "bg-gray-700 text-white",
+  "WAFA News": "bg-green-600 text-white",
+  "TRT World": "bg-sky-500 text-white",
+  "Reuters": "bg-orange-500 text-white",
+  "UN": "bg-blue-500 text-white",
+  "Human Rights Watch": "bg-yellow-500 text-black",
+  "Amnesty International": "bg-yellow-400 text-black",
+  "WHO": "bg-blue-400 text-white",
+};
+
 
 const stats = {
   days: 681,
@@ -101,6 +116,7 @@ export default function Home() {
   const [isScraping, setIsScraping] = React.useState(false);
   const [searchTerm, setSearchTerm] = React.useState("");
   const [topicFilter, setTopicFilter] = React.useState("All Topics");
+  const [sourceFilter, setSourceFilter] = React.useState("All Sources");
   const { toast } = useToast();
 
   const fetchArticles = React.useCallback(async () => {
@@ -149,7 +165,8 @@ export default function Home() {
   const filteredArticles = articles.filter((article) => {
     const matchesSearch = article.title.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesTopic = topicFilter === "All Topics" || article.category === topicFilter;
-    return matchesSearch && matchesTopic;
+    const matchesSource = sourceFilter === "All Sources" || article.source === sourceFilter;
+    return matchesSearch && matchesTopic && matchesSource;
   });
   
   const isRefreshing = loading || isScraping;
@@ -157,7 +174,7 @@ export default function Home() {
   return (
     <AppLayout>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 space-y-6 order-2 lg:order-1">
+        <div className="lg:col-span-2 space-y-6 lg:order-2">
           <div className="p-4 bg-card rounded-lg border shadow-sm">
              <div className="flex flex-col md:flex-row items-center gap-4">
               <div className="relative flex-1 w-full">
@@ -169,12 +186,14 @@ export default function Home() {
                   className="w-full pl-10"
                 />
               </div>
-              <div className="flex items-center gap-2 w-full md:w-auto">
-                <Filter className="h-5 w-5 text-muted-foreground" />
+              <div className="flex items-center gap-2 w-full md:w-auto md:flex-row flex-col">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="outline" className="w-full md:w-[200px] justify-between">
-                      <span>{topicFilter}</span>
+                      <div className="flex items-center gap-2">
+                        <span className={cn("w-2 h-2 rounded-full", topicColorMap[topicFilter])}></span>
+                        <span>{topicFilter}</span>
+                      </div>
                       <ChevronDown className="h-4 w-4" />
                     </Button>
                   </DropdownMenuTrigger>
@@ -193,6 +212,33 @@ export default function Home() {
                     ))}
                   </DropdownMenuContent>
                 </DropdownMenu>
+
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" className="w-full md:w-[200px] justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className={cn("w-2 h-2 rounded-full", sourceColorMap[sourceFilter] || 'bg-gray-400 text-white')}></span>
+                        <span>{sourceFilter}</span>
+                      </div>
+                      <ChevronDown className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-full md:w-[200px]">
+                    {allSources.map((source) => (
+                      <DropdownMenuItem
+                        key={source}
+                        onSelect={() => setSourceFilter(source)}
+                        className={cn("flex items-center gap-2", {
+                          'font-bold': sourceFilter === source,
+                        })}
+                      >
+                         <span className={cn("w-2 h-2 rounded-full", sourceColorMap[source] || 'bg-gray-400 text-white')}></span>
+                        {source}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+
               </div>
             </div>
           </div>

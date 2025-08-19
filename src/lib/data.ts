@@ -7,7 +7,7 @@ export type NewsArticle = {
   date: string;
   excerpt: string;
   link: string;
-  image: string;
+  image?: string;
   category: 'Politics' | 'Humanitarian' | 'Conflict' | 'International News' | 'Regional News' | 'Analysis' | 'Official News';
   priority: 'normal' | 'urgent' | 'breaking';
 };
@@ -42,7 +42,7 @@ export async function getNewsArticles(): Promise<NewsArticleWithReports[]> {
     date: article.published_at,
     excerpt: article.summary,
     link: article.link,
-    image: article.image_url || `https://placehold.co/600x400.png?text=${encodeURIComponent(article.title)}`,
+    image: article.image_url,
     category: article.category,
     priority: article.priority
   }));
@@ -54,7 +54,7 @@ export async function getNewsArticles(): Promise<NewsArticleWithReports[]> {
       date: report.date,
       excerpt: report.summary,
       link: report.link,
-      image: `https://placehold.co/600x400.png?text=${encodeURIComponent(report.source)}`,
+      image: `https://placehold.co/600x400?text=${encodeURIComponent(report.source)}`,
       category: 'Official News',
       priority: 'normal'
   }));
@@ -100,6 +100,18 @@ export const officialReports: OfficialReport[] = [
     summary: 'A study on the challenges Palestinians face in accessing essential health services due to checkpoints and other restrictions.',
     link: '#',
   },
+];
+
+
+export const allSources = [
+  "All Sources",
+  "Al Jazeera",
+  "Middle East Eye",
+  "Middle East Monitor",
+  "WAFA News",
+  "TRT World",
+  "Reuters",
+  ...officialReports.map(r => r.source)
 ];
 
 export const casualtyStats = [

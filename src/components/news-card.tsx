@@ -7,16 +7,6 @@ import { ArrowRight, Bookmark, Clock } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import Image from 'next/image';
 
-const topicVariantMap: { [key: string]: 'default' | 'secondary' | 'outline' | 'destructive' | null | undefined } = {
-  'Politics': 'default',
-  'Humanitarian': 'secondary',
-  'Conflict': 'destructive',
-  'Analysis': 'outline',
-  'Official News': 'secondary',
-  'Regional News': 'outline',
-  'International News': 'default',
-};
-
 const topicColorMap: { [key: string]: string } = {
   "Politics": "bg-blue-500",
   "Humanitarian": "bg-green-500",
@@ -27,12 +17,30 @@ const topicColorMap: { [key: string]: string } = {
   "Official News": "bg-gray-500",
 };
 
-function getBadgeClasses(topic: string) {
+const sourceColorMap: { [key: string]: string } = {
+    "Al Jazeera": "bg-red-600 text-white",
+    "Middle East Eye": "bg-blue-800 text-white",
+    "Middle East Monitor": "bg-gray-700 text-white",
+    "WAFA News": "bg-green-600 text-white",
+    "TRT World": "bg-sky-500 text-white",
+    "Reuters": "bg-orange-500 text-white",
+    "UN": "bg-blue-500 text-white",
+    "Human Rights Watch": "bg-yellow-500 text-black",
+    "Amnesty International": "bg-yellow-400 text-black",
+    "WHO": "bg-blue-400 text-white",
+};
+
+function getCategoryBadgeClasses(topic: string) {
     return `${topicColorMap[topic] || 'bg-gray-400'} text-white`;
+}
+
+function getSourceBadgeClasses(source: string) {
+    return `${sourceColorMap[source] || 'bg-gray-400'} text-white`;
 }
 
 
 export function NewsCard({ article }: { article: NewsArticleWithReports }) {
+  const imageUrl = article.image || `https://placehold.co/600x400.png?text=${encodeURIComponent(article.title)}`;
   
   return (
     <Card className="transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 flex flex-col bg-gray-800/60 border border-gray-700 text-white">
@@ -40,19 +48,20 @@ export function NewsCard({ article }: { article: NewsArticleWithReports }) {
         <CardHeader className="p-0">
           <div className="relative aspect-video w-full">
             <Image 
-              src={article.image}
+              src={imageUrl}
               alt={article.title}
               fill
               className="object-cover rounded-t-lg"
               data-ai-hint="news article"
+              onError={(e) => { e.currentTarget.src = `https://placehold.co/600x400.png?text=${encodeURIComponent(article.title)}` }}
             />
           </div>
         </CardHeader>
       )}
       <CardContent className="p-4 flex-grow">
         <div className="flex flex-wrap items-center gap-2 mb-2">
-            <Badge variant={getBadgeVariant(article.topic, 'normal')}>{article.source}</Badge>
-            <Badge className={getBadgeClasses(article.category)}>{article.category}</Badge>
+            <Badge className={getSourceBadgeClasses(article.source)}>{article.source}</Badge>
+            <Badge className={getCategoryBadgeClasses(article.category)}>{article.category}</Badge>
             { (article.priority === 'urgent' || article.priority === 'breaking') && 
                 <Badge variant="destructive" className="animate-pulse">{article.priority.toUpperCase()}</Badge>
             }
@@ -80,11 +89,4 @@ export function NewsCard({ article }: { article: NewsArticleWithReports }) {
       </CardFooter>
     </Card>
   );
-}
-
-function getBadgeVariant(topic: string, priority: string) {
-    if (priority === 'urgent' || priority === 'breaking') {
-        return 'destructive';
-    }
-    return topicVariantMap[topic] || 'default';
 }
