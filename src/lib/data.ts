@@ -1,5 +1,4 @@
 import { supabase } from "./supabase";
-import { addDays, subDays } from 'date-fns';
 
 export type NewsArticle = {
   id: string;
@@ -9,7 +8,7 @@ export type NewsArticle = {
   excerpt: string;
   link: string;
   image: string;
-  topic: 'Politics' | 'Humanitarian' | 'Conflict' | 'International News' | 'Regional News' | 'Analysis' | 'Official News';
+  category: 'Politics' | 'Humanitarian' | 'Conflict' | 'International News' | 'Regional News' | 'Analysis' | 'Official News';
   priority: 'normal' | 'urgent' | 'breaking';
 };
 
@@ -43,8 +42,8 @@ export async function getNewsArticles(): Promise<NewsArticleWithReports[]> {
     date: article.published_at,
     excerpt: article.summary,
     link: article.link,
-    image: article.image_url || `https://placehold.co/600x400.png?text=${encodeURIComponent(article.source)}`,
-    topic: article.category,
+    image: article.image_url || `https://placehold.co/600x400.png?text=${encodeURIComponent(article.title)}`,
+    category: article.category,
     priority: article.priority
   }));
 
@@ -56,7 +55,7 @@ export async function getNewsArticles(): Promise<NewsArticleWithReports[]> {
       excerpt: report.summary,
       link: report.link,
       image: `https://placehold.co/600x400.png?text=${encodeURIComponent(report.source)}`,
-      topic: 'Official News',
+      category: 'Official News',
       priority: 'normal'
   }));
 
