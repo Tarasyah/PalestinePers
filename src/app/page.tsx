@@ -117,6 +117,8 @@ export default function Home() {
   const fetchArticles = React.useCallback(async () => {
     setLoading(true);
     const fetchedArticles = await getNewsArticles();
+    
+    // Set all articles for the main feed
     setArticles(fetchedArticles);
 
     // Separate out Middle East Monitor for trending
