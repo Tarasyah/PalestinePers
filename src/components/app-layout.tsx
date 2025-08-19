@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Globe, BarChart, Newspaper, User, LogIn, LogOut, FileText, Image as ImageIcon, Wrench } from "lucide-react";
+import { Globe, BarChart, Newspaper, User, LogIn, LogOut, FileText, Image as ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/lib/supabase";
 import type { User as SupabaseUser } from '@supabase/supabase-js';
@@ -13,10 +13,6 @@ const navItems = [
   { href: "/reports", label: "Reports", icon: FileText },
   { href: "/media", label: "Media", icon: ImageIcon },
 ];
-
-const adminNavItems = [
-  { href: "/admin/scrape", label: "Scraper", icon: Wrench },
-]
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -46,8 +42,6 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const handleLogout = async () => {
     await supabase.auth.signOut();
   };
-  
-  const isAdmin = user?.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL;
 
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
@@ -55,7 +49,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         <div className="container flex items-center h-16 px-4 mx-auto sm:px-6 lg:px-8">
           <div className="flex items-center gap-3 mr-auto">
             <Globe className="w-8 h-8 text-green-400" />
-            <div>
+            <div className="hidden sm:block">
               <h1 className="text-xl font-bold">Palestine Perspectives</h1>
               <p className="text-sm text-green-300/70">
                 Independent news aggregation
@@ -64,19 +58,6 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           </div>
           <nav className="hidden md:flex items-center gap-1">
             {navItems.map((item) => (
-              <Button
-                key={item.href}
-                asChild
-                variant={pathname === item.href ? "secondary" : "ghost"}
-                className="flex items-center gap-2"
-              >
-                <Link href={item.href}>
-                  <item.icon className="w-4 h-4" />
-                  <span>{item.label}</span>
-                </Link>
-              </Button>
-            ))}
-             {isAdmin && adminNavItems.map((item) => (
               <Button
                 key={item.href}
                 asChild

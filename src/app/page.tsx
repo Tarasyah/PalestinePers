@@ -7,10 +7,17 @@ import { getNewsArticles, NewsArticleWithReports } from "@/lib/data";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Filter, Search, RefreshCw } from "lucide-react";
+import { Filter, Search, RefreshCw, ChevronDown } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
+import { 
+  DropdownMenu, 
+  DropdownMenuTrigger, 
+  DropdownMenuContent, 
+  DropdownMenuItem 
+} from "@/components/ui/dropdown-menu";
+import { useToast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
+
 
 const allTopics = [
     "All Topics",
@@ -24,13 +31,14 @@ const allTopics = [
 ];
 
 const topicColorMap: { [key: string]: string } = {
-  "Politics": "bg-blue-500 hover:bg-blue-600",
-  "Humanitarian": "bg-green-500 hover:bg-green-600",
-  "Conflict": "bg-red-500 hover:bg-red-600",
-  "International News": "bg-purple-500 hover:bg-purple-600",
-  "Regional News": "bg-indigo-500 hover:bg-indigo-600",
-  "Analysis": "bg-yellow-500 hover:bg-yellow-600 text-black",
-  "Official News": "bg-gray-500 hover:bg-gray-600",
+  "All Topics": "bg-gray-400 text-white",
+  "Politics": "bg-blue-500 text-white",
+  "Humanitarian": "bg-green-500 text-white",
+  "Conflict": "bg-red-500 text-white",
+  "International News": "bg-purple-500 text-white",
+  "Regional News": "bg-indigo-500 text-white",
+  "Analysis": "bg-yellow-500 text-black",
+  "Official News": "bg-gray-500 text-white",
 };
 
 const stats = {
@@ -90,8 +98,10 @@ function StatsCard() {
 export default function Home() {
   const [articles, setArticles] = React.useState<NewsArticleWithReports[]>([]);
   const [loading, setLoading] = React.useState(true);
+  const [isScraping, setIsScraping] = React.useState(false);
   const [searchTerm, setSearchTerm] = React.useState("");
   const [topicFilter, setTopicFilter] = React.useState("All Topics");
+  const { toast } = useToast();
 
   const fetchArticles = React.useCallback(async () => {
     setLoading(true);
@@ -104,16 +114,50 @@ export default function Home() {
     fetchArticles();
   }, [fetchArticles]);
 
+  const handleRefreshAndScrape = async () => {
+      setIsScraping(true);
+      toast({
+        title: "Scraping started...",
+        description: "Fetching latest articles. This may take a moment.",
+      });
+
+      try {
+        const response = await fetch("/api/scrape", { method: "POST" });
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || "Something went wrong during scraping.");
+        }
+
+        toast({
+          title: "Scraping Complete",
+          description: `Successfully scraped ${data.articlesScraped} articles.`,
+        });
+
+      } catch (error: any) {
+        toast({
+          variant: "destructive",
+          title: "Scraping Failed",
+          description: error.message,
+        });
+      } finally {
+        await fetchArticles();
+        setIsScraping(false);
+      }
+    };
+
   const filteredArticles = articles.filter((article) => {
     const matchesSearch = article.title.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesTopic = topicFilter === "All Topics" || article.category === topicFilter;
     return matchesSearch && matchesTopic;
   });
+  
+  const isRefreshing = loading || isScraping;
 
   return (
     <AppLayout>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 space-y-6">
+        <div className="lg:col-span-2 space-y-6 order-2 lg:order-1">
           <div className="p-4 bg-card rounded-lg border shadow-sm">
              <div className="flex flex-col md:flex-row items-center gap-4">
               <div className="relative flex-1 w-full">
@@ -125,27 +169,31 @@ export default function Home() {
                   className="w-full pl-10"
                 />
               </div>
-               <div className="flex items-center gap-2 w-full md:w-auto">
-                    <Filter className="h-5 w-5 text-muted-foreground" />
-                    <p className="text-sm font-medium text-muted-foreground">Filter by topic:</p>
-                </div>
-            </div>
-            <div className="flex flex-wrap items-center gap-2 mt-4">
-                 <Badge
-                    onClick={() => setTopicFilter("All Topics")}
-                    className={`cursor-pointer transition-transform hover:scale-105 text-white ${topicFilter === "All Topics" ? 'bg-primary' : 'bg-gray-400 hover:bg-gray-500'}`}
-                  >
-                    All Topics
-                  </Badge>
-                {allTopics.slice(1).map((topic) => (
-                  <Badge
-                    key={topic}
-                    onClick={() => setTopicFilter(topic)}
-                    className={`cursor-pointer transition-transform hover:scale-105 text-white ${topicColorMap[topic] || 'bg-gray-400'} ${topicFilter === topic ? 'ring-2 ring-offset-2 ring-white' : ''}`}
-                  >
-                    {topic}
-                  </Badge>
-                ))}
+              <div className="flex items-center gap-2 w-full md:w-auto">
+                <Filter className="h-5 w-5 text-muted-foreground" />
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" className="w-full md:w-[200px] justify-between">
+                      <span>{topicFilter}</span>
+                      <ChevronDown className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-full md:w-[200px]">
+                    {allTopics.map((topic) => (
+                      <DropdownMenuItem
+                        key={topic}
+                        onSelect={() => setTopicFilter(topic)}
+                        className={cn("flex items-center gap-2", {
+                          'font-bold': topicFilter === topic,
+                        })}
+                      >
+                         <span className={cn("w-2 h-2 rounded-full", topicColorMap[topic])}></span>
+                        {topic}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
             </div>
           </div>
 
@@ -156,9 +204,9 @@ export default function Home() {
                       {loading ? 'Loading articles...' : `${filteredArticles.length} articles from independent sources`}
                   </p>
               </div>
-            <Button variant="outline" onClick={fetchArticles} disabled={loading}>
-              <RefreshCw className={`mr-2 h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
-              Refresh News
+            <Button variant="outline" onClick={handleRefreshAndScrape} disabled={isRefreshing}>
+              <RefreshCw className={`mr-2 h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+              {isScraping ? 'Scraping...' : 'Refresh News'}
             </Button>
           </div>
 
@@ -180,7 +228,7 @@ export default function Home() {
             </div>
           )}
         </div>
-        <aside className="lg:col-span-1 space-y-6 pt-16">
+        <aside className="lg:col-span-1 space-y-6 lg:pt-16 order-1 lg:order-2">
           <StatsCard />
         </aside>
       </div>
