@@ -3,21 +3,34 @@
 import * as React from "react";
 import { AppLayout } from "@/components/app-layout";
 import { NewsCard } from "@/components/news-card";
-import { newsArticles } from "@/lib/data";
+import { getNewsArticles } from "@/lib/data";
 import type { NewsArticle } from "@/lib/data";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Filter } from "lucide-react";
-
-const sources = ["All Sources", ...Array.from(new Set(newsArticles.map((a) => a.source)))];
-const topics = ["All Topics", ...Array.from(new Set(newsArticles.map((a) => a.topic)))];
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Home() {
+  const [articles, setArticles] = React.useState<NewsArticle[]>([]);
+  const [loading, setLoading] = React.useState(true);
   const [searchTerm, setSearchTerm] = React.useState("");
   const [sourceFilter, setSourceFilter] = React.useState("All Sources");
   const [topicFilter, setTopicFilter] = React.useState("All Topics");
 
-  const filteredArticles = newsArticles
+  React.useEffect(() => {
+    const fetchArticles = async () => {
+      setLoading(true);
+      const fetchedArticles = await getNewsArticles();
+      setArticles(fetchedArticles);
+      setLoading(false);
+    };
+    fetchArticles();
+  }, []);
+
+  const sources = ["All Sources", ...Array.from(new Set(articles.map((a) => a.source)))];
+  const topics = ["All Topics", ...Array.from(new Set(articles.map((a) => a.topic)))];
+
+  const filteredArticles = articles
     .filter((article) =>
       article.title.toLowerCase().includes(searchTerm.toLowerCase())
     )
@@ -45,7 +58,7 @@ export default function Home() {
               <Filter className="h-5 w-5" />
               <span className="font-medium">Filter by:</span>
             </div>
-            <Select onValueChange={setSourceFilter} defaultValue={sourceFilter}>
+            <Select onValueChange={setSourceFilter} defaultValue={sourceFilter} disabled={loading}>
               <SelectTrigger className="w-full md:w-[180px]">
                 <SelectValue placeholder="Source" />
               </SelectTrigger>
@@ -57,7 +70,7 @@ export default function Home() {
                 ))}
               </SelectContent>
             </Select>
-            <Select onValueChange={setTopicFilter} defaultValue={topicFilter}>
+            <Select onValueChange={setTopicFilter} defaultValue={topicFilter} disabled={loading}>
               <SelectTrigger className="w-full md:w-[180px]">
                 <SelectValue placeholder="Topic" />
               </SelectTrigger>
@@ -72,7 +85,19 @@ export default function Home() {
           </div>
         </div>
 
-        {filteredArticles.length > 0 ? (
+        {loading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="flex flex-col space-y-3">
+                <Skeleton className="h-[200px] w-full rounded-xl" />
+                <div className="space-y-2">
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-4/5" />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : filteredArticles.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
             {filteredArticles.map((article: NewsArticle) => (
               <NewsCard key={article.id} article={article} />

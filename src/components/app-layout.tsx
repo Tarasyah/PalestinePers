@@ -20,6 +20,7 @@ import {
   FileText,
   Image as ImageIcon,
   BookMarked,
+  Sparkles,
 } from "lucide-react";
 
 const navItems = [
@@ -27,6 +28,7 @@ const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/reports", label: "Official Reports", icon: FileText },
   { href: "/media", label: "Media Gallery", icon: ImageIcon },
+  { href: "/admin/scrape", label: "Scrape News", icon: Sparkles },
 ];
 
 export function AppLayout({

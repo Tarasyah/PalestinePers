@@ -1,3 +1,5 @@
+import { supabase } from "./supabase";
+
 export type NewsArticle = {
   id: string;
   title: string;
@@ -6,71 +8,31 @@ export type NewsArticle = {
   excerpt: string;
   link: string;
   image: string;
-  topic: 'Politics' | 'Humanitarian' | 'Conflict';
+  topic: 'Politics' | 'Humanitarian' | 'Conflict' | 'International News' | 'Regional News' | 'Analysis' | 'Official News';
 };
 
-export const newsArticles: NewsArticle[] = [
-  {
-    id: '1',
-    title: 'Ceasefire Talks Resume Amidst Heightened Tensions',
-    source: 'Al Jazeera',
-    date: '2023-10-26',
-    excerpt: 'Diplomatic efforts to secure a lasting ceasefire have resumed this week, with international mediators pushing for a peaceful resolution.',
-    link: '#',
-    image: 'https://placehold.co/600x400',
-    topic: 'Politics',
-  },
-  {
-    id: '2',
-    title: 'Humanitarian Aid Blockade Worsens Crisis in Gaza',
-    source: 'Reuters',
-    date: '2023-10-25',
-    excerpt: 'A blockade on humanitarian aid has led to severe shortages of food, water, and medical supplies, affecting millions of civilians.',
-    link: '#',
-    image: 'https://placehold.co/600x400',
-    topic: 'Humanitarian',
-  },
-  {
-    id: '3',
-    title: 'UN Releases Report on Civilian Casualties',
-    source: 'Associated Press',
-    date: '2023-10-24',
-    excerpt: 'The latest UN report highlights a significant increase in civilian casualties, urging all parties to respect international law.',
-    link: '#',
-    image: 'https://placehold.co/600x400',
-    topic: 'Conflict',
-  },
-  {
-    id: '4',
-    title: 'West Bank Settlements Expand, Drawing Condemnation',
-    source: 'The Guardian',
-    date: '2023-10-23',
-    excerpt: 'Recent expansion of settlements in the West Bank has been met with widespread international condemnation and calls for a halt.',
-    link: '#',
-    image: 'https://placehold.co/600x400',
-    topic: 'Politics',
-  },
-  {
-    id: '5',
-    title: 'Medical Facilities Overwhelmed as Supplies Dwindle',
-    source: 'Doctors Without Borders',
-    date: '2023-10-22',
-    excerpt: 'Hospitals and clinics are struggling to cope with the influx of patients amid a critical shortage of essential medical supplies.',
-    link: '#',
-    image: 'https://placehold.co/600x400',
-    topic: 'Humanitarian',
-  },
-  {
-    id: '6',
-    title: 'Eyewitnesses Recount Airstrikes in Residential Areas',
-    source: 'BBC News',
-    date: '2023-10-21',
-    excerpt: 'Survivors and eyewitnesses have provided harrowing accounts of recent airstrikes that targeted densely populated residential areas.',
-    link: '#',
-    image: 'https://placehold.co/600x400',
-    topic: 'Conflict',
-  },
-];
+export async function getNewsArticles(): Promise<NewsArticle[]> {
+  const { data, error } = await supabase
+    .from('articles')
+    .select('id, title, source, published_at, summary, link, image_url, category')
+    .order('published_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching articles:', error);
+    return [];
+  }
+
+  return data.map((article: any) => ({
+    id: article.id,
+    title: article.title,
+    source: article.source,
+    date: article.published_at,
+    excerpt: article.summary,
+    link: article.link,
+    image: article.image_url || 'https://placehold.co/600x400',
+    topic: article.category,
+  }));
+}
 
 export type OfficialReport = {
   id: string;
