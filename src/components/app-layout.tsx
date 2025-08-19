@@ -24,33 +24,42 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const [hidden, setHidden] = React.useState(false);
   const [isAtTop, setIsAtTop] = React.useState(true);
   const isMobile = useIsMobile();
+  const lastScrollY = React.useRef(0);
+
+  const handleScroll = React.useCallback(() => {
+    const currentScrollY = window.scrollY;
+    if (currentScrollY > lastScrollY.current && currentScrollY > 100) {
+      setHidden(true); // Hide on scroll down
+    } else {
+      setHidden(false); // Show on scroll up
+    }
+    setIsAtTop(currentScrollY < 10);
+    lastScrollY.current = currentScrollY;
+  }, []);
+  
+  const handleMouseMove = React.useCallback((e: MouseEvent) => {
+    if (e.clientY < 50) {
+        setHidden(false); // Show when mouse is near top
+    } else {
+        // Hide when mouse is not near top, but only if not at the top of the page
+        if (window.scrollY > 10) {
+            setHidden(true);
+        }
+    }
+  }, []);
 
   React.useEffect(() => {
-    let lastScrollY = window.scrollY;
-
-    const handleScroll = () => {
-      if (window.scrollY > lastScrollY && window.scrollY > 100) {
-        setHidden(true);
-      } else {
-        setHidden(false);
-      }
-      setIsAtTop(window.scrollY < 10);
-      lastScrollY = window.scrollY;
-    };
+    // Initialize last scroll position
+    lastScrollY.current = window.scrollY;
     
-    const handleMouseMove = (e: MouseEvent) => {
-        if (e.clientY < 50) {
-            setHidden(false);
-        }
-    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    document.addEventListener("mousemove", handleMouseMove);
 
-    window.addEventListener("scroll", handleScroll);
-    window.addEventListener("mousemove", handleMouseMove);
     return () => {
       window.removeEventListener("scroll", handleScroll);
-      window.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mousemove", handleMouseMove);
     };
-  }, []);
+  }, [handleScroll, handleMouseMove]);
 
   React.useEffect(() => {
     const getSession = async () => {
