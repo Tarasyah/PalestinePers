@@ -19,9 +19,9 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
-import { format, formatDistanceToNow, differenceInDays } from 'date-fns';
+import { formatDistanceToNow } from 'date-fns';
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { supabase } from "@/lib/supabase";
 
 
 const allTopics = [
@@ -60,56 +60,82 @@ const sourceColorMap: { [key: string]: string } = {
   "WHO": "bg-blue-400 text-white",
 };
 
-
-const staticStats = {
-  killed: "62,004",
-  wounded: "156,230",
-  missing: "11,000",
-  source: "Euro-Med Human Rights Monitor",
-  sourceLink: "https://euromedmonitor.org/en/",
+type DailyStats = {
+    id: number;
+    created_at: string;
+    days: number;
+    killed: number;
+    wounded: number;
+    missing: number;
 };
 
 function StatsCard() {
-    const startDate = new Date('2023-10-07');
-    const today = new Date();
-    const daysDifference = differenceInDays(today, startDate);
-    
-    const stats = {
-        days: daysDifference,
-        ...staticStats,
-        lastUpdated: format(today, "MMMM d, yyyy"),
-    };
+    const [stats, setStats] = React.useState<DailyStats | null>(null);
+    const [loading, setLoading] = React.useState(true);
 
-  return (
-    <Card className="bg-black text-white p-6 rounded-lg shadow-2xl border border-gray-800">
-      <CardHeader className="p-0 mb-4 text-left">
-        <CardTitle className="text-2xl font-bold tracking-tight text-white">
-          Gaza genocide
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="p-0 space-y-2 text-left">
+    React.useEffect(() => {
+        async function fetchLatestStats() {
+            setLoading(true);
+            const { data, error } = await supabase
+                .from('daily_stats')
+                .select('*')
+                .order('created_at', { ascending: false })
+                .limit(1)
+                .single();
+
+            if (error) {
+                console.error('Error fetching stats:', error);
+                setStats(null);
+            } else {
+                setStats(data);
+            }
+            setLoading(false);
+        }
+
+        fetchLatestStats();
+    }, []);
+
+    const renderStat = (value: number | undefined, label: string, colorClass: string = "text-white") => (
         <div className="flex items-baseline gap-2">
-          <span className="text-lg font-bold text-white">{stats.days}</span>
-          <span className="text-sm font-light tracking-wider opacity-80">DAYS</span>
+            {loading ? (
+                <>
+                    <Skeleton className="h-6 w-20 bg-white/20" />
+                    <Skeleton className="h-4 w-16 bg-white/20" />
+                </>
+            ) : (
+                <>
+                    <span className={`text-lg font-bold ${colorClass}`}>{value?.toLocaleString('en-US') ?? '...'}</span>
+                    <span className="text-sm font-light tracking-wider opacity-80">{label}</span>
+                </>
+            )}
         </div>
-        <div className="flex items-baseline gap-2">
-          <span className="text-lg font-bold text-red-400">{stats.killed}</span>
-          <span className="text-sm font-light tracking-wider opacity-80">KILLED</span>
-        </div>
-         <div className="flex items-baseline gap-2">
-          <span className="text-lg font-bold text-white">{stats.wounded}</span>
-          <span className="text-sm font-light tracking-wider opacity-80">WOUNDED</span>
-        </div>
-         <div className="flex items-baseline gap-2">
-          <span className="text-lg font-bold text-white">{stats.missing}</span>
-          <span className="text-sm font-light tracking-wider opacity-80">MISSING</span>
-        </div>
-         <div className="text-left opacity-80 pt-3 border-t border-white/20 mt-4 text-xs">
-            <p>Last updated: {stats.lastUpdated}</p>
-         </div>
-      </CardContent>
-    </Card>
-  )
+    );
+    
+    return (
+        <Card className="bg-black text-white p-6 rounded-lg shadow-2xl border border-gray-800">
+            <CardHeader className="p-0 mb-4 text-left">
+                <CardTitle className="text-2xl font-bold tracking-tight text-white">
+                    Gaza genocide
+                </CardTitle>
+            </CardHeader>
+            <CardContent className="p-0 space-y-2 text-left">
+                {renderStat(stats?.days, "DAYS")}
+                {renderStat(stats?.killed, "KILLED", "text-red-400")}
+                {renderStat(stats?.wounded, "WOUNDED")}
+                {renderStat(stats?.missing, "MISSING")}
+
+                <div className="text-left opacity-80 pt-3 border-t border-white/20 mt-4 text-xs">
+                    {loading ? (
+                        <Skeleton className="h-4 w-40 bg-white/20" />
+                    ) : (
+                        <p>
+                            Last updated: {stats ? new Date(stats.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : '...'}
+                        </p>
+                    )}
+                </div>
+            </CardContent>
+        </Card>
+    );
 }
 
 export default function Home() {
@@ -345,5 +371,5 @@ export default function Home() {
         </div>
       </div>
     </AppLayout>
-    );
+  );
 }
