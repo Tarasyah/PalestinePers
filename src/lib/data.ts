@@ -46,25 +46,8 @@ export async function getNewsArticles(): Promise<NewsArticleWithReports[]> {
     category: article.category,
     priority: article.priority
   }));
-
-  const reportArticles: NewsArticleWithReports[] = officialReports.map(report => ({
-      id: `report-${report.id}`,
-      title: report.title,
-      source: report.source,
-      date: report.date,
-      excerpt: report.summary,
-      link: report.link,
-      image: `https://placehold.co/600x400.png?text=${encodeURIComponent(report.source)}`,
-      category: 'Official News',
-      priority: 'normal'
-  }));
-
-  const combined = [...articles, ...reportArticles];
-
-  // Sort combined array by date
-  combined.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   
-  return combined;
+  return articles;
 }
 
 export const officialReports: OfficialReport[] = [
@@ -103,7 +86,7 @@ export const officialReports: OfficialReport[] = [
 ];
 
 
-export const allSources = Array.from(new Set([
+export const allSources = [
   "All Sources",
   "Al Jazeera",
   "Middle East Eye",
@@ -111,8 +94,12 @@ export const allSources = Array.from(new Set([
   "WAFA News",
   "TRT World",
   "Reuters",
-  ...officialReports.map(r => r.source)
-]));
+  "UN",
+  "Human Rights Watch",
+  "Amnesty International",
+  "WHO",
+  "Official News"
+];
 
 export const casualtyStats = [
   { name: 'Jan', killed: 30, injured: 90 },

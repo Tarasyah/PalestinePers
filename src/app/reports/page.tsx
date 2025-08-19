@@ -45,7 +45,8 @@ export default function ReportsPage() {
       }));
       
     setReports(fetchedReports);
-    setAllSources(["All Sources", ...Array.from(new Set(fetchedReports.map((r) => r.source)))]);
+    const sources = ["All Sources", ...Array.from(new Set(fetchedReports.map((r) => r.source)))];
+    setAllSources(sources as string[]);
 
   }, [toast]);
 
