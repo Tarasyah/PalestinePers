@@ -86,7 +86,6 @@ function StatsCard() {
                 .single();
 
             if (error) {
-                console.error('Error fetching stats:', error);
                 setError("Could not load stats. Please check your Supabase Row Level Security (RLS) settings for the 'daily_stats' table.");
                 setStats(null);
             } else {
