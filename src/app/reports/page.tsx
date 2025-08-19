@@ -10,21 +10,40 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Filter, RefreshCw } from "lucide-react";
 
-const reportSources = ["UN", "Human Rights Watch", "Amnesty International", "WHO"];
+const reportSourceNames: { [key: string]: string[] } = {
+  "UN": ["UN", "UN News"],
+  "Human Rights Watch": ["Human Rights Watch", "HRW"],
+  "Amnesty International": ["Amnesty International", "Amnesty"],
+  "WHO": ["WHO", "World Health Organization"],
+};
+
+const allReportSourceValues = Object.values(reportSourceNames).flat();
+const reportSourceFilterOptions = ["All Sources", ...Object.keys(reportSourceNames)];
 
 export default function ReportsPage() {
   const [sourceFilter, setSourceFilter] = React.useState("All Sources");
   const [reports, setReports] = React.useState<OfficialReport[]>([]);
-  const [allSources, setAllSources] = React.useState<string[]>(["All Sources", ...reportSources]);
   const [isScraping, setIsScraping] = React.useState(false);
   const { toast } = useToast();
 
-  const fetchReports = React.useCallback(async () => {
+  const fetchReports = React.useCallback(async (filter: string) => {
     let query = supabase
       .from('articles')
       .select('*')
-      .in('source', reportSources)
       .order('published_at', { ascending: false });
+
+    if (filter === "All Sources") {
+      query = query.in('source', allReportSourceValues);
+    } else {
+      const sourceValues = reportSourceNames[filter];
+      if (sourceValues) {
+        query = query.in('source', sourceValues);
+      } else {
+        // If filter is not found, return no results.
+        setReports([]);
+        return;
+      }
+    }
 
     const { data, error } = await query;
 
@@ -49,14 +68,11 @@ export default function ReportsPage() {
       }));
       
     setReports(fetchedReports);
-    const sources = ["All Sources", ...Array.from(new Set(fetchedReports.map((r) => r.source)))];
-    setAllSources(sources as string[]);
-
   }, [toast]);
 
   React.useEffect(() => {
-    fetchReports();
-  }, [fetchReports]);
+    fetchReports(sourceFilter);
+  }, [fetchReports, sourceFilter]);
 
 
   const handleRefreshAndScrape = async () => {
@@ -91,14 +107,10 @@ export default function ReportsPage() {
         description: error.message,
       });
     } finally {
-      await fetchReports();
+      await fetchReports(sourceFilter);
       setIsScraping(false);
     }
   };
-
-  const filteredReports = reports.filter((report) =>
-    sourceFilter === "All Sources" ? true : report.source === sourceFilter
-  );
   
   const isRefreshing = isScraping;
 
@@ -115,7 +127,7 @@ export default function ReportsPage() {
                         <SelectValue placeholder="Filter by source" />
                         </SelectTrigger>
                         <SelectContent>
-                        {allSources.map((source) => (
+                        {reportSourceFilterOptions.map((source) => (
                             <SelectItem key={source} value={source}>
                             {source}
                             </SelectItem>
@@ -130,9 +142,9 @@ export default function ReportsPage() {
             </div>
         </div>
         
-        {filteredReports.length > 0 ? (
+        {reports.length > 0 ? (
           <div className="space-y-4">
-            {filteredReports.map((report: OfficialReport) => (
+            {reports.map((report: OfficialReport) => (
               <ReportCard key={report.id} report={report} />
             ))}
           </div>
