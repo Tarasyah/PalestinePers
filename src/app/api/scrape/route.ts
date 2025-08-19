@@ -34,7 +34,7 @@ async function scrapeURL(url: string, source: string, category: string, priority
       let imageUrl = $(el).find(imageSelector).attr(imageAttr);
 
       if (title && link && title.length > 10) {
-        if (!link.startsWith('http')) {
+        if (link && !link.startsWith('http')) {
           link = `${baseUrl}${link}`;
         }
          if (imageUrl && !imageUrl.startsWith('http')) {
@@ -100,10 +100,10 @@ export async function POST() {
     
     const sources = [
         { url: 'https://www.aljazeera.com/palestine/', source: 'Al Jazeera', category: 'International News', priority: 'normal', itemSelector: 'article.gc', titleSelector: 'h3.gc__title a span', linkSelector: 'h3.gc__title a', imageSelector: 'div.gc__image-container img', imageAttr: 'src', baseUrl: 'https://www.aljazeera.com' },
-        { url: 'https://www.middleeasteye.net/news/israel-palestine', source: 'Middle East Eye', category: 'Regional News', priority: 'normal', itemSelector: 'div.views-row', titleSelector: 'h2 a', linkSelector: 'h2 a', imageSelector: 'div.field-name-field-promo-image-medium img', imageAttr: 'src', baseUrl: 'https://www.middleeasteye.net' },
+        { url: 'https://www.middleeasteye.net/news/israel-palestine', source: 'Middle East Eye', category: 'Regional News', priority: 'normal', itemSelector: 'div.views-row', titleSelector: 'h2 a', linkSelector: 'h2 a', imageSelector: '.field-content a img', imageAttr: 'src', baseUrl: 'https://www.middleeasteye.net' },
         { url: 'https://www.middleeastmonitor.com/section/palestine/', source: 'Middle East Monitor', category: 'Analysis', priority: 'normal', itemSelector: 'div.category-article-item', titleSelector: 'h3.title a', linkSelector: 'h3.title a', imageSelector: 'div.image-wrapper a img', imageAttr: 'src', baseUrl: '' },
         { url: 'https://english.wafa.ps/Pages/Last-News', source: 'WAFA News', category: 'Official News', priority: 'urgent', itemSelector: '.row.news-box', titleSelector: '.news-title a', linkSelector: '.news-title a', imageSelector: '.news-img-container img', imageAttr: 'src', baseUrl: 'https://english.wafa.ps' },
-        { url: 'https://www.trtworld.com/middle-east', source: 'TRT World', category: 'International News', priority: 'normal', itemSelector: '.listing-item', titleSelector: '.article-title a', linkSelector: '.article-title a', imageSelector: '.article-image img', imageAttr: 'src', baseUrl: 'https://www.trtworld.com' },
+        { url: 'https://www.trtworld.com/middle-east', source: 'TRT World', category: 'International News', priority: 'normal', itemSelector: '.listing-item', titleSelector: '.article-title a', linkSelector: '.article-title a', imageSelector: '.article-image img', imageAttr: 'data-src', baseUrl: 'https://www.trtworld.com' },
         { url: 'https://www.reuters.com/world/israel-hamas/', source: 'Reuters', category: 'International News', priority: 'normal', itemSelector: 'li[data-testid="StoryList-story-item"]', titleSelector: 'a[data-testid="StoryCard-title"]', linkSelector: 'a[data-testid="StoryCard-title"]', imageSelector: 'img', imageAttr: 'src', baseUrl: 'https://www.reuters.com' },
 
     ];

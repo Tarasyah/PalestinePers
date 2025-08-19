@@ -6,6 +6,7 @@ import { Button } from './ui/button';
 import { ArrowRight, Bookmark, Clock } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import Image from 'next/image';
+import { useState } from 'react';
 
 const topicColorMap: { [key: string]: string } = {
   "Politics": "bg-blue-500",
@@ -40,11 +41,11 @@ function getSourceBadgeClasses(source: string) {
 
 
 export function NewsCard({ article }: { article: NewsArticleWithReports }) {
-  const imageUrl = article.image || `https://placehold.co/600x400.png?text=${encodeURIComponent(article.title)}`;
+  const [imageUrl, setImageUrl] = useState(article.image || `https://placehold.co/600x400.png?text=${encodeURIComponent(article.source)}`);
   
   return (
     <Card className="transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 flex flex-col bg-gray-800/60 border border-gray-700 text-white">
-      {article.image && (
+      {imageUrl && (
         <CardHeader className="p-0">
           <div className="relative aspect-video w-full">
             <Image 
@@ -53,7 +54,7 @@ export function NewsCard({ article }: { article: NewsArticleWithReports }) {
               fill
               className="object-cover rounded-t-lg"
               data-ai-hint="news article"
-              onError={(e) => { e.currentTarget.src = `https://placehold.co/600x400.png?text=${encodeURIComponent(article.title)}` }}
+              onError={() => { setImageUrl(`https://placehold.co/600x400.png?text=${encodeURIComponent(article.source)}`) }}
             />
           </div>
         </CardHeader>

@@ -8,7 +8,7 @@ export type NewsArticle = {
   excerpt: string;
   link: string;
   image?: string;
-  category: 'Politics' | 'Humanitarian' | 'Conflict' | 'International News' | 'Regional News' | 'Analysis' | 'Official News';
+  category: string;
   priority: 'normal' | 'urgent' | 'breaking';
 };
 
@@ -54,7 +54,7 @@ export async function getNewsArticles(): Promise<NewsArticleWithReports[]> {
       date: report.date,
       excerpt: report.summary,
       link: report.link,
-      image: `https://placehold.co/600x400?text=${encodeURIComponent(report.source)}`,
+      image: `https://placehold.co/600x400.png?text=${encodeURIComponent(report.source)}`,
       category: 'Official News',
       priority: 'normal'
   }));
@@ -103,7 +103,7 @@ export const officialReports: OfficialReport[] = [
 ];
 
 
-export const allSources = [
+export const allSources = Array.from(new Set([
   "All Sources",
   "Al Jazeera",
   "Middle East Eye",
@@ -112,7 +112,7 @@ export const allSources = [
   "TRT World",
   "Reuters",
   ...officialReports.map(r => r.source)
-];
+]));
 
 export const casualtyStats = [
   { name: 'Jan', killed: 30, injured: 90 },
@@ -134,12 +134,12 @@ export type MediaItem = {
 };
 
 export const mediaItems: MediaItem[] = [
-  { id: 'm1', type: 'image', src: 'https://placehold.co/600x400', caption: 'A street in Gaza after an airstrike.', source: 'Reuters' },
-  { id: 'm2', type: 'image', src: 'https://placehold.co/600x400', caption: 'Children playing amidst rubble.', source: 'AP' },
-  { id: 'm3', type: 'image', src: 'https://placehold.co/600x400', caption: 'Humanitarian aid distribution.', source: 'UNRWA' },
-  { id: 'm4', type: 'image', src: 'https://placehold.co/600x400', caption: 'A farmer in the West Bank.', source: 'Getty Images' },
-  { id: 'm5', type: 'image', src: 'https://placehold.co/600x400', caption: 'Protests in Ramallah.', source: 'AFP' },
-  { id: 'm6', type: 'image', src: 'https://placehold.co/600x400', caption: 'A view of the separation wall.', source: 'Human Rights Watch' },
-  { id: 'm7', type: 'image', src: 'https://placehold.co/600x400', caption: 'Inside a crowded hospital.', source: 'MSF' },
-  { id: 'm8', type: 'image', src: 'https://placehold.co/600x400', caption: 'Sunset over Jerusalem.', source: 'Independent' },
+  { id: 'm1', type: 'image', src: 'https://placehold.co/600x400.png', caption: 'A street in Gaza after an airstrike.', source: 'Reuters' },
+  { id: 'm2', type: 'image', src: 'https://placehold.co/600x400.png', caption: 'Children playing amidst rubble.', source: 'AP' },
+  { id: 'm3', type: 'image', src: 'https://placehold.co/600x400.png', caption: 'Humanitarian aid distribution.', source: 'UNRWA' },
+  { id: 'm4', type: 'image', src: 'https://placehold.co/600x400.png', caption: 'A farmer in the West Bank.', source: 'Getty Images' },
+  { id: 'm5', type: 'image', src: 'https://placehold.co/600x400.png', caption: 'Protests in Ramallah.', source: 'AFP' },
+  { id: 'm6', type: 'image', src: 'https://placehold.co/600x400.png', caption: 'A view of the separation wall.', source: 'Human Rights Watch' },
+  { id: 'm7', type: 'image', src: 'https://placehold.co/600x400.png', caption: 'Inside a crowded hospital.', source: 'MSF' },
+  { id: 'm8', type: 'image', src: 'https://placehold.co/600x400.png', caption: 'Sunset over Jerusalem.', source: 'Independent' },
 ];

@@ -173,8 +173,8 @@ export default function Home() {
 
   return (
     <AppLayout>
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 space-y-6 lg:order-2">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+        <div className="lg:col-span-2 space-y-6">
           <div className="p-4 bg-card rounded-lg border shadow-sm">
              <div className="flex flex-col md:flex-row items-center gap-4">
               <div className="relative flex-1 w-full">
@@ -258,8 +258,8 @@ export default function Home() {
 
           {loading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {Array.from({ length: 2 }).map((_, i) => (
-                 <Skeleton key={i} className="h-[250px] w-full rounded-lg" />
+              {Array.from({ length: 4 }).map((_, i) => (
+                 <Skeleton key={i} className="h-[350px] w-full rounded-lg" />
               ))}
             </div>
           ) : filteredArticles.length > 0 ? (
@@ -274,7 +274,7 @@ export default function Home() {
             </div>
           )}
         </div>
-        <aside className="lg:col-span-1 space-y-6 lg:pt-16 order-1 lg:order-2">
+        <aside className="lg:col-span-1 space-y-6">
           <StatsCard />
         </aside>
       </div>
