@@ -17,7 +17,7 @@ interface ScrapedArticle {
 
 async function scrapeURL(url: string, source: string, category: string, priority: 'normal' | 'urgent' | 'breaking', itemSelector: string, titleSelector: string, linkSelector: string, imageSelector: string, imageAttr: string, baseUrl: string): Promise<ScrapedArticle[]> {
   try {
-    const response = await fetch(url);
+    const response = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36' }});
     if (!response.ok) {
         console.error(`Error fetching ${url}: ${response.statusText}`);
         return [];
@@ -81,7 +81,7 @@ async function saveArticlesToDatabase(articles: ScrapedArticle[]) {
           source: article.source,
           published_at: article.published_at,
           category: article.category,
-          image_url: article.image_url,
+          image_url: article.image_url || null,
           priority: article.priority
         });
       
@@ -103,9 +103,8 @@ export async function POST() {
         { url: 'https://www.middleeasteye.net/news/israel-palestine', source: 'Middle East Eye', category: 'Regional News', priority: 'normal', itemSelector: 'div.views-row', titleSelector: 'h2 a', linkSelector: 'h2 a', imageSelector: '.field-content a img', imageAttr: 'src', baseUrl: 'https://www.middleeasteye.net' },
         { url: 'https://www.middleeastmonitor.com/section/palestine/', source: 'Middle East Monitor', category: 'Analysis', priority: 'normal', itemSelector: 'div.category-article-item', titleSelector: 'h3.title a', linkSelector: 'h3.title a', imageSelector: 'div.image-wrapper a img', imageAttr: 'src', baseUrl: '' },
         { url: 'https://english.wafa.ps/Pages/Last-News', source: 'WAFA News', category: 'Official News', priority: 'urgent', itemSelector: '.row.news-box', titleSelector: '.news-title a', linkSelector: '.news-title a', imageSelector: '.news-img-container img', imageAttr: 'src', baseUrl: 'https://english.wafa.ps' },
-        { url: 'https://www.trtworld.com/middle-east', source: 'TRT World', category: 'International News', priority: 'normal', itemSelector: '.listing-item', titleSelector: '.article-title a', linkSelector: '.article-title a', imageSelector: '.article-image img', imageAttr: 'data-src', baseUrl: 'https://www.trtworld.com' },
-        { url: 'https://www.reuters.com/world/israel-hamas/', source: 'Reuters', category: 'International News', priority: 'normal', itemSelector: 'li[data-testid="StoryList-story-item"]', titleSelector: 'a[data-testid="StoryCard-title"]', linkSelector: 'a[data-testid="StoryCard-title"]', imageSelector: 'img', imageAttr: 'src', baseUrl: 'https://www.reuters.com' },
-
+        { url: 'https://www.trtworld.com/middle-east', source: 'TRT World', category: 'International News', priority: 'normal', itemSelector: '.listing-item', titleSelector: 'h3.title a', linkSelector: 'h3.title a', imageSelector: '.image-container a img', imageAttr: 'data-src', baseUrl: 'https://www.trtworld.com' },
+        { url: 'https://www.reuters.com/world/middle-east/', source: 'Reuters', category: 'International News', priority: 'normal', itemSelector: 'li[data-testid="StoryList-story-item"]', titleSelector: 'a[data-testid="StoryCard-title"]', linkSelector: 'a[data-testid="StoryCard-title"]', imageSelector: 'img', imageAttr: 'src', baseUrl: 'https://www.reuters.com' },
     ];
 
     const scrapingPromises = sources.map(s => scrapeURL(s.url, s.source, s.category, s.priority, s.itemSelector, s.titleSelector, s.linkSelector, s.imageSelector, s.imageAttr, s.baseUrl));
