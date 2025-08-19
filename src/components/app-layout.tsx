@@ -15,12 +15,34 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { navItems } from "@/lib/nav-items";
+import { cn } from "@/lib/utils";
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [user, setUser] = React.useState<SupabaseUser | null>(null);
   const [loading, setLoading] = React.useState(true);
+  const [hidden, setHidden] = React.useState(false);
+  const [isAtTop, setIsAtTop] = React.useState(true);
   const isMobile = useIsMobile();
+
+  React.useEffect(() => {
+    let lastScrollY = window.scrollY;
+
+    const handleScroll = () => {
+      if (window.scrollY > lastScrollY && window.scrollY > 100) {
+        setHidden(true);
+      } else {
+        setHidden(false);
+      }
+      setIsAtTop(window.scrollY < 10);
+      lastScrollY = window.scrollY;
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
   React.useEffect(() => {
     const getSession = async () => {
@@ -90,7 +112,13 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
-      <header className="sticky top-0 z-50 w-full border-b border-white/20 bg-black">
+      <header 
+        className={cn(
+            "fixed top-0 z-50 w-full border-b backdrop-blur-sm transition-all duration-300",
+            (hidden && !isAtTop) ? "-translate-y-full" : "translate-y-0",
+            isAtTop ? "bg-transparent border-transparent" : "bg-black/50 border-white/20"
+        )}
+      >
         <div className="container flex items-center h-16 px-4 mx-auto sm:px-6 lg:px-8">
           <div className="flex items-center gap-3 mr-auto">
             <Globe className="w-8 h-8 text-green-400" />
@@ -127,7 +155,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           </div>
         </div>
       </header>
-      <main className="container flex-grow px-4 py-8 mx-auto sm:px-6 lg:px-8">
+      <main className="container flex-grow px-4 py-8 mx-auto sm:px-6 lg:px-8 pt-24">
         {children}
       </main>
        <footer className="py-6 md:px-8 md:py-0 bg-black/20 border-t border-white/20">
