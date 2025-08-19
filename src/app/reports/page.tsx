@@ -9,43 +9,42 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Filter, RefreshCw } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
-const reportSourceNames: { [key: string]: string[] } = {
-  "UN": ["UN", "UN News"],
-  "Human Rights Watch": ["Human Rights Watch", "HRW"],
-  "Amnesty International": ["Amnesty International", "Amnesty"],
-  "WHO": ["WHO", "World Health Organization"],
-};
 
-const allReportSourceValues = Object.values(reportSourceNames).flat();
-const reportSourceFilterOptions = ["All Sources", ...Object.keys(reportSourceNames)];
+const reportSources = [
+  "All Sources",
+  "UN",
+  "Human Rights Watch",
+  "Amnesty International",
+  "WHO",
+];
 
 export default function ReportsPage() {
   const [sourceFilter, setSourceFilter] = React.useState("All Sources");
   const [reports, setReports] = React.useState<OfficialReport[]>([]);
+  const [loading, setLoading] = React.useState(true);
   const [isScraping, setIsScraping] = React.useState(false);
   const { toast } = useToast();
 
   const fetchReports = React.useCallback(async (filter: string) => {
+    setLoading(true);
     let query = supabase
       .from('articles')
       .select('*')
+      .eq('category', 'Official News') // Always filter for Official News category
       .order('published_at', { ascending: false });
 
-    if (filter === "All Sources") {
-      query = query.in('source', allReportSourceValues);
-    } else {
-      const sourceValues = reportSourceNames[filter];
-      if (sourceValues) {
-        query = query.in('source', sourceValues);
-      } else {
-        // If filter is not found, return no results.
-        setReports([]);
-        return;
-      }
+    // Additionally filter by source if not "All Sources"
+    if (filter !== "All Sources") {
+      // Use a pattern match to catch variations like "HRW" for "Human Rights Watch"
+      const searchPattern = `%${filter.replace(" ", "%")}%`;
+      query = query.ilike('source', searchPattern);
     }
 
     const { data, error } = await query;
+
+    setLoading(false);
 
     if (error) {
       console.error('Error fetching reports:', error);
@@ -107,12 +106,13 @@ export default function ReportsPage() {
         description: error.message,
       });
     } finally {
+      // Refresh the data regardless of scrape outcome
       await fetchReports(sourceFilter);
       setIsScraping(false);
     }
   };
   
-  const isRefreshing = isScraping;
+  const isRefreshing = isScraping || loading;
 
   return (
     <AppLayout>
@@ -127,7 +127,7 @@ export default function ReportsPage() {
                         <SelectValue placeholder="Filter by source" />
                         </SelectTrigger>
                         <SelectContent>
-                        {reportSourceFilterOptions.map((source) => (
+                        {reportSources.map((source) => (
                             <SelectItem key={source} value={source}>
                             {source}
                             </SelectItem>
@@ -142,7 +142,22 @@ export default function ReportsPage() {
             </div>
         </div>
         
-        {reports.length > 0 ? (
+        {loading ? (
+           <div className="space-y-4">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <Card key={i} className="p-4">
+                <div className="flex items-start gap-4">
+                   <Skeleton className="h-12 w-12 rounded-md" />
+                   <div className="flex-1 space-y-2">
+                     <Skeleton className="h-4 w-3/4" />
+                     <Skeleton className="h-4 w-1/4" />
+                     <Skeleton className="h-10 w-full mt-2" />
+                   </div>
+                </div>
+              </Card>
+            ))}
+           </div>
+        ) : reports.length > 0 ? (
           <div className="space-y-4">
             {reports.map((report: OfficialReport) => (
               <ReportCard key={report.id} report={report} />
@@ -151,6 +166,7 @@ export default function ReportsPage() {
         ) : (
           <div className="text-center py-12">
             <p className="text-lg text-muted-foreground">No reports found for the selected filter.</p>
+            <p className="text-sm text-muted-foreground mt-2">Try refreshing the news or selecting "All Sources".</p>
           </div>
         )}
       </div>
