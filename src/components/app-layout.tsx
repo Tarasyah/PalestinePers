@@ -37,10 +37,18 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
       setIsAtTop(window.scrollY < 10);
       lastScrollY = window.scrollY;
     };
+    
+    const handleMouseMove = (e: MouseEvent) => {
+        if (e.clientY < 50) {
+            setHidden(false);
+        }
+    };
 
     window.addEventListener("scroll", handleScroll);
+    window.addEventListener("mousemove", handleMouseMove);
     return () => {
       window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("mousemove", handleMouseMove);
     };
   }, []);
 
