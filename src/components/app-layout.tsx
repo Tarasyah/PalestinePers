@@ -3,82 +3,50 @@
 import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  SidebarProvider,
-  Sidebar,
-  SidebarHeader,
-  SidebarContent,
-  SidebarMenu,
-  SidebarMenuItem,
-  SidebarMenuButton,
-  SidebarInset,
-  SidebarTrigger,
-} from "@/components/ui/sidebar";
-import {
-  Newspaper,
-  LayoutDashboard,
-  FileText,
-  Image as ImageIcon,
-  BookMarked,
-  Sparkles,
-} from "lucide-react";
+import { Globe, BarChart, Newspaper } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const navItems = [
   { href: "/", label: "News Feed", icon: Newspaper },
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/reports", label: "Official Reports", icon: FileText },
-  { href: "/media", label: "Media Gallery", icon: ImageIcon },
-  { href: "/admin/scrape", label: "Scrape News", icon: Sparkles },
+  { href: "/dashboard", label: "Statistics", icon: BarChart },
 ];
 
-export function AppLayout({
-  children,
-  pageTitle,
-}: {
-  children: React.ReactNode;
-  pageTitle: string;
-}) {
+export function AppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   return (
-    <SidebarProvider>
-      <div className="flex min-h-screen">
-        <Sidebar>
-          <SidebarHeader>
-            <div className="flex items-center gap-2 p-2">
-              <BookMarked className="w-8 h-8 text-primary" />
-              <h1 className="text-xl font-semibold">Palestine Focus</h1>
+    <div className="flex flex-col min-h-screen bg-background">
+      <header className="sticky top-0 z-50 w-full border-b bg-card">
+        <div className="container flex items-center h-16 px-4 mx-auto sm:px-6 lg:px-8">
+          <div className="flex items-center gap-3">
+            <Globe className="w-8 h-8 text-primary" />
+            <div>
+              <h1 className="text-xl font-bold">Palestine Perspectives</h1>
+              <p className="text-sm text-muted-foreground">
+                Independent news aggregation
+              </p>
             </div>
-          </SidebarHeader>
-          <SidebarContent>
-            <SidebarMenu>
-              {navItems.map((item) => (
-                <SidebarMenuItem key={item.href}>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={pathname === item.href}
-                    tooltip={{ children: item.label, side: "right" }}
-                  >
-                    <Link href={item.href}>
-                      <item.icon />
-                      <span>{item.label}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarContent>
-        </Sidebar>
-        <SidebarInset className="flex-1">
-          <header className="flex items-center justify-between p-4 border-b bg-card">
-            <div className="flex items-center gap-4">
-              <SidebarTrigger className="md:hidden" />
-              <h2 className="text-2xl font-bold tracking-tight">{pageTitle}</h2>
-            </div>
-          </header>
-          <main className="p-4 md:p-6 lg:p-8">{children}</main>
-        </SidebarInset>
-      </div>
-    </SidebarProvider>
+          </div>
+          <nav className="flex items-center gap-2 ml-auto">
+            {navItems.map((item) => (
+              <Button
+                key={item.href}
+                asChild
+                variant={pathname === item.href ? "default" : "outline"}
+                className="flex items-center gap-2"
+              >
+                <Link href={item.href}>
+                  <item.icon className="w-4 h-4" />
+                  <span>{item.label}</span>
+                </Link>
+              </Button>
+            ))}
+          </nav>
+        </div>
+      </header>
+      <main className="container flex-grow px-4 py-8 mx-auto sm:px-6 lg:px-8">
+        {children}
+      </main>
+    </div>
   );
 }

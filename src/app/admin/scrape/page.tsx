@@ -40,51 +40,54 @@ export default function ScrapePage() {
   };
 
   return (
-    <AppLayout pageTitle="Scrape News Feeds">
-      <div className="flex flex-col items-center justify-center space-y-6">
-        <Card className="w-full max-w-md">
-          <CardHeader>
-            <CardTitle>Manual Scraping Trigger</CardTitle>
-            <CardDescription>
-              Click the button below to start the web scraping process. This will
-              fetch the latest articles from all configured news sources and
-              store them in the database.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button onClick={handleScrape} disabled={loading} className="w-full">
-              {loading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Scraping...
-                </>
-              ) : (
-                "Start Scraping"
-              )}
-            </Button>
-          </CardContent>
-        </Card>
-
-        {result && (
+    <AppLayout>
+      <div className="space-y-4">
+         <h2 className="text-2xl font-bold tracking-tight">Scrape News Feeds</h2>
+        <div className="flex flex-col items-center justify-center space-y-6">
           <Card className="w-full max-w-md">
             <CardHeader>
-              <CardTitle>Scraping Results</CardTitle>
+              <CardTitle>Manual Scraping Trigger</CardTitle>
+              <CardDescription>
+                Click the button below to start the web scraping process. This will
+                fetch the latest articles from all configured news sources and
+                store them in the database.
+              </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-2">
-              <p>
-                <strong>Total Articles Scraped:</strong> {result.articlesScraped}
-              </p>
-              <h4 className="font-semibold">By Source:</h4>
-              <ul className="list-disc pl-5 text-sm text-muted-foreground">
-                {Object.entries(result.sources).map(([source, count]) => (
-                  <li key={source}>
-                    {source}: {count as number}
-                  </li>
-                ))}
-              </ul>
+            <CardContent>
+              <Button onClick={handleScrape} disabled={loading} className="w-full">
+                {loading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Scraping...
+                  </>
+                ) : (
+                  "Start Scraping"
+                )}
+              </Button>
             </CardContent>
           </Card>
-        )}
+
+          {result && (
+            <Card className="w-full max-w-md">
+              <CardHeader>
+                <CardTitle>Scraping Results</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                <p>
+                  <strong>Total Articles Scraped:</strong> {result.articlesScraped}
+                </p>
+                <h4 className="font-semibold">By Source:</h4>
+                <ul className="list-disc pl-5 text-sm text-muted-foreground">
+                  {Object.entries(result.sources).map(([source, count]) => (
+                    <li key={source}>
+                      {source}: {count as number}
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
+            </Card>
+          )}
+        </div>
       </div>
     </AppLayout>
   );

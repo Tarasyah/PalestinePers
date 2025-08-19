@@ -1,4 +1,6 @@
 import { supabase } from "./supabase";
+import { addDays, subDays } from 'date-fns';
+
 
 export type NewsArticle = {
   id: string;
@@ -9,12 +11,13 @@ export type NewsArticle = {
   link: string;
   image: string;
   topic: 'Politics' | 'Humanitarian' | 'Conflict' | 'International News' | 'Regional News' | 'Analysis' | 'Official News';
+  priority: 'normal' | 'urgent' | 'breaking';
 };
 
 export async function getNewsArticles(): Promise<NewsArticle[]> {
   const { data, error } = await supabase
     .from('articles')
-    .select('id, title, source, published_at, summary, link, image_url, category')
+    .select('id, title, source, published_at, summary, link, image_url, category, priority')
     .order('published_at', { ascending: false });
 
   if (error) {
@@ -31,6 +34,7 @@ export async function getNewsArticles(): Promise<NewsArticle[]> {
     link: article.link,
     image: article.image_url || 'https://placehold.co/600x400',
     topic: article.category,
+    priority: article.priority
   }));
 }
 

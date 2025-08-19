@@ -18,25 +18,25 @@ export default function ReportsPage() {
   );
 
   return (
-    <AppLayout pageTitle="Official Reports">
+    <AppLayout>
       <div className="space-y-6">
-        <div className="p-4 bg-card rounded-lg shadow-sm flex items-center justify-end gap-4">
-          <div className="flex items-center gap-2 text-muted-foreground">
-              <Filter className="h-5 w-5" />
-              <span className="font-medium">Filter by source:</span>
+        <div className="flex justify-between items-center">
+            <h2 className="text-2xl font-bold tracking-tight">Official Reports</h2>
+            <div className="flex items-center gap-2">
+                <Filter className="h-5 w-5 text-muted-foreground" />
+                <Select onValueChange={setSourceFilter} defaultValue={sourceFilter}>
+                    <SelectTrigger className="w-full md:w-[220px]">
+                    <SelectValue placeholder="Filter by source" />
+                    </SelectTrigger>
+                    <SelectContent>
+                    {sources.map((source) => (
+                        <SelectItem key={source} value={source}>
+                        {source}
+                        </SelectItem>
+                    ))}
+                    </SelectContent>
+                </Select>
             </div>
-          <Select onValueChange={setSourceFilter} defaultValue={sourceFilter}>
-            <SelectTrigger className="w-full md:w-[220px]">
-              <SelectValue placeholder="Source" />
-            </SelectTrigger>
-            <SelectContent>
-              {sources.map((source) => (
-                <SelectItem key={source} value={source}>
-                  {source}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
         </div>
         
         {filteredReports.length > 0 ? (
