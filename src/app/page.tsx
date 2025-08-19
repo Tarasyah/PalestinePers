@@ -311,28 +311,18 @@ export default function Home() {
                           Trending news
                       </CardTitle>
                   </CardHeader>
-                  <Tabs defaultValue="today" className="w-full">
-                      <TabsList className="grid w-full grid-cols-2 bg-transparent p-0 mb-4 border-b-2 border-white/30 rounded-none">
-                          <TabsTrigger value="today" className="text-white/70 data-[state=active]:bg-transparent data-[state=active]:text-white data-[state=active]:shadow-none data-[state=active]:border-b-2 border-white rounded-none">Today</TabsTrigger>
-                          <TabsTrigger value="this-week" className="text-white/70 data-[state=active]:bg-transparent data-[state=active]:text-white data-[state=active]:shadow-none data-[state=active]:border-b-2 border-white rounded-none">This week</TabsTrigger>
-                      </TabsList>
-                      <TabsContent value="today" className="mt-0">
-                         {loading ? Array.from({length: 5}).map((_, i) => <Skeleton key={i} className="h-20 w-full bg-white/20" />) :
-                          <div className="space-y-4">
-                            {trendingArticles.map(article => (
-                                <Link key={article.id} href={article.link} target="_blank" className="block hover:opacity-80 transition-opacity">
-                                    <p className="text-xs font-semibold uppercase opacity-70 mb-1">News</p>
-                                    <h4 className="font-semibold text-base leading-tight line-clamp-3">{article.title}</h4>
-                                </Link>
-                            ))}
-                          </div>
-                         }
-                      </TabsContent>
-                      <TabsContent value="this-week" className="mt-0">
-                        {/* Add logic for "This week" trending news if available */}
-                        <p className="text-center text-sm opacity-70">"This week" trending news not available yet.</p>
-                      </TabsContent>
-                  </Tabs>
+                  <div className="mt-4">
+                      {loading ? Array.from({length: 5}).map((_, i) => <Skeleton key={i} className="h-20 mb-4 w-full bg-white/20" />) :
+                      <div className="space-y-4">
+                        {trendingArticles.map(article => (
+                            <Link key={article.id} href={article.link} target="_blank" className="block hover:opacity-80 transition-opacity">
+                                <p className="text-xs font-semibold uppercase opacity-70 mb-1">News</p>
+                                <h4 className="font-semibold text-base leading-tight line-clamp-3">{article.title}</h4>
+                            </Link>
+                        ))}
+                      </div>
+                      }
+                  </div>
                 </Card>
 
                  <div className="flex justify-center">
