@@ -1,114 +1,61 @@
 "use client";
 
-import Link from "next/link";
 import { AppLayout } from "@/components/app-layout";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
-import { Bar, BarChart, CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
-import { casualtyStats, casualtySource } from "@/lib/data";
-import type { ChartConfig } from "@/components/ui/chart";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-const chartConfig: ChartConfig = {
-  killed: {
-    label: "Killed",
-    color: "hsl(var(--destructive))",
-  },
-  injured: {
-    label: "Injured",
-    color: "hsl(var(--primary))",
-  },
+const stats = {
+  days: 681,
+  killed: "62,004",
+  wounded: "156,230",
+  missing: "11,000",
+  lastUpdated: "August 18, 2025",
+  source: "Euro-Med Human Rights Monitor",
+  sourceLink: "https://euromedmonitor.org/en/",
 };
 
 export default function DashboardPage() {
   return (
     <AppLayout>
-      <div className="space-y-4">
-        <h2 className="text-2xl font-bold tracking-tight">Key Statistics Dashboard</h2>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Monthly Casualties</CardTitle>
-              <CardDescription>
-                A summary of reported casualties over the past six months.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ChartContainer config={chartConfig} className="h-[300px] w-full">
-                <BarChart accessibilityLayer data={casualtyStats}>
-                  <CartesianGrid vertical={false} />
-                  <XAxis
-                    dataKey="name"
-                    tickLine={false}
-                    tickMargin={10}
-                    axisLine={false}
-                  />
-                  <YAxis />
-                  <ChartTooltip
-                    content={<ChartTooltipContent indicator="dot" />}
-                  />
-                  <Bar dataKey="killed" fill="var(--color-killed)" radius={4} />
-                  <Bar dataKey="injured" fill="var(--color-injured)" radius={4} />
-                </BarChart>
-              </ChartContainer>
-            </CardContent>
-            <CardFooter>
-              <p className="text-xs text-muted-foreground">
-                Source:{" "}
-                <Link href={`https://${casualtySource}`} target="_blank" className="underline hover:text-primary">
-                  {casualtySource}
-                </Link>
-              </p>
-            </CardFooter>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>Casualty Trends</CardTitle>
-              <CardDescription>
-                A line chart showing the trend of casualties over time.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ChartContainer config={chartConfig} className="h-[300px] w-full">
-                <LineChart accessibilityLayer data={casualtyStats}>
-                  <CartesianGrid vertical={false} />
-                  <XAxis
-                    dataKey="name"
-                    tickLine={false}
-                    tickMargin={10}
-                    axisLine={false}
-                  />
-                  <YAxis />
-                  <ChartTooltip
-                    cursor={false}
-                    content={<ChartTooltipContent indicator="line" />}
-                  />
-                  <Line
-                    dataKey="killed"
-                    type="monotone"
-                    stroke="var(--color-killed)"
-                    strokeWidth={2}
-                    dot={true}
-                  />
-                  <Line
-                    dataKey="injured"
-                    type="monotone"
-                    stroke="var(--color-injured)"
-                    strokeWidth={2}
-                    dot={true}
-                  />
-                </LineChart>
-              </ChartContainer>
-            </CardContent>
-            <CardFooter>
-              <p className="text-xs text-muted-foreground">
-                Source:{" "}
-                <Link href={`https://${casualtySource}`} target="_blank" className="underline hover:text-primary">
-                  {casualtySource}
-                </Link>
-              </p>
-            </CardFooter>
-          </Card>
-        </div>
+      <div className="flex justify-center items-start pt-10">
+        <Card className="w-full max-w-md bg-black text-white rounded-lg shadow-2xl p-8">
+          <CardHeader className="text-center p-0 mb-8">
+            <CardTitle className="text-5xl font-bold tracking-tight text-white">
+              Gaza genocide
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6 p-0">
+            <div className="flex justify-between items-baseline">
+              <span className="text-4xl font-bold">{stats.days}</span>
+              <span className="text-2xl font-light tracking-wider">DAYS</span>
+            </div>
+            <div className="flex justify-between items-baseline">
+              <span className="text-4xl font-bold">{stats.killed}</span>
+              <span className="text-2xl font-light tracking-wider">KILLED</span>
+            </div>
+             <div className="flex justify-between items-baseline">
+              <span className="text-4xl font-bold">{stats.wounded}</span>
+              <span className="text-2xl font-light tracking-wider">WOUNDED</span>
+            </div>
+             <div className="flex justify-between items-baseline">
+              <span className="text-4xl font-bold">{stats.missing}</span>
+              <span className="text-2xl font-light tracking-wider">MISSING</span>
+            </div>
+             <div className="text-center text-neutral-400 pt-6">
+                <p>Last updated: {stats.lastUpdated}</p>
+                <p className="text-sm">
+                    Source:{" "}
+                    <a
+                        href={stats.sourceLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="underline hover:text-neutral-200"
+                    >
+                        {stats.source}
+                    </a>
+                </p>
+             </div>
+          </CardContent>
+        </Card>
       </div>
     </AppLayout>
   );

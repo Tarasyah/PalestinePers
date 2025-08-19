@@ -3,17 +3,30 @@
 import * as React from "react";
 import { AppLayout } from "@/components/app-layout";
 import { NewsCard } from "@/components/news-card";
-import { getNewsArticles } from "@/lib/data";
-import type { NewsArticle } from "@/lib/data";
+import { getNewsArticles, NewsArticleWithReports } from "@/lib/data";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Filter, Search, RefreshCw, RadioTower } from "lucide-react";
+import { Filter, Search, RefreshCw } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
+const allTopics = [
+    "All Topics",
+    "Politics",
+    "Humanitarian",
+    "Conflict",
+    "International News",
+    "Regional News",
+    "Analysis",
+    "Official News",
+];
+
 
 export default function Home() {
-  const [articles, setArticles] = React.useState<NewsArticle[]>([]);
+  const [articles, setArticles] = React.useState<NewsArticleWithReports[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [searchTerm, setSearchTerm] = React.useState("");
+  const [topicFilter, setTopicFilter] = React.useState("All Topics");
 
   const fetchArticles = React.useCallback(async () => {
     setLoading(true);
@@ -26,9 +39,11 @@ export default function Home() {
     fetchArticles();
   }, [fetchArticles]);
 
-  const filteredArticles = articles.filter((article) =>
-    article.title.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredArticles = articles.filter((article) => {
+    const matchesSearch = article.title.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesTopic = topicFilter === "All Topics" || article.topic === topicFilter;
+    return matchesSearch && matchesTopic;
+  });
 
   return (
     <AppLayout>
@@ -45,14 +60,21 @@ export default function Home() {
               />
             </div>
             <div className="flex items-center gap-2 w-full md:w-auto">
-              <Button variant="outline" className="w-full md:w-auto">
-                <Filter className="mr-2 h-4 w-4" />
-                Filters
-              </Button>
-              <Button className="w-full md:w-auto bg-green-700 hover:bg-green-800 text-white">
-                <RadioTower className="mr-2 h-4 w-4" />
-                Live Updates
-              </Button>
+                 <div className="flex items-center gap-2 w-full md:w-auto">
+                    <Filter className="h-5 w-5 text-muted-foreground" />
+                    <Select onValueChange={setTopicFilter} defaultValue={topicFilter}>
+                        <SelectTrigger className="w-full md:w-[220px]">
+                        <SelectValue placeholder="Filter by topic" />
+                        </SelectTrigger>
+                        <SelectContent>
+                        {allTopics.map((topic) => (
+                            <SelectItem key={topic} value={topic}>
+                            {topic}
+                            </SelectItem>
+                        ))}
+                        </SelectContent>
+                    </Select>
+                </div>
             </div>
           </div>
         </div>
@@ -71,14 +93,14 @@ export default function Home() {
         </div>
 
         {loading ? (
-          <div className="grid grid-cols-1 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {Array.from({ length: 3 }).map((_, i) => (
-               <Skeleton key={i} className="h-[150px] w-full rounded-lg" />
+               <Skeleton key={i} className="h-[250px] w-full rounded-lg" />
             ))}
           </div>
         ) : filteredArticles.length > 0 ? (
-          <div className="space-y-4">
-            {filteredArticles.map((article: NewsArticle) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredArticles.map((article: NewsArticleWithReports) => (
               <NewsCard key={article.id} article={article} />
             ))}
           </div>

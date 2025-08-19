@@ -15,7 +15,7 @@ interface ScrapedArticle {
   priority: 'normal' | 'urgent' | 'breaking';
 }
 
-async function scrapeURL(url: string, source: string, category: string, priority: 'normal' | 'urgent' | 'breaking', selector: string, baseUrl: string): Promise<ScrapedArticle[]> {
+async function scrapeURL(url: string, source: string, category: string, priority: 'normal' | 'urgent' | 'breaking', itemSelector: string, titleSelector: string, linkSelector: string, imageSelector: string, imageAttr: string, baseUrl: string): Promise<ScrapedArticle[]> {
   try {
     const response = await fetch(url);
     if (!response.ok) {
@@ -26,29 +26,34 @@ async function scrapeURL(url: string, source: string, category: string, priority
     const $ = cheerio.load(html);
     const articles: ScrapedArticle[] = [];
 
-    $(selector).each((i, el) => {
+    $(itemSelector).each((i, el) => {
       if (i >= 5) return; 
 
-      const title = $(el).text().trim().replace(/&[^;]+;/g, '');
-      let link = $(el).attr('href');
+      const title = $(el).find(titleSelector).text().trim().replace(/&[^;]+;/g, '');
+      let link = $(el).find(linkSelector).attr('href');
+      let imageUrl = $(el).find(imageSelector).attr(imageAttr);
 
       if (title && link && title.length > 10) {
         if (!link.startsWith('http')) {
           link = `${baseUrl}${link}`;
         }
+         if (imageUrl && !imageUrl.startsWith('http')) {
+          imageUrl = `${baseUrl}${imageUrl}`;
+        }
         articles.push({
           title,
           link,
-          summary: `${title.substring(0, 100)}...`,
+          summary: `${title.substring(0, 150)}...`,
           source,
           published_at: new Date().toISOString(),
           category,
+          image_url: imageUrl,
           priority,
         });
       }
     });
     
-    console.log(`${source}: Found ${articles.length} articles`);
+    console.log(`${source}: Found ${articles.length} articles from ${url}`);
     return articles;
   } catch (error) {
     console.error(`Error scraping ${source}:`, error);
@@ -57,6 +62,8 @@ async function scrapeURL(url: string, source: string, category: string, priority
 }
 
 async function saveArticlesToDatabase(articles: ScrapedArticle[]) {
+  if (articles.length === 0) return;
+
   for (const article of articles) {
     const { data: existing } = await supabase
       .from('articles')
@@ -79,7 +86,7 @@ async function saveArticlesToDatabase(articles: ScrapedArticle[]) {
         });
       
       if (error) {
-        console.error('Error saving article:', error);
+        console.error('Error saving article:', error.message);
       } else {
         console.log('Saved article:', article.title);
       }
@@ -92,14 +99,14 @@ export async function POST() {
     console.log('Starting news scraping...');
     
     const sources = [
-        { url: 'https://www.aljazeera.com/tag/israel-palestine-conflict/', source: 'Al Jazeera', category: 'International News', priority: 'normal', selector: 'h3.gc__title a', baseUrl: 'https://www.aljazeera.com' },
-        { url: 'https://www.middleeasteye.net/live/israel-palestine-war-gaza-live', source: 'Middle East Eye', category: 'Regional News', priority: 'normal', selector: 'h3.card-plat-title a', baseUrl: 'https://www.middleeasteye.net' },
-        { url: 'https://www.middleeastmonitor.com/region/middle-east/palestine/', source: 'Middle East Monitor', category: 'Analysis', priority: 'normal', selector: 'h2.item-title a', baseUrl: '' },
-        { url: 'https://english.wafa.ps/Pages/Last-News', source: 'WAFA News', category: 'Official News', priority: 'urgent', selector: '.news-title a', baseUrl: 'https://english.wafa.ps' },
-        { url: 'https://www.trtworld.com/middle-east', source: 'TRT World', category: 'International News', priority: 'normal', selector: '.article-title a', baseUrl: 'https://www.trtworld.com' },
+        { url: 'https://www.aljazeera.com/palestine/', source: 'Al Jazeera', category: 'International News', priority: 'normal', itemSelector: 'article.gc', titleSelector: 'h3.gc__title a span', linkSelector: 'h3.gc__title a', imageSelector: 'div.gc__image-container img', imageAttr: 'src', baseUrl: 'https://www.aljazeera.com' },
+        { url: 'https://www.middleeasteye.net/news/israel-palestine', source: 'Middle East Eye', category: 'Regional News', priority: 'normal', itemSelector: 'div.views-row', titleSelector: 'h2 a', linkSelector: 'h2 a', imageSelector: 'div.field-name-field-promo-image-medium img', imageAttr: 'src', baseUrl: 'https://www.middleeasteye.net' },
+        { url: 'https://www.middleeastmonitor.com/section/palestine/', source: 'Middle East Monitor', category: 'Analysis', priority: 'normal', itemSelector: 'div.category-article-item', titleSelector: 'h3.title a', linkSelector: 'h3.title a', imageSelector: 'div.image-wrapper a img', imageAttr: 'src', baseUrl: '' },
+        { url: 'https://english.wafa.ps/Pages/Last-News', source: 'WAFA News', category: 'Official News', priority: 'urgent', itemSelector: '.row.news-box', titleSelector: '.news-title a', linkSelector: '.news-title a', imageSelector: '.news-img-container img', imageAttr: 'src', baseUrl: 'https://english.wafa.ps' },
+        { url: 'https://www.trtworld.com/middle-east', source: 'TRT World', category: 'International News', priority: 'normal', itemSelector: '.listing-item', titleSelector: '.article-title a', linkSelector: '.article-title a', imageSelector: '.article-image img', imageAttr: 'src', baseUrl: 'https://www.trtworld.com' },
     ];
 
-    const scrapingPromises = sources.map(s => scrapeURL(s.url, s.source, s.category, s.priority, s.selector, s.baseUrl));
+    const scrapingPromises = sources.map(s => scrapeURL(s.url, s.source, s.category, s.priority, s.itemSelector, s.titleSelector, s.linkSelector, s.imageSelector, s.imageAttr, s.baseUrl));
 
     const results = await Promise.all(scrapingPromises);
     const allArticles = results.flat();

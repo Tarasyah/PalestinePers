@@ -1,7 +1,6 @@
 import { supabase } from "./supabase";
 import { addDays, subDays } from 'date-fns';
 
-
 export type NewsArticle = {
   id: string;
   title: string;
@@ -14,7 +13,19 @@ export type NewsArticle = {
   priority: 'normal' | 'urgent' | 'breaking';
 };
 
-export async function getNewsArticles(): Promise<NewsArticle[]> {
+export type OfficialReport = {
+  id: string;
+  title: string;
+  source: 'UN' | 'Human Rights Watch' | 'Amnesty International' | 'WHO';
+  date: string;
+  summary: string;
+  link: string;
+};
+
+// This type will be used in the front-end to handle both articles and reports
+export type NewsArticleWithReports = NewsArticle;
+
+export async function getNewsArticles(): Promise<NewsArticleWithReports[]> {
   const { data, error } = await supabase
     .from('articles')
     .select('id, title, source, published_at, summary, link, image_url, category, priority')
@@ -25,27 +36,37 @@ export async function getNewsArticles(): Promise<NewsArticle[]> {
     return [];
   }
 
-  return data.map((article: any) => ({
+  const articles = data.map((article: any) => ({
     id: article.id,
     title: article.title,
     source: article.source,
     date: article.published_at,
     excerpt: article.summary,
     link: article.link,
-    image: article.image_url || 'https://placehold.co/600x400',
+    image: article.image_url || `https://placehold.co/600x400.png?text=${encodeURIComponent(article.source)}`,
     topic: article.category,
     priority: article.priority
   }));
-}
 
-export type OfficialReport = {
-  id: string;
-  title: string;
-  source: 'UN' | 'Human Rights Watch' | 'Amnesty International' | 'WHO';
-  date: string;
-  summary: string;
-  link: string;
-};
+  const reportArticles: NewsArticleWithReports[] = officialReports.map(report => ({
+      id: `report-${report.id}`,
+      title: report.title,
+      source: report.source,
+      date: report.date,
+      excerpt: report.summary,
+      link: report.link,
+      image: `https://placehold.co/600x400.png?text=${encodeURIComponent(report.source)}`,
+      topic: 'Official News',
+      priority: 'normal'
+  }));
+
+  const combined = [...articles, ...reportArticles];
+
+  // Sort combined array by date
+  combined.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  
+  return combined;
+}
 
 export const officialReports: OfficialReport[] = [
   {
