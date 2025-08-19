@@ -17,30 +17,30 @@ export default function DashboardPage() {
   return (
     <AppLayout>
       <div className="flex justify-center items-start pt-10">
-        <Card className="w-full max-w-md bg-black text-white rounded-lg shadow-2xl p-8">
-          <CardHeader className="text-center p-0 mb-8">
-            <CardTitle className="text-5xl font-bold tracking-tight text-white">
-              Gaza genocide
+        <Card className="w-full max-w-md shadow-lg">
+          <CardHeader className="text-center pb-4">
+            <CardTitle className="text-4xl font-bold tracking-tight">
+              Gaza Genocide Statistics
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-6 p-0">
+          <CardContent className="space-y-5 px-8 py-6">
             <div className="flex justify-between items-baseline">
-              <span className="text-4xl font-bold">{stats.days}</span>
-              <span className="text-2xl font-light tracking-wider">DAYS</span>
+              <span className="text-3xl font-bold">{stats.days}</span>
+              <span className="text-xl font-light tracking-wider text-muted-foreground">DAYS</span>
             </div>
             <div className="flex justify-between items-baseline">
-              <span className="text-4xl font-bold">{stats.killed}</span>
-              <span className="text-2xl font-light tracking-wider">KILLED</span>
+              <span className="text-3xl font-bold text-destructive">{stats.killed}</span>
+              <span className="text-xl font-light tracking-wider text-muted-foreground">KILLED</span>
             </div>
              <div className="flex justify-between items-baseline">
-              <span className="text-4xl font-bold">{stats.wounded}</span>
-              <span className="text-2xl font-light tracking-wider">WOUNDED</span>
+              <span className="text-3xl font-bold">{stats.wounded}</span>
+              <span className="text-xl font-light tracking-wider text-muted-foreground">WOUNDED</span>
             </div>
              <div className="flex justify-between items-baseline">
-              <span className="text-4xl font-bold">{stats.missing}</span>
-              <span className="text-2xl font-light tracking-wider">MISSING</span>
+              <span className="text-3xl font-bold">{stats.missing}</span>
+              <span className="text-xl font-light tracking-wider text-muted-foreground">MISSING</span>
             </div>
-             <div className="text-center text-neutral-400 pt-6">
+             <div className="text-center text-muted-foreground pt-4 border-t mt-4">
                 <p>Last updated: {stats.lastUpdated}</p>
                 <p className="text-sm">
                     Source:{" "}
@@ -48,7 +48,7 @@ export default function DashboardPage() {
                         href={stats.sourceLink}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="underline hover:text-neutral-200"
+                        className="underline hover:text-primary"
                     >
                         {stats.source}
                     </a>

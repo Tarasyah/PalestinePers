@@ -7,28 +7,47 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Github, Chrome } from "lucide-react";
 import type { Provider } from '@supabase/supabase-js';
+import { useToast } from "@/hooks/use-toast";
 
 export default function LoginPage() {
   const router = useRouter();
+  const { toast } = useToast();
 
   React.useEffect(() => {
     const checkUser = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
+        // If user is already logged in, redirect to home
         router.push("/");
       }
     };
     checkUser();
+
+    // Listen for auth changes to handle redirection after login
+    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_IN" && session?.user) {
+        router.push("/");
+      }
+    });
+
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
   }, [router]);
 
   const handleOAuthLogin = async (provider: Provider) => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider,
       options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
+        redirectTo: typeof window !== 'undefined' ? `${window.location.origin}/auth/callback` : '',
       },
     });
     if (error) {
+      toast({
+        variant: "destructive",
+        title: "Login Error",
+        description: error.message,
+      });
       console.error("OAuth login error:", error.message);
     }
   };
