@@ -3,46 +3,51 @@
 import * as React from "react";
 import { AppLayout } from "@/components/app-layout";
 import { ReportCard } from "@/components/report-card";
-import { getNewsArticles, officialReports } from "@/lib/data";
-import type { OfficialReport, NewsArticleWithReports } from "@/lib/data";
+import { supabase } from "@/lib/supabase";
+import type { OfficialReport } from "@/lib/data";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Filter, RefreshCw } from "lucide-react";
 
-const sources = ["All Sources", ...Array.from(new Set(officialReports.map((r) => r.source)))];
-
 export default function ReportsPage() {
   const [sourceFilter, setSourceFilter] = React.useState("All Sources");
-  const [reports, setReports] = React.useState<OfficialReport[]>(officialReports);
+  const [reports, setReports] = React.useState<OfficialReport[]>([]);
+  const [allSources, setAllSources] = React.useState<string[]>(["All Sources"]);
   const [isScraping, setIsScraping] = React.useState(false);
   const { toast } = useToast();
 
   const fetchReports = React.useCallback(async () => {
-    // In a real scenario, you might want to fetch this from a DB.
-    // For now, we are just re-setting it from the static data.
-    const fetchedArticles = await getNewsArticles();
-    const officialReportsFromArticles = fetchedArticles
-      .filter(a => a.category === 'Official News')
-      .map(a => ({
-        id: a.id,
-        title: a.title,
-        source: a.source as 'UN' | 'Human Rights Watch' | 'Amnesty International' | 'WHO',
-        date: a.date,
-        summary: a.excerpt,
-        link: a.link,
-      }));
-    
-    // To ensure we have all reports, we can merge and remove duplicates
-    const allReports = [...officialReports, ...officialReportsFromArticles];
-    const uniqueReports = allReports.filter((report, index, self) =>
-      index === self.findIndex((r) => (
-        r.id === report.id
-      ))
-    );
+    const { data, error } = await supabase
+      .from('reports')
+      .select('*')
+      .order('published_at', { ascending: false })
+      .limit(10);
 
-    setReports(uniqueReports);
-  }, []);
+    if (error) {
+      console.error('Error fetching reports:', error);
+      toast({
+        variant: "destructive",
+        title: "Failed to fetch reports",
+        description: error.message,
+      });
+      setReports([]);
+      return;
+    }
+
+    const fetchedReports = data.map((report: any) => ({
+        id: report.id,
+        title: report.title,
+        source: report.source,
+        date: report.published_at,
+        summary: report.summary,
+        link: report.link,
+      }));
+      
+    setReports(fetchedReports);
+    setAllSources(["All Sources", ...Array.from(new Set(fetchedReports.map((r) => r.source)))]);
+
+  }, [toast]);
 
   React.useEffect(() => {
     fetchReports();
@@ -105,7 +110,7 @@ export default function ReportsPage() {
                         <SelectValue placeholder="Filter by source" />
                         </SelectTrigger>
                         <SelectContent>
-                        {sources.map((source) => (
+                        {allSources.map((source) => (
                             <SelectItem key={source} value={source}>
                             {source}
                             </SelectItem>
