@@ -90,7 +90,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
-      <header className="sticky top-0 z-50 w-full border-b border-white/20 bg-black/30 backdrop-blur-lg">
+      <header className="sticky top-0 z-50 w-full border-b border-white/20 bg-black">
         <div className="container flex items-center h-16 px-4 mx-auto sm:px-6 lg:px-8">
           <div className="flex items-center gap-3 mr-auto">
             <Globe className="w-8 h-8 text-green-400" />
