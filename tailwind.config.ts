@@ -9,6 +9,9 @@ export default {
   ],
   theme: {
     extend: {
+      backgroundImage: {
+        glow: 'radial-gradient(circle at 50% -20%, hsl(var(--primary)), rgba(255, 255, 255, 0))',
+      },
       fontFamily: {
         body: ['Inter', 'sans-serif'],
         headline: ['Inter', 'sans-serif'],

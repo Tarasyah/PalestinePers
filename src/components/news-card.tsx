@@ -7,6 +7,7 @@ import { ArrowRight, Bookmark, Clock } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import Image from 'next/image';
 import { useState } from 'react';
+import { cn } from '@/lib/utils';
 
 const topicColorMap: { [key: string]: string } = {
   "Politics": "bg-blue-500",
@@ -44,7 +45,10 @@ export function NewsCard({ article }: { article: NewsArticleWithReports }) {
   const [imageUrl, setImageUrl] = useState(article.image || `https://placehold.co/600x400.png?text=${encodeURIComponent(article.source)}`);
   
   return (
-    <Card className="transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 flex flex-col bg-gray-800/60 border border-gray-700 text-white">
+    <Card className={cn(
+        "group/card relative flex flex-col overflow-hidden bg-gray-800/60 text-white transition-all duration-300",
+        "before:pointer-events-none before:absolute before:-inset-px before:z-10 before:hidden before:rounded-lg before:bg-glow before:opacity-0 before:transition-opacity before:duration-300 hover:before:block hover:before:opacity-100"
+      )}>
       {imageUrl && (
         <CardHeader className="p-0">
           <div className="relative aspect-video w-full">
@@ -52,7 +56,7 @@ export function NewsCard({ article }: { article: NewsArticleWithReports }) {
               src={imageUrl}
               alt={article.title}
               fill
-              className="object-cover rounded-t-lg"
+              className="object-cover rounded-t-lg transition-transform duration-300 group-hover/card:scale-105"
               data-ai-hint="news article"
               onError={() => { setImageUrl(`https://placehold.co/600x400.png?text=${encodeURIComponent(article.source)}`) }}
             />
