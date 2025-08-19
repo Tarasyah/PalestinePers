@@ -10,19 +10,23 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Filter, RefreshCw } from "lucide-react";
 
+const reportSources = ["UN", "Human Rights Watch", "Amnesty International", "WHO"];
+
 export default function ReportsPage() {
   const [sourceFilter, setSourceFilter] = React.useState("All Sources");
   const [reports, setReports] = React.useState<OfficialReport[]>([]);
-  const [allSources, setAllSources] = React.useState<string[]>(["All Sources"]);
+  const [allSources, setAllSources] = React.useState<string[]>(["All Sources", ...reportSources]);
   const [isScraping, setIsScraping] = React.useState(false);
   const { toast } = useToast();
 
   const fetchReports = React.useCallback(async () => {
-    const { data, error } = await supabase
-      .from('reports')
+    let query = supabase
+      .from('articles')
       .select('*')
-      .order('published_at', { ascending: false })
-      .limit(10);
+      .in('source', reportSources)
+      .order('published_at', { ascending: false });
+
+    const { data, error } = await query;
 
     if (error) {
       console.error('Error fetching reports:', error);
