@@ -1,3 +1,4 @@
+
 import { supabase } from "./supabase";
 
 export type NewsArticle = {
@@ -125,12 +126,13 @@ export type MediaItem = {
 };
 
 export const mediaItems: MediaItem[] = [
-  { id: 'm1', type: 'image', src: 'https://placehold.co/600x400.png', caption: 'A street in Gaza after an airstrike.', source: 'Reuters' },
-  { id: 'm2', type: 'image', src: 'https://placehold.co/600x400.png', caption: 'Children playing amidst rubble.', source: 'AP' },
-  { id: 'm3', type: 'image', src: 'https://placehold.co/600x400.png', caption: 'Humanitarian aid distribution.', source: 'UNRWA' },
-  { id: 'm4', type: 'image', src: 'https://placehold.co/600x400.png', caption: 'A farmer in the West Bank.', source: 'Getty Images' },
-  { id: 'm5', type: 'image', src: 'https://placehold.co/600x400.png', caption: 'Protests in Ramallah.', source: 'AFP' },
-  { id: 'm6', type: 'image', src: 'https://placehold.co/600x400.png', caption: 'A view of the separation wall.', source: 'Human Rights Watch' },
-  { id: 'm7', type: 'image', src: 'https://placehold.co/600x400.png', caption: 'Inside a crowded hospital.', source: 'MSF' },
-  { id: 'm8', type: 'image', src: 'https://placehold.co/600x400.png', caption: 'Sunset over Jerusalem.', source: 'Independent' },
+  { id: 'm1', type: 'image', src: '/images/image-1.jpg', caption: 'Sebuah jalan di Gaza setelah serangan udara.', source: 'Reuters' },
+  { id: 'm2', type: 'image', src: '/images/image-2.jpg', caption: 'Anak-anak bermain di tengah puing-puing.', source: 'AP' },
+  { id: 'm3', type: 'image', src: '/images/image-3.jpg', caption: 'Distribusi bantuan kemanusiaan.', source: 'UNRWA' },
+  { id: 'm4', type: 'image', src: '/images/image-4.jpg', caption: 'Seorang petani di Tepi Barat.', source: 'Getty Images' },
+  { id: 'm5', type: 'image', src: '/images/image-5.jpg', caption: 'Protes di Ramallah.', source: 'AFP' },
+  { id: 'm6', type: 'image', src: '/images/image-6.jpg', caption: 'Pemandangan tembok pemisah.', source: 'Human Rights Watch' },
+  { id: 'm7', type: 'image', src: '/images/image-7.jpg', caption: 'Di dalam rumah sakit yang penuh sesak.', source: 'MSF' },
+  { id: 'm8', type: 'image', src: '/images/image-8.jpg', caption: 'Matahari terbenam di atas Yerusalem.', source: 'Independent' },
 ];
+
