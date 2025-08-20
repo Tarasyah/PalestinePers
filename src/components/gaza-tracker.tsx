@@ -79,12 +79,12 @@ function GazaTracker() {
   }
 
   return (
-    <div className="gaza-tracker-stats space-y-4">
-      <div>
-        <h4 className="font-bold text-lg text-white">Gaza Casualty Tracker</h4>
+    <div className="gaza-tracker-stats space-y-4 flex flex-col items-center">
+      <div className="w-full">
+        <h4 className="font-bold text-lg text-white text-center">Gaza Casualty Tracker</h4>
       </div>
       
-      <ul className="space-y-1 list-none text-white text-sm">
+      <ul className="space-y-1 list-none text-white text-sm w-full">
         {days !== null && <li><strong>Days:</strong> {days}</li>}
         <li><strong>Killed:</strong> {tracker.confirmed_killed?.toLocaleString()} (incl. {tracker.children_killed?.toLocaleString()} children)</li>
         <li><strong>Injured:</strong> {tracker.injured?.toLocaleString()}</li>
