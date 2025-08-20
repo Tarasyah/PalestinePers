@@ -7,10 +7,10 @@ export default function MediaPage() {
   return (
     <AppLayout>
         <div className="space-y-4">
-            <h2 className="text-2xl font-bold tracking-tight">Media Gallery</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <h2 className="text-2xl font-bold tracking-tight text-center">Media Gallery</h2>
+            <div className="flex flex-wrap justify-center items-center gap-4">
                 {mediaItems.map((item: MediaItem) => (
-                <MediaCard key={item.id} item={item} />
+                    <MediaCard key={item.id} item={item} />
                 ))}
             </div>
         </div>

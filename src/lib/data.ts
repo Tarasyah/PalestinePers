@@ -122,16 +122,181 @@ export type MediaItem = {
   type: 'image' | 'video';
   src: string;
   caption: string;
-  source: string;
 };
 
 export const mediaItems: MediaItem[] = [
-  { id: 'm1', type: 'image', src: '/images/1.webp', caption: 'A father holds his child after an airstrike in Gaza.', source: 'Reuters' },
-  { id: 'm2', type: 'image', src: '/images/2.webp', caption: 'Children look out from a damaged building.', source: 'AP' },
-  { id: 'm3', type: 'image', src: '/images/3.webp', caption: 'Humanitarian aid is distributed to displaced families.', source: 'UNRWA' },
-  { id: 'm4', type: 'image', src: '/images/4.webp', caption: 'An olive farmer tends to his trees in the West Bank.', source: 'Getty Images' },
-  { id: 'm5', type: 'image', src: '/images/5.webp', caption: 'A large crowd gathers for a protest in Ramallah.', source: 'AFP' },
-  { id: 'm6', type: 'image', src: '/images/6.webp', caption: 'A section of the separation wall dividing communities.', source: 'Human Rights Watch' },
-  { id: 'm7', type: 'image', src: '/images/7.webp', caption: 'Medical staff treat patients in an overflowing hospital.', source: 'MSF' },
-  { id: 'm8', type: 'image', src: '/images/8.webp', caption: 'A view of the Dome of the Rock at sunset.', source: 'Independent' },
+ {
+ id: 'm1',
+ type: 'image',
+ src: '/images/A Palestinian family displaced from Beit Hanoun, Gaza, shares a meal of bulgur wheat in Gaza City on May 24.webp',
+    caption: 'A Palestinian family displaced from Beit Hanoun, Gaza, shares a meal of bulgur wheat in Gaza City on May 24'
+  },
+ {
+ id: 'm2',
+ type: 'image',
+ src: '/images/A Palestinian girl suffering from malnutrition has her arm circumference measured while receiving treatment at the Patient Friends Association Hospital in Gaza City on July 22.webp',
+    caption: 'A Palestinian girl suffering from malnutrition has her arm circumference measured while receiving treatment at the Patient Friends Association Hospital in Gaza City on July 22'
+  },
+ {
+ id: 'm3',
+ type: 'image',
+ src: '/images/A boy fills plastic containers with water to carry to his family in the Jabalya camp in Gaza on April 24. There is little clean water available in Gaza, so people often dig for whatever water they can find.webp',
+    caption: 'A boy fills plastic containers with water to carry to his family in the Jabalya camp in Gaza on April 24. There is little clean water available in Gaza, so people often dig for whatever water they can find'
+  },
+ {
+ id: 'm4',
+ type: 'image',
+ src: '/images/A displaced Palestinian girl takes a sip of lentil soup that she received at a food distribution point in Gaza City on July 25.webp',
+    caption: 'A displaced Palestinian girl takes a sip of lentil soup that she received at a food distribution point in Gaza City on July 25'
+  },
+ {
+ id: 'm5',
+ type: 'image',
+ src: '/images/A displaced Palestinian woman cooks amid ongoing food shortages in Gaza on July 28.webp',
+    caption: 'A displaced Palestinian woman cooks amid ongoing food shortages in Gaza on July 28'
+  },
+ {
+ id: 'm6',
+ type: 'image',
+ src: '/images/A woman prepares bread over a fire due to the lack of cooking gas in Gaza on April 23.webp',
+    caption: 'A woman prepares bread over a fire due to the lack of cooking gas in Gaza on April 23'
+  },
+ {
+ id: 'm7',
+ type: 'image',
+ src: '/images/Alaa Al-Najjar mourns her 3-month-old baby, Yehia, at the Nasser Hospital in Khan Younis on July 20. Medics said Yehia died from malnutrition.webp',
+    caption: 'Alaa Al-Najjar mourns her 3-month-old baby, Yehia, at the Nasser Hospital in Khan Younis on July 20. Medics said Yehia died from malnutrition'
+  },
+ {
+ id: 'm8',
+ type: 'image',
+ src: '/images/An airplane drops humanitarian aid over Gaza on July 27. The head of the United Nations agency for Palestinian refugees called the drops a “distraction,” saying they will do little to alleviate suffering in the enc.webp',
+    caption: 'An airplane drops humanitarian aid over Gaza on July 27. The head of the United Nations agency for Palestinian refugees called the drops a “distraction,” saying they will do little to alleviate suffering in the enc'
+  },
+ {
+ id: 'm9',
+ type: 'image',
+ src: '/images/Crowds form in Gaza City as Palestinians wait to receive food distributed by a charity on July 22.webp',
+    caption: 'Crowds form in Gaza City as Palestinians wait to receive food distributed by a charity on July 22'
+  },
+  {
+ id: 'm10',
+ type: 'image',
+ src: '/images/Humanitarian aid is dropped over Gaza City on July 27.webp',
+    caption: 'Humanitarian aid is dropped over Gaza City on July 27'
+  },
+  {
+ id: 'm11',
+ type: 'image',
+ src: '/images/Hundreds of Palestinians wait in line for hours in the scorching heat to receive food aid at the Nuseirat Camp in Gaza on July 25.webp',
+    caption: 'Hundreds of Palestinians wait in line for hours in the scorching heat to receive food aid at the Nuseirat Camp in Gaza on July 25'
+  },
+  {
+ id: 'm12',
+ type: 'image',
+ src: '/images/Mohammed al-Mutawaq, an 18-month-old Palestinian boy with medical issues and signs of malnutrition, lies on a mattress inside a tent at the Al-Shati refugee camp west of Gaza City on July 25.webp',
+    caption: 'Mohammed al-Mutawaq, an 18-month-old Palestinian boy with medical issues and signs of malnutrition, lies on a mattress inside a tent at the Al-Shati refugee camp west of Gaza City on July 25'
+  },
+  {
+ id: 'm13',
+ type: 'image',
+ src: '/images/Mosab Al-Debs, a 14-year-old Palestinian boy who is suffering from malnourishment, lies on a bed at the Al-Shifa Hospital in Gaza City on July 22.webp',
+    caption: 'Mosab Al-Debs, a 14-year-old Palestinian boy who is suffering from malnourishment, lies on a bed at the Al-Shifa Hospital in Gaza City on July 22'
+  },
+  {
+ id: 'm14',
+ type: 'image',
+ src: '/images/Muhammad Zakariya Ayyoub al-Matouq, a child in Gaza City, is held on July 21_jpg.webp',
+    caption: 'Muhammad Zakariya Ayyoub al-Matouq, a child in Gaza City, is held on July 21_jpg'
+  },
+  {
+ id: 'm15',
+ type: 'image',
+ src: '/images/Najwa Hussein Hajjaj, 6, is suffering from severe malnutrition in Gaza City.webp',
+    caption: 'Najwa Hussein Hajjaj, 6, is suffering from severe malnutrition in Gaza City'
+  },
+  {
+ id: 'm16',
+ type: 'image',
+ src: '/images/Palestinian families and journalists gather in Gaza City on July 19 to demand an end to Israeli attacks and the entry of humanitarian aid..webp',
+    caption: 'Palestinian families and journalists gather in Gaza City on July 19 to demand an end to Israeli attacks and the entry of humanitarian aid.'
+  },
+  {
+ id: 'm17',
+ type: 'image',
+ src: '/images/Palestinians carry parcels of donated food they obtained at a distribution point northwest of Gaza City on June 16..webp',
+    caption: 'Palestinians carry parcels of donated food they obtained at a distribution point northwest of Gaza City on June 16.'
+  },
+  {
+ id: 'm18',
+ type: 'image',
+ src: '/images/Palestinians carry sacks of flour unloaded from a humanitarian aid convoy that reached Gaza City on July 27..webp',
+    caption: 'Palestinians carry sacks of flour unloaded from a humanitarian aid convoy that reached Gaza City on July 27.'
+  },
+  {
+ id: 'm19',
+ type: 'image',
+ src: '/images/Palestinians gather for aid in Beit Lahia, Gaza, on June 17..webp',
+    caption: 'Palestinians gather for aid in Beit Lahia, Gaza, on June 17.'
+  },
+  {
+ id: 'm20',
+ type: 'image',
+ src: '/images/Palestinians grieve for their dead relatives outside the Al-Shifa Hospital in Gaza City on July 20. At least 73 people were killed and around 150 people injured by Israeli gunfire in Gaza while seeking aid that day..webp',
+    caption: 'Palestinians grieve for their dead relatives outside the Al-Shifa Hospital in Gaza City on July 20. At least 73 people were killed and around 150 people injured by Israeli gunfire in Gaza while seeking aid that day.'
+  },
+  {
+ id: 'm21',
+ type: 'image',
+ src: '/images/Palestinians hurry toward a distribution point northwest of Gaza City as humanitarian aid arrives on June 16. A convoy of trucks brought food parcels into the territory..webp',
+    caption: 'Palestinians hurry toward a distribution point northwest of Gaza City as humanitarian aid arrives on June 16. A convoy of trucks brought food parcels into the territory.'
+  },
+  {
+ id: 'm22',
+ type: 'image',
+ src: '/images/Palestinians rush to line up at a charity kitchen in Khan Younis on July 22..webp',
+    caption: 'Palestinians rush to line up at a charity kitchen in Khan Younis on July 22.'
+  },
+  {
+ id: 'm23',
+ type: 'image',
+ src: '/images/Palestinians wait for food that was distributed by a charity organization in Gaza City on July 25..webp',
+    caption: 'Palestinians wait for food that was distributed by a charity organization in Gaza City on July 25.'
+  },
+  {
+ id: 'm24',
+ type: 'image',
+ src: '/images/Palestinians walk with sacks of flour after trucks carrying humanitarian aid entered northern Gaza from the Zikim border crossing on July 27..webp',
+    caption: 'Palestinians walk with sacks of flour after trucks carrying humanitarian aid entered northern Gaza from the Zikim border crossing on July 27.'
+  },
+  {
+ id: 'm25',
+ type: 'image',
+ src: '/images/Parcels of humanitarian aid await transfer on the Gaza side of the Kerem Shalom crossing on July 24..webp',
+    caption: 'Parcels of humanitarian aid await transfer on the Gaza side of the Kerem Shalom crossing on July 24.'
+  },
+  {
+ id: 'm26',
+ type: 'image',
+ src: '/images/People seeking aid from the US-backed Gaza Humanitarian Foundation carry bags near Rafah, Gaza, on July 24..webp',
+    caption: 'People seeking aid from the US-backed Gaza Humanitarian Foundation carry bags near Rafah, Gaza, on July 24.'
+  },
+  {
+ id: 'm27',
+ type: 'image',
+ src: '/images/Samah Matar holds her malnourished son Ameer, who has cerebral palsy, at a school where their family is taking shelter in Gaza City on July 24..webp',
+    caption: 'Samah Matar holds her malnourished son Ameer, who has cerebral palsy, at a school where their family is taking shelter in Gaza City on July 24.'
+  },
+  {
+ id: 'm28',
+ type: 'image',
+ src: '/images/Yazan, a malnourished 2-year-old, stands in his family’s damaged home in the Al-Shati refugee camp west of Gaza City on July 23..webp',
+    caption: 'Yazan, a malnourished 2-year-old, stands in his family’s damaged home in the Al-Shati refugee camp west of Gaza City on July 23.'
+  },
+  {
+ id: 'm29',
+ type: 'image',
+ src: '/images/Young Palestinians wait for a charity organization to distribute food in Gaza City on July 24..webp',
+    caption: 'Young Palestinians wait for a charity organization to distribute food in Gaza City on July 24.'
+  },
 ];

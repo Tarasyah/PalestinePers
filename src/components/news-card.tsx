@@ -110,9 +110,30 @@ export function NewsCard({ article, onDelete }: { article: NewsArticleWithReport
     }
   }
 
+  const borderStyle = {
+    '--c': '#8A9B0F', // the border color
+    '--b': '10px',    // the border thickness
+    '--g': '5px',     // the gap on hover
+    padding: 'calc(var(--g) + var(--b))',
+    '--_g': '#0000 25%, var(--c) 0',
+    background:
+      'conic-gradient(from 180deg at top var(--b) right var(--b), var(--_g)) var(--_i, 200%) 0 / 200% var(--_i, var(--b)) no-repeat,' +
+      'conic-gradient(at bottom var(--b) left var(--b), var(--_g)) 0 var(--_i, 200%) / var(--_i, var(--b)) 200% no-repeat',
+    transition: '.3s, background-position .3s .3s',
+    cursor: 'pointer',
+  } as React.CSSProperties;
+
+  const hoverBorderStyle = {
+    '--_i': '100%',
+    transition: '.3s, background-size .3s .3s',
+  } as React.CSSProperties;
+
   return (
-    <Card className={cn(
+    <Card className={cn( 
+        "relative flex flex-col overflow-hidden bg-gray-800/60 text-white transition-all duration-300",
         "group/card relative flex flex-col overflow-hidden bg-gray-800/60 text-white transition-all duration-300",
+        
+        // Remove the duplicate class name
         "before:pointer-events-none before:absolute before:-inset-px before:z-10 before:hidden before:rounded-lg before:bg-glow before:opacity-0 before:transition-opacity before:duration-300 hover:before:block hover:before:opacity-100"
       )}>
       <CardContent className="p-4 flex-grow">
