@@ -9,7 +9,7 @@ export default function StatisticsPage() {
       <div className="space-y-8">
         <div>
           <h2 className="text-2xl font-bold tracking-tight mb-4">oPt Unified Health Dashboard</h2>
-          <div className="w-full" style={{ height: '800px' }}>
+          <div className="w-full" style={{ height: '1200px' }}>
             <iframe
               title="oPt Unified Health Dashboard"
               width="100%"
@@ -23,7 +23,7 @@ export default function StatisticsPage() {
         </div>
         <div>
           <h2 className="text-2xl font-bold tracking-tight mb-4">Data on demolition and displacement in the West Bank</h2>
-          <div className="w-full" style={{ height: '800px' }}>
+          <div className="w-3/4 mx-auto" style={{ height: '800px' }}>
             <iframe
               title="Data on demolition and displacement in the West Bank"
               width="100%"
