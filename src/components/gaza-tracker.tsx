@@ -8,6 +8,15 @@ import { Skeleton } from './ui/skeleton';
 function GazaTracker() {
   const [tracker, setTracker] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [days, setDays] = useState<number | null>(null);
+
+  useEffect(() => {
+    const startDate = new Date('2023-10-07T00:00:00Z');
+    const currentDate = new Date();
+    const timeDiff = currentDate.getTime() - startDate.getTime();
+    const daysDiff = Math.floor(timeDiff / (1000 * 3600 * 24)) + 1;
+    setDays(daysDiff);
+  }, []);
 
   useEffect(() => {
     async function fetchTrackerData() {
@@ -56,6 +65,7 @@ function GazaTracker() {
           <Skeleton className="h-5 w-5/6" />
           <Skeleton className="h-5 w-4/6" />
           <Skeleton className="h-5 w-5/6" />
+          <Skeleton className="h-5 w-4/6" />
         </div>
         <Skeleton className="w-full aspect-video rounded-lg" />
         <Skeleton className="w-full aspect-video rounded-lg" />
@@ -75,6 +85,7 @@ function GazaTracker() {
       </div>
       
       <ul className="space-y-1 list-none text-white text-sm">
+        {days !== null && <li><strong>Days:</strong> {days}</li>}
         <li><strong>Killed:</strong> {tracker.confirmed_killed?.toLocaleString()} (incl. {tracker.children_killed?.toLocaleString()} children)</li>
         <li><strong>Injured:</strong> {tracker.injured?.toLocaleString()}</li>
         <li><strong>Starvation Deaths:</strong> {tracker.starvation_deaths} (incl. {tracker.children_starvation_deaths} children)</li>
