@@ -7,8 +7,8 @@ import { NewsCard } from "@/components/news-card";
 import { getNewsArticles, NewsArticleWithReports, allSources } from "@/lib/data";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardTitle, CardFooter } from "@/components/ui/card";
-import { Filter, Search, RefreshCw, ChevronDown, TrendingUp, Newspaper, AlertTriangle } from "lucide-react";
+import { Card, CardTitle } from "@/components/ui/card";
+import { Search, ChevronDown, RefreshCw } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { 
   DropdownMenu, 
@@ -18,10 +18,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
-import Image from "next/image";
 import { formatDistanceToNow } from 'date-fns';
 import { Badge } from "@/components/ui/badge";
-import { supabase } from "@/lib/supabase";
+import GazaTracker from "@/components/gaza-tracker";
 
 
 const allTopics = [
@@ -132,118 +131,125 @@ export default function Home() {
 
   return (
     <AppLayout>
-      <div className="space-y-8">
-        <div className="p-4 bg-card rounded-lg border shadow-sm">
-            <div className="flex flex-col md:flex-row items-center gap-4">
-            <div className="relative flex-1 w-full">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                <Input
-                placeholder="Search articles..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10"
-                />
-            </div>
-            <div className="flex items-center gap-2 w-full md:w-auto md:flex-row flex-col">
-                <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <Button variant="outline" className="w-full md:w-[200px] justify-between">
-                    <div className="flex items-center gap-2">
-                        <span className={cn("w-2 h-2 rounded-full", topicColorMap[topicFilter])}></span>
-                        <span>{topicFilter}</span>
-                    </div>
-                    <ChevronDown className="h-4 w-4" />
-                    </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-full md:w-[200px]">
-                    {allTopics.map((topic) => (
-                    <DropdownMenuItem
-                        key={topic}
-                        onSelect={() => setTopicFilter(topic)}
-                        className={cn("flex items-center gap-2", {
-                        'font-bold': topicFilter === topic,
-                        })}
-                    >
-                        <span className={cn("w-2 h-2 rounded-full", topicColorMap[topic])}></span>
-                        {topic}
-                    </DropdownMenuItem>
-                    ))}
-                </DropdownMenuContent>
-                </DropdownMenu>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-2 space-y-8">
+          <div className="p-4 bg-card rounded-lg border shadow-sm">
+              <div className="flex flex-col md:flex-row items-center gap-4">
+              <div className="relative flex-1 w-full">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                  <Input
+                  placeholder="Search articles..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full pl-10"
+                  />
+              </div>
+              <div className="flex items-center gap-2 w-full md:w-auto md:flex-row flex-col">
+                  <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                      <Button variant="outline" className="w-full md:w-[200px] justify-between">
+                      <div className="flex items-center gap-2">
+                          <span className={cn("w-2 h-2 rounded-full", topicColorMap[topicFilter])}></span>
+                          <span>{topicFilter}</span>
+                      </div>
+                      <ChevronDown className="h-4 w-4" />
+                      </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-full md:w-[200px]">
+                      {allTopics.map((topic) => (
+                      <DropdownMenuItem
+                          key={topic}
+                          onSelect={() => setTopicFilter(topic)}
+                          className={cn("flex items-center gap-2", {
+                          'font-bold': topicFilter === topic,
+                          })}
+                      >
+                          <span className={cn("w-2 h-2 rounded-full", topicColorMap[topic])}></span>
+                          {topic}
+                      </DropdownMenuItem>
+                      ))}
+                  </DropdownMenuContent>
+                  </DropdownMenu>
 
-                <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <Button variant="outline" className="w-full md:w-[200px] justify-between">
-                    <div className="flex items-center gap-2">
-                        <span className={cn("w-2 h-2 rounded-full", sourceColorMap[sourceFilter] || 'bg-gray-400 text-white')}></span>
-                        <span>{sourceFilter}</span>
-                    </div>
-                    <ChevronDown className="h-4 w-4" />
-                    </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-full md:w-[200px]">
-                    {allSources.map((source) => (
-                    <DropdownMenuItem
-                        key={source}
-                        onSelect={() => setSourceFilter(source)}
-                        className={cn("flex items-center gap-2", {
-                        'font-bold': sourceFilter === source,
-                        })}
-                    >
-                        <span className={cn("w-2 h-2 rounded-full", sourceColorMap[source] || 'bg-gray-400 text-white')}></span>
-                        {source}
-                    </DropdownMenuItem>
-                    ))}
-                </DropdownMenuContent>
-                </DropdownMenu>
-            </div>
-            </div>
+                  <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                      <Button variant="outline" className="w-full md:w-[200px] justify-between">
+                      <div className="flex items-center gap-2">
+                          <span className={cn("w-2 h-2 rounded-full", sourceColorMap[sourceFilter] || 'bg-gray-400 text-white')}></span>
+                          <span>{sourceFilter}</span>
+                      </div>
+                      <ChevronDown className="h-4 w-4" />
+                      </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-full md:w-[200px]">
+                      {allSources.map((source) => (
+                      <DropdownMenuItem
+                          key={source}
+                          onSelect={() => setSourceFilter(source)}
+                          className={cn("flex items-center gap-2", {
+                          'font-bold': sourceFilter === source,
+                          })}
+                      >
+                          <span className={cn("w-2 h-2 rounded-full", sourceColorMap[source] || 'bg-gray-400 text-white')}></span>
+                          {source}
+                      </DropdownMenuItem>
+                      ))}
+                  </DropdownMenuContent>
+                  </DropdownMenu>
+              </div>
+              </div>
+          </div>
+
+          <div className="space-y-8">
+              {/* Featured Article */}
+              {loading ? <Skeleton className="h-[250px] w-full rounded-lg" /> : featuredArticle && (
+                  <Card className="overflow-hidden bg-gray-800/60 border border-gray-700 text-white shadow-xl hover:shadow-2xl transition-shadow duration-300">
+                      <div className="grid">
+                          <div className="p-6 flex flex-col justify-between">
+                              <div>
+                                  <div className="flex flex-wrap items-center gap-2 mb-2">
+                                      <Badge className={cn(sourceColorMap[featuredArticle.source] || 'bg-gray-400', "text-white")}>{featuredArticle.source}</Badge>
+                                      <Badge className={cn(topicColorMap[featuredArticle.category] || 'bg-gray-400', "text-white")}>{featuredArticle.category}</Badge>
+                                  </div>
+                                  <CardTitle className="text-2xl font-bold mb-2 text-white">
+                                      <Link href={featuredArticle.link} target="_blank" className="hover:underline">{featuredArticle.title}</Link>
+                                  </CardTitle>
+                                  <p className="text-gray-300 line-clamp-4 mb-4">{featuredArticle.excerpt}</p>
+                              </div>
+                              <div className="text-xs text-gray-400">
+                                  {formatDistanceToNow(new Date(featuredArticle.date), { addSuffix: true })}
+                              </div>
+                          </div>
+                      </div>
+                  </Card>
+              )}
+
+              {/* Article Grid */}
+              {loading ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="h-[280px] w-full rounded-lg" />)}
+                  </div>
+              ) : otherArticles.length > 0 ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {otherArticles.map((article) => <NewsCard key={article.id} article={article} />)}
+                  </div>
+              ) : (
+                  !loading && <p className="text-center col-span-full">No more articles found.</p>
+              )}
+              
+              <div className="flex justify-center pt-8">
+                  <Button variant="outline" onClick={handleRefreshAndScrape} disabled={isRefreshing}>
+                      <RefreshCw className={`mr-2 h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+                      {isScraping ? 'Scraping...' : 'Refresh News'}
+                  </Button>
+              </div>
+          </div>
         </div>
-
-        <div className="space-y-8">
-            {/* Featured Article */}
-            {loading ? <Skeleton className="h-[250px] w-full rounded-lg" /> : featuredArticle && (
-                <Card className="overflow-hidden bg-gray-800/60 border border-gray-700 text-white shadow-xl hover:shadow-2xl transition-shadow duration-300">
-                    <div className="grid">
-                        <div className="p-6 flex flex-col justify-between">
-                            <div>
-                                <div className="flex flex-wrap items-center gap-2 mb-2">
-                                    <Badge className={cn(sourceColorMap[featuredArticle.source] || 'bg-gray-400', "text-white")}>{featuredArticle.source}</Badge>
-                                    <Badge className={cn(topicColorMap[featuredArticle.category] || 'bg-gray-400', "text-white")}>{featuredArticle.category}</Badge>
-                                </div>
-                                <CardTitle className="text-2xl font-bold mb-2 text-white">
-                                    <Link href={featuredArticle.link} target="_blank" className="hover:underline">{featuredArticle.title}</Link>
-                                </CardTitle>
-                                <p className="text-gray-300 line-clamp-4 mb-4">{featuredArticle.excerpt}</p>
-                            </div>
-                            <div className="text-xs text-gray-400">
-                                {formatDistanceToNow(new Date(featuredArticle.date), { addSuffix: true })}
-                            </div>
-                        </div>
-                    </div>
-                </Card>
-            )}
-
-            {/* Article Grid */}
-            {loading ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="h-[350px] w-full rounded-lg" />)}
-                </div>
-            ) : otherArticles.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {otherArticles.map((article) => <NewsCard key={article.id} article={article} />)}
-                </div>
-            ) : (
-                !loading && <p className="text-center col-span-full">No more articles found.</p>
-            )}
-            
-            <div className="flex justify-center pt-8">
-                <Button variant="outline" onClick={handleRefreshAndScrape} disabled={isRefreshing}>
-                    <RefreshCw className={`mr-2 h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
-                    {isScraping ? 'Scraping...' : 'Refresh News'}
-                </Button>
-            </div>
-        </div>
+        <aside className="lg:col-span-1 space-y-8 lg:sticky top-24 h-fit">
+          <Card className="p-4 bg-card rounded-lg border shadow-sm">
+            <GazaTracker />
+          </Card>
+        </aside>
       </div>
     </AppLayout>
   );

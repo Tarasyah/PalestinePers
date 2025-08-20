@@ -5,8 +5,6 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from './ui/button';
 import { ArrowRight, Bookmark, Clock } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
-import Image from 'next/image';
-import { useState } from 'react';
 import { cn } from '@/lib/utils';
 
 const topicColorMap: { [key: string]: string } = {
@@ -42,7 +40,6 @@ function getSourceBadgeClasses(source: string) {
 
 
 export function NewsCard({ article }: { article: NewsArticleWithReports }) {
-  const [imageUrl, setImageUrl] = useState(article.image || `https://placehold.co/600x400.png?text=${encodeURIComponent(article.source)}`);
   
   return (
     <Card className={cn(
