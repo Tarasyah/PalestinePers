@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Globe, User, LogIn, LogOut, Menu } from "lucide-react";
+import { Globe, User, LogIn, LogOut, Menu, Bookmark } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/lib/supabase";
 import type { User as SupabaseUser } from '@supabase/supabase-js';
@@ -11,7 +11,8 @@ import {
   DropdownMenu, 
   DropdownMenuTrigger, 
   DropdownMenuContent, 
-  DropdownMenuItem 
+  DropdownMenuItem,
+  DropdownMenuSeparator
 } from "@/components/ui/dropdown-menu";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { navItems } from "@/lib/nav-items";
@@ -150,16 +151,27 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
            <div className="flex items-center gap-2 ml-4">
               {!loading && (
                 user ? (
-                  <>
-                    <Button variant="ghost" size="icon" disabled>
-                      <User className="w-5 h-5" />
-                      <span className="sr-only">Profile</span>
-                    </Button>
-                    <Button variant="outline" size="sm" onClick={handleLogout} className="bg-transparent border-red-500 text-red-500 hover:bg-red-500 hover:text-white">
-                      <LogOut className="mr-2 h-4 w-4" />
-                      Logout
-                    </Button>
-                  </>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon">
+                        <User className="w-5 h-5" />
+                        <span className="sr-only">User Menu</span>
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                       <DropdownMenuItem asChild>
+                          <Link href="/saved-articles" className="flex items-center gap-2">
+                              <Bookmark className="w-4 h-4" />
+                              <span>Saved Articles</span>
+                          </Link>
+                        </DropdownMenuItem>
+                       <DropdownMenuSeparator />
+                       <DropdownMenuItem onClick={handleLogout} className="flex items-center gap-2 text-red-500 focus:bg-red-500/10 focus:text-red-500">
+                          <LogOut className="w-4 h-4" />
+                          <span>Logout</span>
+                       </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 ) : (
                   <Button asChild variant="default" size="sm" className="bg-green-500 hover:bg-green-600 text-white">
                     <Link href="/login">

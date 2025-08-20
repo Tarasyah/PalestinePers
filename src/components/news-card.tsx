@@ -1,3 +1,5 @@
+"use client";
+
 import Link from 'next/link';
 import type { NewsArticleWithReports } from '@/lib/data';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
@@ -6,6 +8,9 @@ import { Button } from './ui/button';
 import { ArrowRight, Bookmark, Clock } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { cn } from '@/lib/utils';
+import { supabase } from '@/lib/supabase';
+import { useToast } from '@/hooks/use-toast';
+import { useState } from 'react';
 
 const topicColorMap: { [key: string]: string } = {
   "Politics": "bg-blue-500",
@@ -40,6 +45,48 @@ function getSourceBadgeClasses(source: string) {
 
 
 export function NewsCard({ article }: { article: NewsArticleWithReports }) {
+  const { toast } = useToast();
+  const [isSaving, setIsSaving] = useState(false);
+
+  const handleSaveArticle = async () => {
+    setIsSaving(true);
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      toast({
+        variant: "destructive",
+        title: "Not logged in",
+        description: "You must be logged in to save articles.",
+      });
+      setIsSaving(false);
+      return;
+    }
+
+    const { error } = await supabase
+      .from('saved_articles')
+      .insert({ user_id: user.id, article_id: article.id });
+
+    if (error) {
+       if (error.code === '23505') { // Unique constraint violation
+        toast({
+          title: "Already Saved",
+          description: "This article is already in your saved list.",
+        });
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Save Failed",
+          description: error.message,
+        });
+      }
+    } else {
+      toast({
+        title: "Article Saved",
+        description: "You can find it in your 'Saved Articles' list.",
+      });
+    }
+    setIsSaving(false);
+  };
   
   return (
     <Card className={cn(
@@ -63,7 +110,7 @@ export function NewsCard({ article }: { article: NewsArticleWithReports }) {
             <span>{formatDistanceToNow(new Date(article.date), { addSuffix: true })}</span>
         </div>
         <div className="flex items-center gap-2">
-            <Button variant="ghost" size="icon" className="text-gray-400 hover:text-green-400">
+            <Button variant="ghost" size="icon" className="text-gray-400 hover:text-green-400" onClick={handleSaveArticle} disabled={isSaving}>
                 <Bookmark className="h-5 w-5" />
                 <span className="sr-only">Bookmark</span>
             </Button>
