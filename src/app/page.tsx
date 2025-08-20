@@ -131,7 +131,7 @@ export default function Home() {
 
   return (
     <AppLayout>
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
         <div className="lg:col-span-2 space-y-8">
           <div className="p-4 bg-card rounded-lg border shadow-sm">
               <div className="flex flex-col md:flex-row items-center gap-4">
@@ -213,6 +213,7 @@ export default function Home() {
                                   </div>
                                   <CardTitle className="text-2xl font-bold mb-2 text-white">
                                       <Link href={featuredArticle.link} target="_blank" className="hover:underline">{featuredArticle.title}</Link>
+
                                   </CardTitle>
                                   <p className="text-gray-300 line-clamp-4 mb-4">{featuredArticle.excerpt}</p>
                               </div>
@@ -245,7 +246,7 @@ export default function Home() {
               </div>
           </div>
         </div>
-        <aside className="lg:col-span-1 space-y-8 lg:sticky top-24 h-fit">
+        <aside className="lg:col-span-1 space-y-8 lg:sticky lg:top-24">
           <Card className="p-4 bg-card rounded-lg border shadow-sm">
             <GazaTracker />
           </Card>
