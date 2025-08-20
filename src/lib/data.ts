@@ -126,12 +126,12 @@ export type MediaItem = {
 };
 
 export const mediaItems: MediaItem[] = [
-  { id: 'm1', type: 'image', src: 'https://placehold.co/400x400.png', caption: 'A street in Gaza after an airstrike.', source: 'Reuters' },
-  { id: 'm2', type: 'image', src: 'https://placehold.co/400x400.png', caption: 'Children playing amidst the rubble.', source: 'AP' },
-  { id: 'm3', type: 'image', src: 'https://placehold.co/400x400.png', caption: 'Distribution of humanitarian aid.', source: 'UNRWA' },
-  { id: 'm4', type: 'image', src: 'https://placehold.co/400x400.png', caption: 'A farmer in the West Bank.', source: 'Getty Images' },
-  { id: 'm5', type: 'image', src: 'https://placehold.co/400x400.png', caption: 'Protest in Ramallah.', source: 'AFP' },
-  { id: 'm6', type: 'image', src: 'https://placehold.co/400x400.png', caption: 'View of the separation wall.', source: 'Human Rights Watch' },
-  { id: 'm7', type: 'image', src: 'https://placehold.co/400x400.png', caption: 'Inside a crowded hospital.', source: 'MSF' },
-  { id: 'm8', type: 'image', src: 'https://placehold.co/400x400.png', caption: 'Sunset over Jerusalem.', source: 'Independent' },
+  { id: 'm1', type: 'image', src: '/images/1.jpeg', caption: 'A father holds his child after an airstrike in Gaza.', source: 'Reuters' },
+  { id: 'm2', type: 'image', src: '/images/2.jpeg', caption: 'Children look out from a damaged building.', source: 'AP' },
+  { id: 'm3', type: 'image', src: '/images/3.jpeg', caption: 'Humanitarian aid is distributed to displaced families.', source: 'UNRWA' },
+  { id: 'm4', type: 'image', src: '/images/4.jpeg', caption: 'An olive farmer tends to his trees in the West Bank.', source: 'Getty Images' },
+  { id: 'm5', type: 'image', src: '/images/5.jpeg', caption: 'A large crowd gathers for a protest in Ramallah.', source: 'AFP' },
+  { id: 'm6', type: 'image', src: '/images/6.jpeg', caption: 'A section of the separation wall dividing communities.', source: 'Human Rights Watch' },
+  { id: 'm7', type: 'image', src: '/images/7.jpeg', caption: 'Medical staff treat patients in an overflowing hospital.', source: 'MSF' },
+  { id: 'm8', type: 'image', src: '/images/8.jpeg', caption: 'A view of the Dome of the Rock at sunset.', source: 'Independent' },
 ];
