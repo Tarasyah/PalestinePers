@@ -4,14 +4,6 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import Image from 'next/image';
 import { Skeleton } from './ui/skeleton';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 
 function GazaTracker() {
   const [tracker, setTracker] = useState<any>(null);
@@ -40,20 +32,18 @@ function GazaTracker() {
 
   const renderImage = (src: string, alt: string) => {
     return (
-      <Dialog>
-        <DialogTrigger asChild>
-          <div className="relative w-full h-auto cursor-pointer hover:opacity-80 transition-opacity">
-            <Image src={src} alt={alt} width={500} height={800} objectFit="contain" className="rounded-lg border border-white/10" />
-          </div>
-        </DialogTrigger>
-        <DialogContent className="p-0 border-0 max-w-4xl bg-transparent">
-           <DialogHeader className="sr-only">
-            <DialogTitle>{alt}</DialogTitle>
-            <DialogDescription>Enlarged view of the {alt} chart.</DialogDescription>
-          </DialogHeader>
-          <Image src={src} alt={alt} width={1200} height={1600} objectFit="contain" />
-        </DialogContent>
-      </Dialog>
+      <a href={src} target="_blank" rel="noopener noreferrer">
+        <div className="relative w-full h-auto cursor-pointer hover:opacity-80 transition-opacity">
+          <Image 
+            src={src} 
+            alt={alt} 
+            width={500} 
+            height={800} 
+            objectFit="contain" 
+            className="rounded-lg border border-white/10" 
+          />
+        </div>
+      </a>
     );
   };
 
