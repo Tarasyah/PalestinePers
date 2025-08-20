@@ -7,7 +7,7 @@ export default function StatisticsPage() {
     <AppLayout>
       <div className="space-y-4">
         <h2 className="text-2xl font-bold tracking-tight">oPt Unified Health Dashboard</h2>
-        <div className="aspect-video w-full">
+        <div className="w-full h-[85vh]">
           <iframe
             title="oPt Unified Health Dashboard"
             width="100%"
