@@ -129,7 +129,7 @@ export function NewsCard({ article, onDelete }: { article: NewsArticleWithReport
   } as React.CSSProperties;
 
   return (
-    <Card className="relative flex flex-col overflow-hidden bg-gray-800/60 text-white transition-all duration-300">
+    <Card className="gradient-border relative flex flex-col overflow-hidden bg-gray-800/60 text-white transition-all duration-300">
       <CardContent className="p-4 flex-grow">
         <div className="flex flex-wrap items-center gap-2 mb-2">
             <Badge className={getSourceBadgeClasses(article.source)}>{article.source}</Badge>
