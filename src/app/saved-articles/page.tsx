@@ -9,12 +9,14 @@ import { supabase } from "@/lib/supabase";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Bookmark } from "lucide-react";
+import { Bookmark, Trash2 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 export default function SavedArticlesPage() {
   const [articles, setArticles] = React.useState<NewsArticleWithReports[]>([]);
   const [loading, setLoading] = React.useState(true);
   const router = useRouter();
+  const { toast } = useToast();
 
   React.useEffect(() => {
     const fetchSavedArticles = async () => {
@@ -74,6 +76,23 @@ export default function SavedArticlesPage() {
 
     fetchSavedArticles();
   }, [router]);
+  
+  const handleDeleteArticle = async (articleId: string) => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    const { error } = await supabase
+      .from('saved_articles')
+      .delete()
+      .match({ user_id: user.id, article_id: articleId });
+      
+    if (error) {
+      throw new Error(error.message);
+    } else {
+      setArticles(prevArticles => prevArticles.filter(article => article.id !== articleId));
+    }
+  };
+
 
   return (
     <AppLayout>
@@ -91,7 +110,7 @@ export default function SavedArticlesPage() {
         ) : articles.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {articles.map((article) => (
-              <NewsCard key={article.id} article={article} />
+              <NewsCard key={article.id} article={article} onDelete={handleDeleteArticle} />
             ))}
           </div>
         ) : (
