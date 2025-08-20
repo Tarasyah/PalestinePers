@@ -1,3 +1,4 @@
+
 import { AppLayout } from "@/components/app-layout";
 import { MediaCard } from "@/components/media-card";
 import { mediaItems } from "@/lib/data";
