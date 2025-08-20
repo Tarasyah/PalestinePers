@@ -25,15 +25,18 @@ export type OfficialReport = {
 export type NewsArticleWithReports = NewsArticle;
 
 export async function getNewsArticles(): Promise<NewsArticleWithReports[]> {
+  console.log("Fetching articles from Supabase...");
   const { data, error } = await supabase
     .from('articles')
     .select('id, title, source, published_at, summary, link, image_url, category, priority')
     .order('published_at', { ascending: false });
 
   if (error) {
-    // console.error('Error fetching articles:', error);
+    console.error('Error fetching articles:', error);
     return [];
   }
+  
+  console.log("Raw data from Supabase:", data);
 
   const articles = data.map((article: any) => ({
     id: article.id,
@@ -47,6 +50,7 @@ export async function getNewsArticles(): Promise<NewsArticleWithReports[]> {
     priority: article.priority
   }));
   
+  console.log("Processed articles:", articles);
   return articles;
 }
 
