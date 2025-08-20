@@ -4,26 +4,27 @@ import * as React from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Chrome } from "lucide-react";
-import type { Provider } from '@supabase/supabase-js';
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 
 export default function LoginPage() {
   const router = useRouter();
   const { toast } = useToast();
+  const [email, setEmail] = React.useState('');
+  const [password, setPassword] = React.useState('');
+  const [loading, setLoading] = React.useState(false);
 
   React.useEffect(() => {
     const checkUser = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
-        // If user is already logged in, redirect to home
         router.push("/");
       }
     };
     checkUser();
 
-    // Listen for auth changes to handle redirection after login
     const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === "SIGNED_IN" && session?.user) {
         router.push("/");
@@ -35,40 +36,103 @@ export default function LoginPage() {
     };
   }, [router]);
 
-  const handleOAuthLogin = async (provider: Provider) => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider,
-      options: {
-        redirectTo: typeof window !== 'undefined' ? `${window.location.origin}/auth/callback` : '',
-      },
+  const handleSignIn = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
     });
+
     if (error) {
       toast({
         variant: "destructive",
-        title: "Login Error",
+        title: "Login Failed",
         description: error.message,
       });
-      console.error("OAuth login error:", error.message);
+    } else {
+      toast({
+        title: "Login Successful",
+        description: "Welcome back!",
+      });
+      router.push("/");
     }
+    setLoading(false);
   };
+
+  const handleSignUp = async () => {
+    setLoading(true);
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo: typeof window !== 'undefined' ? `${window.location.origin}/auth/callback` : '',
+      }
+    });
+
+    if (error) {
+      toast({
+        variant: "destructive",
+        title: "Sign Up Failed",
+        description: error.message,
+      });
+    } else if (data.user && data.user.identities && data.user.identities.length === 0) {
+      toast({
+        variant: "destructive",
+        title: "Sign Up Error",
+        description: "This user already exists.",
+      });
+    } else {
+      toast({
+        title: "Sign Up Successful",
+        description: "Please check your email to confirm your account.",
+      });
+    }
+    setLoading(false);
+  };
+
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-background">
       <Card className="w-full max-w-sm">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl">Sign In / Sign Up</CardTitle>
-          <CardDescription>Use Google to sign in or create an account</CardDescription>
+          <CardDescription>Enter your email and password</CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
-           <Button
-            variant="outline"
-            className="w-full"
-            onClick={() => handleOAuthLogin("google")}
-          >
-            <Chrome className="mr-2 h-5 w-5" />
-            Continue with Google
-          </Button>
-        </CardContent>
+        <form onSubmit={handleSignIn}>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input 
+                id="email" 
+                type="email" 
+                placeholder="you@example.com" 
+                required 
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <Input 
+                id="password" 
+                type="password" 
+                placeholder="••••••••" 
+                required 
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+          </CardContent>
+          <CardFooter className="flex flex-col gap-4">
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? 'Signing In...' : 'Sign In'}
+            </Button>
+            <Button variant="outline" type="button" className="w-full" onClick={handleSignUp} disabled={loading}>
+              {loading ? 'Signing Up...' : 'Sign Up'}
+            </Button>
+          </CardFooter>
+        </form>
       </Card>
     </div>
   );
