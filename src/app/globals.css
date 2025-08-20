@@ -137,7 +137,7 @@ body {
 }
 
 .hover-img:hover > img {
-  opacity: 0.7;
+  opacity: 0.85;
 }
 
 .hover-img:hover figcaption {
