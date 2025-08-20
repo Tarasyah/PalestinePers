@@ -7,7 +7,7 @@ import { NewsCard } from "@/components/news-card";
 import { getNewsArticles, NewsArticleWithReports, allSources } from "@/lib/data";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { Card, CardContent, CardTitle, CardFooter } from "@/components/ui/card";
 import { Filter, Search, RefreshCw, ChevronDown, TrendingUp, Newspaper, AlertTriangle } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { 
@@ -202,18 +202,9 @@ export default function Home() {
 
         <div className="space-y-8">
             {/* Featured Article */}
-            {loading ? <Skeleton className="h-[450px] w-full rounded-lg" /> : featuredArticle && (
+            {loading ? <Skeleton className="h-[250px] w-full rounded-lg" /> : featuredArticle && (
                 <Card className="overflow-hidden bg-gray-800/60 border border-gray-700 text-white shadow-xl hover:shadow-2xl transition-shadow duration-300">
-                    <div className="grid md:grid-cols-2">
-                        <div className="relative h-64 md:h-auto">
-                            <Image
-                                src={featuredArticle.image || `https://placehold.co/600x400.png?text=${encodeURIComponent(featuredArticle.source)}`}
-                                alt={featuredArticle.title}
-                                fill
-                                className="object-cover"
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
-                        </div>
+                    <div className="grid">
                         <div className="p-6 flex flex-col justify-between">
                             <div>
                                 <div className="flex flex-wrap items-center gap-2 mb-2">

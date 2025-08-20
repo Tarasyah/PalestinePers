@@ -49,20 +49,6 @@ export function NewsCard({ article }: { article: NewsArticleWithReports }) {
         "group/card relative flex flex-col overflow-hidden bg-gray-800/60 text-white transition-all duration-300",
         "before:pointer-events-none before:absolute before:-inset-px before:z-10 before:hidden before:rounded-lg before:bg-glow before:opacity-0 before:transition-opacity before:duration-300 hover:before:block hover:before:opacity-100"
       )}>
-      {imageUrl && (
-        <CardHeader className="p-0">
-          <div className="relative aspect-video w-full">
-            <Image 
-              src={imageUrl}
-              alt={article.title}
-              fill
-              className="object-cover rounded-t-lg transition-transform duration-300 group-hover/card:scale-105"
-              data-ai-hint="news article"
-              onError={() => { setImageUrl(`https://placehold.co/600x400.png?text=${encodeURIComponent(article.source)}`) }}
-            />
-          </div>
-        </CardHeader>
-      )}
       <CardContent className="p-4 flex-grow">
         <div className="flex flex-wrap items-center gap-2 mb-2">
             <Badge className={getSourceBadgeClasses(article.source)}>{article.source}</Badge>
