@@ -129,13 +129,7 @@ export function NewsCard({ article, onDelete }: { article: NewsArticleWithReport
   } as React.CSSProperties;
 
   return (
-    <Card className={cn( 
-        "relative flex flex-col overflow-hidden bg-gray-800/60 text-white transition-all duration-300",
-        "group/card relative flex flex-col overflow-hidden bg-gray-800/60 text-white transition-all duration-300",
-        
-        // Remove the duplicate class name
-        "before:pointer-events-none before:absolute before:-inset-px before:z-10 before:hidden before:rounded-lg before:bg-glow before:opacity-0 before:transition-opacity before:duration-300 hover:before:block hover:before:opacity-100"
-      )}>
+    <Card className="relative flex flex-col overflow-hidden bg-gray-800/60 text-white transition-all duration-300">
       <CardContent className="p-4 flex-grow">
         <div className="flex flex-wrap items-center gap-2 mb-2">
             <Badge className={getSourceBadgeClasses(article.source)}>{article.source}</Badge>
