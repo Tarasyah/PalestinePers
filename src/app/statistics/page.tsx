@@ -5,11 +5,11 @@ export default function StatisticsPage() {
 
   return (
     <AppLayout>
-      <div className="flex flex-col h-[calc(100vh-150px)]">
-        <h2 className="text-2xl font-bold tracking-tight mb-4">Statistics</h2>
-        <div className="flex-grow">
+      <div className="space-y-4">
+        <h2 className="text-2xl font-bold tracking-tight">oPt Unified Health Dashboard</h2>
+        <div className="aspect-video w-full">
           <iframe
-            title="Palestine Statistics"
+            title="oPt Unified Health Dashboard"
             width="100%"
             height="100%"
             src={powerBiUrl}
