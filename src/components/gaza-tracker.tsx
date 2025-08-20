@@ -57,7 +57,7 @@ function GazaTracker() {
         <h4 className="font-bold text-lg text-white">Gaza Casualty Tracker</h4>
       </div>
       
-      <ul className="space-y-1 list-disc list-inside text-white text-sm">
+      <ul className="space-y-1 list-none text-white text-sm">
         <li><strong>Confirmed killed:</strong> {tracker.confirmed_killed?.toLocaleString()} (incl. {tracker.children_killed?.toLocaleString()} children)</li>
         <li><strong>Injured:</strong> {tracker.injured?.toLocaleString()}</li>
         <li><strong>Starvation Deaths:</strong> {tracker.starvation_deaths} (incl. {tracker.children_starvation_deaths} children)</li>
@@ -73,7 +73,7 @@ function GazaTracker() {
           <Image src={tracker.famine_chart_url} alt="Gaza famine tracker chart" layout="fill" objectFit="contain" className="rounded-lg border border-white/10" />
         </div>
        )}
-       <p><small className="text-muted-foreground text-xs">Source: Palestinian Ministry of Health in Gaza as of {new Date(tracker.update_date).toLocaleDateString()}</small></p>
+       <p className="text-center"><small className="text-muted-foreground text-xs">Source: Palestinian Ministry of Health in Gaza as of {new Date(tracker.update_date).toLocaleDateString()}</small></p>
     </div>
   );
 }
