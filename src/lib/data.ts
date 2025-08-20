@@ -28,7 +28,7 @@ export async function getNewsArticles(): Promise<NewsArticleWithReports[]> {
   console.log("Fetching articles from Supabase...");
   const { data, error } = await supabase
     .from('articles')
-    .select('id, title, source, published_at, summary, link, image_url, category, priority')
+    .select('*')
     .order('published_at', { ascending: false });
 
   if (error) {
