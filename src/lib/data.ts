@@ -31,7 +31,7 @@ export async function getNewsArticles(): Promise<NewsArticleWithReports[]> {
     .order('published_at', { ascending: false });
 
   if (error) {
-    console.error('Error fetching articles:', error);
+    // console.error('Error fetching articles:', error);
     return [];
   }
 
