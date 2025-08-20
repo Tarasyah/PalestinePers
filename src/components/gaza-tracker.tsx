@@ -7,6 +7,9 @@ import { Skeleton } from './ui/skeleton';
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
 
@@ -25,7 +28,6 @@ function GazaTracker() {
         .single();
 
       if (error) {
-        console.error('Error fetching tracker data:', error);
         setTracker(null);
       } else {
         setTracker(data);
@@ -45,6 +47,10 @@ function GazaTracker() {
           </div>
         </DialogTrigger>
         <DialogContent className="p-0 border-0 max-w-4xl bg-transparent">
+           <DialogHeader className="sr-only">
+            <DialogTitle>{alt}</DialogTitle>
+            <DialogDescription>Enlarged view of the {alt} chart.</DialogDescription>
+          </DialogHeader>
           <Image src={src} alt={alt} width={1200} height={1600} objectFit="contain" />
         </DialogContent>
       </Dialog>
