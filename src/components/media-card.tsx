@@ -10,7 +10,8 @@ export function MediaCard({ item }: { item: MediaItem }) {
           <Image
             src={item.src}
             alt={item.caption}
-            fill
+            width={400}
+            height={400}
             className="object-cover transition-transform duration-300 group-hover:scale-105"
             data-ai-hint="photojournalism palestine"
           />
