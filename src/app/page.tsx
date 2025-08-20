@@ -149,7 +149,6 @@ function StatsCard() {
 
 export default function Home() {
   const [articles, setArticles] = React.useState<NewsArticleWithReports[]>([]);
-  const [trendingArticles, setTrendingArticles] = React.useState<NewsArticleWithReports[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [isScraping, setIsScraping] = React.useState(false);
   const [searchTerm, setSearchTerm] = React.useState("");
@@ -161,15 +160,7 @@ export default function Home() {
     setLoading(true);
     const fetchedArticles = await getNewsArticles();
     
-    // Set all articles for the main feed
     setArticles(fetchedArticles);
-
-    // Separate out Middle East Monitor for trending
-    const trending = fetchedArticles
-      .filter(a => a.source === 'Middle East Monitor')
-      .slice(0, 5); // get 5 trending articles
-    setTrendingArticles(trending);
-
     setLoading(false);
   }, []);
 
@@ -224,7 +215,7 @@ export default function Home() {
   const isRefreshing = loading || isScraping;
   
   const featuredArticle = !loading && filteredArticles.length > 0 ? filteredArticles[0] : null;
-  const otherArticles = !loading && filteredArticles.length > 1 ? filteredArticles.slice(1, 7) : [];
+  const otherArticles = !loading && filteredArticles.length > 1 ? filteredArticles.slice(1) : [];
 
   return (
     <AppLayout>
@@ -296,87 +287,60 @@ export default function Home() {
             </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Main Content */}
-            <div className="lg:col-span-2 space-y-8">
-                {/* Featured Article */}
-                {loading ? <Skeleton className="h-[450px] w-full rounded-lg" /> : featuredArticle && (
-                    <Card className="overflow-hidden bg-gray-800/60 border border-gray-700 text-white shadow-xl hover:shadow-2xl transition-shadow duration-300">
-                        <div className="grid md:grid-cols-2">
-                            <div className="relative h-64 md:h-auto">
-                                <Image
-                                    src={featuredArticle.image || `https://placehold.co/600x400.png?text=${encodeURIComponent(featuredArticle.source)}`}
-                                    alt={featuredArticle.title}
-                                    fill
-                                    className="object-cover"
-                                />
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+        <div className="space-y-8">
+            <StatsCard />
+
+            {/* Featured Article */}
+            {loading ? <Skeleton className="h-[450px] w-full rounded-lg" /> : featuredArticle && (
+                <Card className="overflow-hidden bg-gray-800/60 border border-gray-700 text-white shadow-xl hover:shadow-2xl transition-shadow duration-300">
+                    <div className="grid md:grid-cols-2">
+                        <div className="relative h-64 md:h-auto">
+                            <Image
+                                src={featuredArticle.image || `https://placehold.co/600x400.png?text=${encodeURIComponent(featuredArticle.source)}`}
+                                alt={featuredArticle.title}
+                                fill
+                                className="object-cover"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+                        </div>
+                        <div className="p-6 flex flex-col justify-between">
+                            <div>
+                                <div className="flex flex-wrap items-center gap-2 mb-2">
+                                    <Badge className={cn(sourceColorMap[featuredArticle.source] || 'bg-gray-400', "text-white")}>{featuredArticle.source}</Badge>
+                                    <Badge className={cn(topicColorMap[featuredArticle.category] || 'bg-gray-400', "text-white")}>{featuredArticle.category}</Badge>
+                                </div>
+                                <CardTitle className="text-2xl font-bold mb-2 text-white">
+                                    <Link href={featuredArticle.link} target="_blank" className="hover:underline">{featuredArticle.title}</Link>
+                                </CardTitle>
+                                <p className="text-gray-300 line-clamp-4 mb-4">{featuredArticle.excerpt}</p>
                             </div>
-                            <div className="p-6 flex flex-col justify-between">
-                                <div>
-                                    <div className="flex flex-wrap items-center gap-2 mb-2">
-                                        <Badge className={cn(sourceColorMap[featuredArticle.source] || 'bg-gray-400', "text-white")}>{featuredArticle.source}</Badge>
-                                        <Badge className={cn(topicColorMap[featuredArticle.category] || 'bg-gray-400', "text-white")}>{featuredArticle.category}</Badge>
-                                    </div>
-                                    <CardTitle className="text-2xl font-bold mb-2 text-white">
-                                        <Link href={featuredArticle.link} target="_blank" className="hover:underline">{featuredArticle.title}</Link>
-                                    </CardTitle>
-                                    <p className="text-gray-300 line-clamp-4 mb-4">{featuredArticle.excerpt}</p>
-                                </div>
-                                <div className="text-xs text-gray-400">
-                                    {formatDistanceToNow(new Date(featuredArticle.date), { addSuffix: true })}
-                                </div>
+                            <div className="text-xs text-gray-400">
+                                {formatDistanceToNow(new Date(featuredArticle.date), { addSuffix: true })}
                             </div>
                         </div>
-                    </Card>
-                )}
-
-                {/* Article Grid */}
-                {loading ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="h-[350px] w-full rounded-lg" />)}
                     </div>
-                ) : otherArticles.length > 0 ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {otherArticles.map((article) => <NewsCard key={article.id} article={article} />)}
-                    </div>
-                ) : (
-                    !loading && <p className="text-center col-span-full">No more articles found.</p>
-                )}
-            </div>
-
-            {/* Right Sidebar */}
-            <aside className="space-y-8">
-                <StatsCard />
-                
-                {/* Trending News */}
-                <Card className="bg-[#c00] text-white p-6 rounded-lg">
-                  <CardHeader className="p-0 mb-4">
-                      <CardTitle className="text-2xl font-bold text-white">
-                          Trending news
-                      </CardTitle>
-                  </CardHeader>
-                  <div className="mt-4">
-                      {loading ? Array.from({length: 5}).map((_, i) => <Skeleton key={i} className="h-20 mb-4 w-full bg-white/20" />) :
-                      <div className="space-y-4">
-                        {trendingArticles.map(article => (
-                            <Link key={article.id} href={article.link} target="_blank" className="block hover:opacity-80 transition-opacity">
-                                <p className="text-xs font-semibold uppercase opacity-70 mb-1">News</p>
-                                <h4 className="font-semibold text-base leading-tight line-clamp-3">{article.title}</h4>
-                            </Link>
-                        ))}
-                      </div>
-                      }
-                  </div>
                 </Card>
+            )}
 
-                 <div className="flex justify-center">
-                    <Button variant="outline" onClick={handleRefreshAndScrape} disabled={isRefreshing}>
-                        <RefreshCw className={`mr-2 h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
-                        {isScraping ? 'Scraping...' : 'Refresh News'}
-                    </Button>
+            {/* Article Grid */}
+            {loading ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="h-[350px] w-full rounded-lg" />)}
                 </div>
-            </aside>
+            ) : otherArticles.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {otherArticles.map((article) => <NewsCard key={article.id} article={article} />)}
+                </div>
+            ) : (
+                !loading && <p className="text-center col-span-full">No more articles found.</p>
+            )}
+            
+            <div className="flex justify-center pt-8">
+                <Button variant="outline" onClick={handleRefreshAndScrape} disabled={isRefreshing}>
+                    <RefreshCw className={`mr-2 h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+                    {isScraping ? 'Scraping...' : 'Refresh News'}
+                </Button>
+            </div>
         </div>
       </div>
     </AppLayout>
