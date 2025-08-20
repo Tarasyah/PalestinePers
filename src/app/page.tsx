@@ -60,93 +60,6 @@ const sourceColorMap: { [key: string]: string } = {
   "WHO": "bg-blue-400 text-white",
 };
 
-type DailyStats = {
-    id: number;
-    created_at: string;
-    days: number;
-    killed: number;
-    wounded: number;
-    missing: number;
-};
-
-function StatsCard() {
-    const [stats, setStats] = React.useState<DailyStats | null>(null);
-    const [loading, setLoading] = React.useState(true);
-    const [error, setError] = React.useState<string | null>(null);
-
-    React.useEffect(() => {
-        async function fetchLatestStats() {
-            setLoading(true);
-            setError(null);
-            const { data, error } = await supabase
-                .from('daily_stats')
-                .select('*')
-                .order('created_at', { ascending: false })
-                .limit(1)
-                .single();
-
-            if (error) {
-                setError("Could not load stats. Please check your Supabase Row Level Security (RLS) settings for the 'daily_stats' table.");
-                setStats(null);
-            } else {
-                setStats(data);
-            }
-            setLoading(false);
-        }
-
-        fetchLatestStats();
-    }, []);
-
-    const renderStat = (value: number | undefined, label: string, colorClass: string = "text-white") => (
-        <div className="flex items-baseline gap-2">
-            <span className={`text-lg font-bold ${colorClass}`}>{value?.toLocaleString('en-US') ?? '...'}</span>
-            <span className="text-sm font-light tracking-wider opacity-80">{label}</span>
-        </div>
-    );
-    
-    return (
-        <Card className="bg-black text-white p-6 rounded-lg shadow-2xl border border-gray-800">
-            <CardHeader className="p-0 mb-4 text-left">
-                <CardTitle className="text-2xl font-bold tracking-tight text-white">
-                    Gaza genocide
-                </CardTitle>
-            </CardHeader>
-            <CardContent className="p-0 space-y-2 text-left">
-                {loading ? (
-                    <>
-                        {renderStat(undefined, "DAYS")}
-                        {renderStat(undefined, "KILLED", "text-red-400")}
-                        {renderStat(undefined, "WOUNDED")}
-                        {renderStat(undefined, "MISSING")}
-                    </>
-                ) : error ? (
-                    <div className="text-red-400 text-sm flex items-start gap-2">
-                        <AlertTriangle className="h-4 w-4 mt-0.5"/>
-                        <span>{error}</span>
-                    </div>
-                ) : (
-                    <>
-                        {renderStat(stats?.days, "DAYS")}
-                        {renderStat(stats?.killed, "KILLED", "text-red-400")}
-                        {renderStat(stats?.wounded, "WOUNDED")}
-                        {renderStat(stats?.missing, "MISSING")}
-                    </>
-                )}
-
-                <div className="text-left opacity-80 pt-3 border-t border-white/20 mt-4 text-xs">
-                    {loading ? (
-                        <Skeleton className="h-4 w-40 bg-white/20" />
-                    ) : (
-                        <p>
-                            Last updated: {stats ? new Date(stats.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : 'N/A'}
-                        </p>
-                    )}
-                </div>
-            </CardContent>
-        </Card>
-    );
-}
-
 export default function Home() {
   const [articles, setArticles] = React.useState<NewsArticleWithReports[]>([]);
   const [loading, setLoading] = React.useState(true);
@@ -288,8 +201,6 @@ export default function Home() {
         </div>
 
         <div className="space-y-8">
-            <StatsCard />
-
             {/* Featured Article */}
             {loading ? <Skeleton className="h-[450px] w-full rounded-lg" /> : featuredArticle && (
                 <Card className="overflow-hidden bg-gray-800/60 border border-gray-700 text-white shadow-xl hover:shadow-2xl transition-shadow duration-300">
