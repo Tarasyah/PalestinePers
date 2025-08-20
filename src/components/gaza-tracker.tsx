@@ -4,6 +4,11 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import Image from 'next/image';
 import { Skeleton } from './ui/skeleton';
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 function GazaTracker() {
   const [tracker, setTracker] = useState<any>(null);
@@ -30,6 +35,22 @@ function GazaTracker() {
 
     fetchTrackerData();
   }, []);
+
+  const renderImage = (src: string, alt: string) => {
+    return (
+      <Dialog>
+        <DialogTrigger asChild>
+          <div className="relative w-full h-auto cursor-pointer hover:opacity-80 transition-opacity">
+            <Image src={src} alt={alt} width={500} height={800} objectFit="contain" className="rounded-lg border border-white/10" />
+          </div>
+        </DialogTrigger>
+        <DialogContent className="p-0 border-0 max-w-4xl bg-transparent">
+          <Image src={src} alt={alt} width={1200} height={1600} objectFit="contain" />
+        </DialogContent>
+      </Dialog>
+    );
+  };
+
 
   if (loading) {
     return (
@@ -63,16 +84,9 @@ function GazaTracker() {
         <li><strong>Starvation Deaths:</strong> {tracker.starvation_deaths} (incl. {tracker.children_starvation_deaths} children)</li>
       </ul>
 
-      {tracker.deaths_chart_url && (
-         <div className="relative w-full h-auto">
-            <Image src={tracker.deaths_chart_url} alt="Gaza death tracker chart" width={500} height={800} objectFit="contain" className="rounded-lg border border-white/10" />
-         </div>
-      )}
-      {tracker.famine_chart_url && (
-        <div className="relative w-full h-auto">
-           <Image src={tracker.famine_chart_url} alt="Gaza famine tracker chart" width={500} height={800} objectFit="contain" className="rounded-lg border border-white/10" />
-        </div>
-       )}
+      {tracker.deaths_chart_url && renderImage(tracker.deaths_chart_url, "Gaza death tracker chart")}
+      {tracker.famine_chart_url && renderImage(tracker.famine_chart_url, "Gaza famine tracker chart")}
+       
        <p className="text-center"><small className="text-muted-foreground text-xs">Source: Palestinian Ministry of Health in Gaza</small></p>
     </div>
   );
