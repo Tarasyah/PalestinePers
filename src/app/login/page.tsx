@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Github, Chrome } from "lucide-react";
+import { Chrome } from "lucide-react";
 import type { Provider } from '@supabase/supabase-js';
 import { useToast } from "@/hooks/use-toast";
 
@@ -56,24 +56,17 @@ export default function LoginPage() {
     <div className="flex items-center justify-center min-h-screen bg-background">
       <Card className="w-full max-w-sm">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl">Login</CardTitle>
-          <CardDescription>Sign in to your account to continue</CardDescription>
+          <CardTitle className="text-2xl">Sign In / Sign Up</CardTitle>
+          <CardDescription>Use Google to sign in or create an account</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <Button
-            className="w-full"
-            onClick={() => handleOAuthLogin("github")}
-          >
-            <Github className="mr-2 h-5 w-5" />
-            Sign in with GitHub
-          </Button>
            <Button
             variant="outline"
             className="w-full"
             onClick={() => handleOAuthLogin("google")}
           >
             <Chrome className="mr-2 h-5 w-5" />
-            Sign in with Google
+            Continue with Google
           </Button>
         </CardContent>
       </Card>
