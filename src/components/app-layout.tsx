@@ -17,6 +17,7 @@ import {
 import { useIsMobile } from "@/hooks/use-mobile";
 import { navItems } from "@/lib/nav-items";
 import { cn } from "@/lib/utils";
+import { MovingBorderButton } from "./ui/moving-border-button";
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -114,20 +115,20 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         {navItems.map((item) => {
           const isActive = pathname === item.href;
           return (
-            <Button
-              key={item.href}
-              asChild
-              variant="ghost"
-              className={cn(
-                "shadow-[0_0_0_2px_#ffffff_inset] px-4 py-2 bg-transparent border-none text-white rounded-lg font-bold transform hover:-translate-y-1 transition duration-400 flex items-center gap-2",
-                isActive && "bg-white/10"
-              )}
-            >
-              <Link href={item.href}>
-                <item.icon className="w-4 h-4" />
-                <span>{item.label}</span>
+             <Link href={item.href} key={item.href}>
+                <MovingBorderButton
+                  as="button"
+                  containerClassName="h-10 w-auto"
+                  className={cn(
+                    "text-sm font-semibold flex items-center gap-2",
+                    isActive ? "text-green-400" : "text-white"
+                  )}
+                  borderClassName="bg-[radial-gradient(var(--green-500)_40%,transparent_60%)]"
+                >
+                  <item.icon className="w-4 h-4" />
+                  <span>{item.label}</span>
+                </MovingBorderButton>
               </Link>
-            </Button>
           );
         })}
       </nav>
