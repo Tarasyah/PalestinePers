@@ -17,7 +17,6 @@ import {
 import { useIsMobile } from "@/hooks/use-mobile";
 import { navItems } from "@/lib/nav-items";
 import { cn } from "@/lib/utils";
-import { MovingBorderButton } from "./ui/moving-border-button";
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -111,23 +110,24 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     }
 
     return (
-       <nav className="hidden md:flex items-center gap-2">
+       <nav className="hidden md:flex items-center gap-4">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
           return (
              <Link href={item.href} key={item.href}>
-                <MovingBorderButton
-                  as="button"
-                  containerClassName="h-10 w-auto"
-                  className={cn(
-                    "text-sm font-semibold flex items-center gap-2",
-                    isActive ? "text-green-400" : "text-white"
-                  )}
-                  borderClassName="bg-[radial-gradient(var(--green-500)_40%,transparent_60%)]"
-                >
-                  <item.icon className="w-4 h-4" />
-                  <span>{item.label}</span>
-                </MovingBorderButton>
+                <button className="relative inline-flex h-10 overflow-hidden rounded-full p-[1px] focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50">
+                  <span className={cn(
+                    "absolute inset-[-1000%] animate-[spin_2s_linear_infinite]",
+                    isActive ? "bg-[conic-gradient(from_90deg_at_50%_50%,#34D399_0%,#10B981_50%,#34D399_100%)]" : "bg-[conic-gradient(from_90deg_at_50%_50%,#A78BFA_0%,#8B5CF6_50%,#A78BFA_100%)]"
+                  )} />
+                  <span className={cn(
+                    "inline-flex h-full w-full cursor-pointer items-center justify-center rounded-full px-4 py-1 text-sm font-medium text-white backdrop-blur-3xl gap-2",
+                    isActive ? "bg-slate-900" : "bg-slate-950"
+                    )}>
+                     <item.icon className="w-4 h-4" />
+                    <span>{item.label}</span>
+                  </span>
+                </button>
               </Link>
           );
         })}
