@@ -1,107 +1,99 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import React, { useState, useEffect, useRef } from "react";
+
+import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
 
-type HoverBorderGradientProps = {
-  children?: React.ReactNode;
-  containerClassName?: string;
-  className?: string;
-  as?: React.ElementType;
-  duration?: number;
-  [key: string]: any;
-};
+type Direction = "TOP" | "LEFT" | "BOTTOM" | "RIGHT";
 
 export function HoverBorderGradient({
   children,
   containerClassName,
   className,
-  as: Tag = "div",
+  as: Tag = "button",
   duration = 1,
-  ...rest
-}: HoverBorderGradientProps) {
+  clockwise = true,
+  ...props
+}: React.PropsWithChildren<
+  {
+    as?: React.ElementType;
+    containerClassName?: string;
+    className?: string;
+    duration?: number;
+    clockwise?: boolean;
+  } & React.HTMLAttributes<HTMLElement>
+>) {
   const [hovered, setHovered] = useState<boolean>(false);
+  const [direction, setDirection] = useState<Direction>("TOP");
 
+  const rotateDirection = (currentDirection: Direction): Direction => {
+    const directions: Direction[] = ["TOP", "LEFT", "BOTTOM", "RIGHT"];
+    const currentIndex = directions.indexOf(currentDirection);
+    const nextIndex = clockwise
+      ? (currentIndex - 1 + directions.length) % directions.length
+      : (currentIndex + 1) % directions.length;
+    return directions[nextIndex];
+  };
+
+  const movingMap: Record<Direction, string> = {
+    TOP: "radial-gradient(20.7% 50% at 50% 0%, hsl(0, 0%, 100%) 0%, rgba(255, 255, 255, 0) 100%)",
+    LEFT: "radial-gradient(16.6% 43.1% at 0% 50%, hsl(0, 0%, 100%) 0%, rgba(255, 255, 255, 0) 100%)",
+    BOTTOM:
+      "radial-gradient(20.7% 50% at 50% 100%, hsl(0, 0%, 100%) 0%, rgba(255, 255, 255, 0) 100%)",
+    RIGHT:
+      "radial-gradient(16.2% 41.199999999999996% at 100% 50%, hsl(0, 0%, 100%) 0%, rgba(255, 255, 255, 0) 100%)",
+  };
+
+  const highlight =
+    "radial-gradient(75% 181.15942028985506% at 50% 50%, #3275F8 0%, rgba(255, 255, 255, 0) 100%)";
+
+  useEffect(() => {
+    if (!hovered) {
+      const interval = setInterval(() => {
+        setDirection((prevState) => rotateDirection(prevState));
+      }, duration * 1000);
+      return () => clearInterval(interval);
+    }
+  }, [hovered]);
   return (
     <Tag
-      onMouseEnter={() => setHovered(true)}
+      onMouseEnter={(event: React.MouseEvent<HTMLDivElement>) => {
+        setHovered(true);
+      }}
       onMouseLeave={() => setHovered(false)}
       className={cn(
-        "relative flex h-full w-full items-center justify-center overflow-hidden rounded-lg bg-background p-[1px] transition-all duration-300 ease-in-out hover:bg-transparent",
+        "relative flex rounded-full border  content-center bg-black/20 hover:bg-black/10 transition duration-500 dark:bg-white/20 items-center flex-col flex-nowrap gap-10 h-min justify-center overflow-visible p-px decoration-clone w-fit",
         containerClassName
       )}
-      {...rest}
+      {...props}
     >
       <div
         className={cn(
-          "relative z-10 h-full w-full rounded-[0.4rem] bg-gray-800/60 text-foreground",
+          "w-auto text-white z-10 bg-black px-4 py-2 rounded-[inherit]",
           className
         )}
       >
         {children}
       </div>
-      <AnimatePresence>
-        {hovered && <MagicBorder duration={duration} />}
-      </AnimatePresence>
+      <motion.div
+        className={cn(
+          "flex-none inset-0 overflow-hidden absolute z-0 rounded-[inherit]"
+        )}
+        style={{
+          filter: "blur(2px)",
+          position: "absolute",
+          width: "100%",
+          height: "100%",
+        }}
+        initial={{ background: movingMap[direction] }}
+        animate={{
+          background: hovered
+            ? [movingMap[direction], highlight]
+            : movingMap[direction],
+        }}
+        transition={{ ease: "linear", duration: duration ?? 1 }}
+      />
+      <div className="bg-black absolute z-1 flex-none inset-[2px] rounded-[100px]" />
     </Tag>
   );
 }
-
-const MagicBorder = ({
-  duration = 1,
-  className,
-}: {
-  duration?: number;
-  className?: string;
-}) => {
-  return (
-    <motion.div
-      initial={{
-        opacity: 0,
-      }}
-      animate={{
-        opacity: 1,
-      }}
-      exit={{
-        opacity: 0,
-      }}
-      className={cn(
-        "pointer-events-none absolute left-0 top-0 h-full w-full",
-        className
-      )}
-    >
-      <motion.div
-        animate={{
-          backgroundPosition: `100% 100%`,
-        }}
-        transition={{
-          duration,
-          ease: "linear",
-          repeat: Infinity,
-        }}
-        style={{
-          backgroundSize: "200% 200%",
-          backgroundImage: `conic-gradient(from var(--gradient-angle), #77B5FE, #8FBC8F, #77B5FE)`,
-        }}
-        className="absolute inset-[1px] z-20 h-[calc(100%-2px)] w-[calc(100%-2px)] rounded-lg"
-      ></motion.div>
-      <motion.div
-        animate={{
-          '--gradient-angle': '360deg',
-        }}
-        transition={{
-          duration: duration,
-          ease: "linear",
-          repeat: Infinity,
-        }}
-        className="absolute inset-0 z-10 h-full w-full rounded-lg"
-        style={
-          {
-            '--gradient-angle': '0deg',
-            background: `conic-gradient(from var(--gradient-angle), #77B5FE, #8FBC8F, #77B5FE)`,
-          } as React.CSSProperties
-        }
-      />
-    </motion.div>
-  );
-};

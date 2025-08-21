@@ -205,6 +205,7 @@ export default function Home() {
               {/* Featured Article */}
               {loading ? <Skeleton className="h-[250px] w-full rounded-lg" /> : featuredArticle && (
                 <HoverBorderGradient
+                  as="div"
                   containerClassName="rounded-lg"
                   className="bg-transparent"
                 >

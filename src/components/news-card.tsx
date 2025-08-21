@@ -113,6 +113,7 @@ export function NewsCard({ article, onDelete }: { article: NewsArticleWithReport
 
   return (
     <HoverBorderGradient
+      as="div"
       containerClassName="rounded-lg h-full"
       className="bg-transparent"
     >
