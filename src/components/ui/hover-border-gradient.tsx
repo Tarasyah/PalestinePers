@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 type HoverBorderGradientProps = {
@@ -15,7 +16,7 @@ export function HoverBorderGradient({
   children,
   containerClassName,
   className,
-  as: Tag = "button",
+  as: Tag = "div",
   duration = 1,
   ...rest
 }: HoverBorderGradientProps) {
@@ -33,13 +34,15 @@ export function HoverBorderGradient({
     >
       <div
         className={cn(
-          "relative z-10 h-full w-full rounded-[0.4rem] bg-background text-foreground",
+          "relative z-10 h-full w-full rounded-[0.4rem] bg-gray-800/60 text-foreground",
           className
         )}
       >
         {children}
       </div>
-      {hovered && <AnimatePresence>{<MagicBorder duration={duration} />}</AnimatePresence>}
+      <AnimatePresence>
+        {hovered && <MagicBorder duration={duration} />}
+      </AnimatePresence>
     </Tag>
   );
 }
@@ -96,18 +99,9 @@ const MagicBorder = ({
           {
             '--gradient-angle': '0deg',
             background: `conic-gradient(from var(--gradient-angle), #77B5FE, #8FBC8F, #77B5FE)`,
-            animation: `spin ${duration}s linear infinite`,
           } as React.CSSProperties
         }
       />
     </motion.div>
   );
-};
-
-// Dummy components for AnimatePresence and motion, since framer-motion is not in the project
-const AnimatePresence = ({ children }: { children: React.ReactNode }) => <>{children}</>;
-const motion = {
-  div: React.forwardRef<HTMLDivElement, any>(function MotionDiv(props, ref) {
-    return <div {...props} ref={ref} />;
-  }),
 };

@@ -21,6 +21,7 @@ import { cn } from "@/lib/utils";
 import { formatDistanceToNow } from 'date-fns';
 import { Badge } from "@/components/ui/badge";
 import GazaTracker from "@/components/gaza-tracker";
+import { HoverBorderGradient } from "@/components/ui/hover-border-gradient";
 
 
 const allTopics = [
@@ -203,8 +204,11 @@ export default function Home() {
           <div className="space-y-8">
               {/* Featured Article */}
               {loading ? <Skeleton className="h-[250px] w-full rounded-lg" /> : featuredArticle && (
-                <div className="gradient-border">
-                  <Card className="overflow-hidden bg-gray-800/60 border border-gray-700 text-white shadow-xl transition-shadow duration-300">
+                <HoverBorderGradient
+                  containerClassName="rounded-lg"
+                  className="bg-transparent"
+                >
+                  <Card className="overflow-hidden bg-transparent text-white shadow-xl transition-shadow duration-300 border-none">
                       <div className="grid">
                           <div className="p-6 flex flex-col justify-between">
                               <div>
@@ -224,7 +228,7 @@ export default function Home() {
                           </div>
                       </div>
                   </Card>
-                </div>
+                </HoverBorderGradient>
               )}
 
               {/* Article Grid */}

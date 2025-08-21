@@ -113,9 +113,8 @@ export function NewsCard({ article, onDelete }: { article: NewsArticleWithReport
 
   return (
     <HoverBorderGradient
-      as="div"
-      containerClassName="rounded-lg"
-      className="bg-gray-800/60"
+      containerClassName="rounded-lg h-full"
+      className="bg-transparent"
     >
       <Card className="relative flex flex-col h-full overflow-hidden bg-transparent text-white transition-all duration-300 border-none shadow-none">
         <CardContent className="p-4 flex-grow">
