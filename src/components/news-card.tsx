@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import type { NewsArticleWithReports } from '@/lib/data';
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { Card, CardContent, CardTitle, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from './ui/button';
 import { ArrowRight, Bookmark, Clock, Trash2 } from 'lucide-react';
@@ -11,6 +11,7 @@ import { cn } from '@/lib/utils';
 import { supabase } from '@/lib/supabase';
 import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
+import { HoverBorderGradient } from './ui/hover-border-gradient';
 
 const topicColorMap: { [key: string]: string } = {
   "Politics": "bg-blue-500",
@@ -110,27 +111,13 @@ export function NewsCard({ article, onDelete }: { article: NewsArticleWithReport
     }
   }
 
-  const borderStyle = {
-    '--c': '#8A9B0F', // the border color
-    '--b': '10px',    // the border thickness
-    '--g': '5px',     // the gap on hover
-    padding: 'calc(var(--g) + var(--b))',
-    '--_g': '#0000 25%, var(--c) 0',
-    background:
-      'conic-gradient(from 180deg at top var(--b) right var(--b), var(--_g)) var(--_i, 200%) 0 / 200% var(--_i, var(--b)) no-repeat,' +
-      'conic-gradient(at bottom var(--b) left var(--b), var(--_g)) 0 var(--_i, 200%) / var(--_i, var(--b)) 200% no-repeat',
-    transition: '.3s, background-position .3s .3s',
-    cursor: 'pointer',
-  } as React.CSSProperties;
-
-  const hoverBorderStyle = {
-    '--_i': '100%',
-    transition: '.3s, background-size .3s .3s',
-  } as React.CSSProperties;
-
   return (
-    <div className="gradient-border">
-      <Card className="relative flex flex-col h-full overflow-hidden bg-gray-800/60 text-white transition-all duration-300">
+    <HoverBorderGradient
+      as="div"
+      containerClassName="rounded-lg"
+      className="bg-gray-800/60"
+    >
+      <Card className="relative flex flex-col h-full overflow-hidden bg-transparent text-white transition-all duration-300 border-none shadow-none">
         <CardContent className="p-4 flex-grow">
           <div className="flex flex-wrap items-center gap-2 mb-2">
               <Badge className={getSourceBadgeClasses(article.source)}>{article.source}</Badge>
@@ -168,6 +155,6 @@ export function NewsCard({ article, onDelete }: { article: NewsArticleWithReport
           </div>
         </CardFooter>
       </Card>
-    </div>
+    </HoverBorderGradient>
   );
 }
