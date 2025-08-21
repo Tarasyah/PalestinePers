@@ -23,17 +23,13 @@ const topicColorMap: { [key: string]: string } = {
   "Official News": "bg-gray-500",
 };
 
-const sourceColorMap: { [key: string]: string } = {
+export const sourceColorMap: { [key: string]: string } = {
     "Al Jazeera": "bg-red-600 text-white",
     "Middle East Eye": "bg-blue-800 text-white",
     "Middle East Monitor": "bg-gray-700 text-white",
     "WAFA News": "bg-green-600 text-white",
     "TRT World": "bg-sky-500 text-white",
     "Reuters": "bg-orange-500 text-white",
-    "UN": "bg-blue-500 text-white",
-    "Human Rights Watch": "bg-yellow-500 text-black",
-    "Amnesty International": "bg-yellow-400 text-black",
-    "WHO": "bg-blue-400 text-white",
 };
 
 function getCategoryBadgeClasses(topic: string) {
@@ -41,7 +37,7 @@ function getCategoryBadgeClasses(topic: string) {
 }
 
 function getSourceBadgeClasses(source: string) {
-    return `${sourceColorMap[source] || 'bg-gray-400'} text-white`;
+    return `${sourceColorMap[source as keyof typeof sourceColorMap] || 'bg-gray-400'} text-white`;
 }
 
 

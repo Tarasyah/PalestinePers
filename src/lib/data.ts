@@ -99,11 +99,6 @@ export const allSources = [
   "WAFA News",
   "TRT World",
   "Reuters",
-  "UN",
-  "Human Rights Watch",
-  "Amnesty International",
-  "WHO",
-  "Official News"
 ];
 
 export const casualtyStats = [

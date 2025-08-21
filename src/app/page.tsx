@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from 'next/link';
 import { AppLayout } from "@/components/app-layout";
-import { NewsCard } from "@/components/news-card";
+import { NewsCard, sourceColorMap } from "@/components/news-card";
 import { getNewsArticles, NewsArticleWithReports, allSources } from "@/lib/data";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -35,19 +35,6 @@ const topicColorMap: { [key: string]: string } = {
   "Regional News": "bg-indigo-500 text-white",
   "Analysis": "bg-yellow-500 text-black",
   "Official News": "bg-gray-500 text-white",
-};
-
-const sourceColorMap: { [key: string]: string } = {
-  "Al Jazeera": "bg-red-600 text-white",
-  "Middle East Eye": "bg-blue-800 text-white",
-  "Middle East Monitor": "bg-gray-700 text-white",
-  "WAFA News": "bg-green-600 text-white",
-  "TRT World": "bg-sky-500 text-white",
-  "Reuters": "bg-orange-500 text-white",
-  "UN": "bg-blue-500 text-white",
-  "Human Rights Watch": "bg-yellow-500 text-black",
-  "Amnesty International": "bg-yellow-400 text-black",
-  "WHO": "bg-blue-400 text-white",
 };
 
 export default function Home() {
@@ -152,7 +139,14 @@ export default function Home() {
                 <DropdownMenuContent className="w-full md:w-[200px]">
                   <DropdownMenuRadioGroup value={selectedSource} onValueChange={setSelectedSource}>
                     {allSources.map(source => (
-                      <DropdownMenuRadioItem key={source} value={source}>{source}</DropdownMenuRadioItem>
+                      <DropdownMenuRadioItem key={source} value={source}>
+                        <div className="flex items-center gap-2">
+                          {source !== "All Sources" && (
+                            <div className={cn("w-2 h-2 rounded-full", sourceColorMap[source as keyof typeof sourceColorMap])} />
+                          )}
+                          <span>{source}</span>
+                        </div>
+                      </DropdownMenuRadioItem>
                     ))}
                   </DropdownMenuRadioGroup>
                 </DropdownMenuContent>
@@ -178,7 +172,7 @@ export default function Home() {
                     <div className="p-6 flex flex-col justify-between">
                       <div>
                         <div className="flex flex-wrap items-center gap-2 mb-2">
-                          <Badge className={cn(sourceColorMap[featuredArticle.source] || 'bg-gray-400', "text-white")}>{featuredArticle.source}</Badge>
+                          <Badge className={cn(sourceColorMap[featuredArticle.source as keyof typeof sourceColorMap] || 'bg-gray-400', "text-white")}>{featuredArticle.source}</Badge>
                           <Badge className={cn(topicColorMap[featuredArticle.category] || 'bg-gray-400', "text-white")}>{featuredArticle.category}</Badge>
                         </div>
                         <CardTitle className="text-2xl font-bold mb-2 text-white">
