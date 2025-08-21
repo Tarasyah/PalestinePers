@@ -4,7 +4,7 @@ import * as React from "react";
 import Link from 'next/link';
 import { AppLayout } from "@/components/app-layout";
 import { NewsCard } from "@/components/news-card";
-import { getNewsArticles, NewsArticleWithReports, allSources } from "@/lib/data";
+import { getNewsArticles, NewsArticleWithReports } from "@/lib/data";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardTitle } from "@/components/ui/card";
