@@ -11,11 +11,32 @@ function GazaTracker() {
   const [days, setDays] = useState<number | null>(null);
 
   useEffect(() => {
-    const startDate = new Date('2023-10-07T00:00:00Z');
-    const currentDate = new Date();
-    const timeDiff = currentDate.getTime() - startDate.getTime();
-    const daysDiff = Math.floor(timeDiff / (1000 * 3600 * 24)) + 1;
-    setDays(daysDiff);
+    const calculateDays = () => {
+      const startDate = new Date('2023-10-07T00:00:00Z');
+      const currentDate = new Date();
+      // To ensure we're comparing dates only, we can zero out the time part.
+      const startDay = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
+      const currentDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
+      const timeDiff = currentDay.getTime() - startDay.getTime();
+      const daysDiff = Math.floor(timeDiff / (1000 * 3600 * 24)) + 1;
+      setDays(daysDiff);
+    };
+
+    calculateDays();
+
+    // Set up an interval to recalculate every day at midnight.
+    const now = new Date();
+    const msUntilMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0, 0).getTime() - now.getTime();
+    const dailyInterval = setInterval(calculateDays, 1000 * 60 * 60 * 24); // fallback to every 24h
+    const timeout = setTimeout(() => {
+      calculateDays(); // Recalculate at midnight
+      setInterval(calculateDays, 1000 * 60 * 60 * 24); // Then every 24h after that
+    }, msUntilMidnight);
+
+    return () => {
+      clearTimeout(timeout);
+      clearInterval(dailyInterval);
+    };
   }, []);
 
   useEffect(() => {
@@ -29,6 +50,7 @@ function GazaTracker() {
         .single();
 
       if (error) {
+        console.error("Error fetching Gaza tracker data:", error.message);
         setTracker(null);
       } else {
         setTracker(data);

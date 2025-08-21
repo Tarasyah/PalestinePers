@@ -4,11 +4,11 @@ import * as React from "react";
 import Link from 'next/link';
 import { AppLayout } from "@/components/app-layout";
 import { NewsCard } from "@/components/news-card";
-import { getNewsArticles, NewsArticleWithReports } from "@/lib/data";
+import { getNewsArticles, NewsArticleWithReports, allSources } from "@/lib/data";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardTitle } from "@/components/ui/card";
-import { Search, RefreshCw } from "lucide-react";
+import { Search, RefreshCw, ChevronDown } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
@@ -16,6 +16,14 @@ import { formatDistanceToNow } from 'date-fns';
 import { Badge } from "@/components/ui/badge";
 import GazaTracker from "@/components/gaza-tracker";
 import { HoverBorderGradient } from "@/components/ui/hover-border-gradient";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+
 
 const ARTICLES_PER_PAGE = 7;
 
@@ -48,6 +56,7 @@ export default function Home() {
   const [loading, setLoading] = React.useState(true);
   const [isScraping, setIsScraping] = React.useState(false);
   const [searchTerm, setSearchTerm] = React.useState("");
+  const [selectedSource, setSelectedSource] = React.useState("All Sources");
   const { toast } = useToast();
 
   const fetchArticles = React.useCallback(async () => {
@@ -100,7 +109,9 @@ export default function Home() {
   };
 
   const filteredArticles = allArticles.filter((article) => {
-    return article.title.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearchTerm = article.title.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSource = selectedSource === "All Sources" || article.source === selectedSource;
+    return matchesSearchTerm && matchesSource;
   });
 
   const visibleArticles = filteredArticles.slice(0, visibleArticlesCount);
@@ -130,6 +141,23 @@ export default function Home() {
                   className="w-full pl-10"
                 />
               </div>
+              
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" className="w-full md:w-[200px] justify-between">
+                    <span>{selectedSource}</span>
+                    <ChevronDown className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-full md:w-[200px]">
+                  <DropdownMenuRadioGroup value={selectedSource} onValueChange={setSelectedSource}>
+                    {allSources.map(source => (
+                      <DropdownMenuRadioItem key={source} value={source}>{source}</DropdownMenuRadioItem>
+                    ))}
+                  </DropdownMenuRadioGroup>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
               <Button variant="outline" onClick={handleRefreshAndScrape} disabled={isRefreshing}>
                   <RefreshCw className={`mr-2 h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
                   {isScraping ? 'Refreshing...' : 'Refresh'}
