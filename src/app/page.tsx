@@ -1,3 +1,4 @@
+
 "use client";
 
 import * as React from "react";
@@ -44,6 +45,7 @@ export default function Home() {
   const [isScraping, setIsScraping] = React.useState(false);
   const [searchTerm, setSearchTerm] = React.useState("");
   const [selectedSource, setSelectedSource] = React.useState("All Sources");
+  const [trackerRefreshKey, setTrackerRefreshKey] = React.useState(0);
   const { toast } = useToast();
 
   const fetchArticles = React.useCallback(async () => {
@@ -90,6 +92,7 @@ export default function Home() {
       });
     } finally {
       await fetchArticles();
+      setTrackerRefreshKey(prevKey => prevKey + 1); // Trigger GazaTracker refresh
       setVisibleArticlesCount(ARTICLES_PER_PAGE); // Reset visible articles
       setIsScraping(false);
     }
@@ -213,7 +216,7 @@ export default function Home() {
         </div>
         <aside className="lg:col-span-1 space-y-8 lg:sticky lg:top-24">
           <Card className="p-4 bg-card rounded-lg border shadow-sm">
-            <GazaTracker />
+            <GazaTracker refreshTrigger={trackerRefreshKey} />
           </Card>
         </aside>
       </div>
