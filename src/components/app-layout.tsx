@@ -110,20 +110,26 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     }
 
     return (
-      <nav className="hidden md:flex items-center gap-1">
-        {navItems.map((item) => (
-          <Button
-            key={item.href}
-            asChild
-            variant={pathname === item.href ? "secondary" : "ghost"}
-            className="flex items-center gap-2"
-          >
-            <Link href={item.href}>
-              <item.icon className="w-4 h-4" />
-              <span>{item.label}</span>
-            </Link>
-          </Button>
-        ))}
+       <nav className="hidden md:flex items-center gap-2">
+        {navItems.map((item) => {
+          const isActive = pathname === item.href;
+          return (
+            <Button
+              key={item.href}
+              asChild
+              variant="ghost"
+              className={cn(
+                "shadow-[0_0_0_2px_#ffffff_inset] px-4 py-2 bg-transparent border-none text-white rounded-lg font-bold transform hover:-translate-y-1 transition duration-400 flex items-center gap-2",
+                isActive && "bg-white/10"
+              )}
+            >
+              <Link href={item.href}>
+                <item.icon className="w-4 h-4" />
+                <span>{item.label}</span>
+              </Link>
+            </Button>
+          );
+        })}
       </nav>
     );
   };
