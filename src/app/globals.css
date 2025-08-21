@@ -147,7 +147,10 @@ body {
 .gradient-border {
   --border-width: 2px;
   position: relative;
-  border-radius: 10px; /* Corresponds to Tailwind's rounded-lg */
+}
+
+.gradient-border > * {
+    border-radius: 0.5rem; /* Corresponds to Tailwind's rounded-lg */
 }
 
 .gradient-border::after {
@@ -171,7 +174,7 @@ body {
   );
   background-size: 300% 300%;
   background-position: 0 50%;
-  border-radius: 12px; /* Slightly larger than the card's border-radius */
+  border-radius: calc(0.5rem + var(--border-width)); /* Match card's border-radius + border-width */
   animation: moveGradient 4s alternate infinite;
   opacity: 0;
   transition: opacity 0.3s ease-in-out;

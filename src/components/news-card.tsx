@@ -129,43 +129,45 @@ export function NewsCard({ article, onDelete }: { article: NewsArticleWithReport
   } as React.CSSProperties;
 
   return (
-    <Card className="gradient-border relative flex flex-col overflow-hidden bg-gray-800/60 text-white transition-all duration-300">
-      <CardContent className="p-4 flex-grow">
-        <div className="flex flex-wrap items-center gap-2 mb-2">
-            <Badge className={getSourceBadgeClasses(article.source)}>{article.source}</Badge>
-            <Badge className={getCategoryBadgeClasses(article.category)}>{article.category}</Badge>
-            { (article.priority === 'urgent' || article.priority === 'breaking') && 
-                <Badge variant="destructive" className="animate-pulse">{article.priority.toUpperCase()}</Badge>
-            }
-        </div>
-        <CardTitle className="text-lg font-bold leading-tight mb-1">{article.title}</CardTitle>
-        <p className="text-gray-300 text-sm mb-3 line-clamp-3">{article.excerpt}</p>
-      </CardContent>
-       <CardFooter className="p-4 pt-0 flex justify-between items-center">
-         <div className="flex items-center text-xs text-gray-400">
-            <Clock className="mr-1.5 h-3.5 w-3.5" />
-            <span>{formatDistanceToNow(new Date(article.date), { addSuffix: true })}</span>
-        </div>
-        <div className="flex items-center gap-2">
-            {onDelete ? (
-                 <Button variant="ghost" size="icon" className="text-gray-400 hover:text-red-500" onClick={handleDeleteClick} disabled={isDeleting}>
-                    <Trash2 className="h-5 w-5" />
-                    <span className="sr-only">Delete</span>
-                </Button>
-            ) : (
-                <Button variant="ghost" size="icon" className="text-gray-400 hover:text-green-400" onClick={handleSaveArticle} disabled={isSaving}>
-                    <Bookmark className="h-5 w-5" />
-                    <span className="sr-only">Bookmark</span>
-                </Button>
-            )}
-            <Button asChild size="sm" className="bg-green-500 hover:bg-green-600 text-white">
-                <Link href={article.link} target="_blank">
-                    Read More
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-            </Button>
-        </div>
-      </CardFooter>
-    </Card>
+    <div className="gradient-border">
+      <Card className="relative flex flex-col h-full overflow-hidden bg-gray-800/60 text-white transition-all duration-300">
+        <CardContent className="p-4 flex-grow">
+          <div className="flex flex-wrap items-center gap-2 mb-2">
+              <Badge className={getSourceBadgeClasses(article.source)}>{article.source}</Badge>
+              <Badge className={getCategoryBadgeClasses(article.category)}>{article.category}</Badge>
+              { (article.priority === 'urgent' || article.priority === 'breaking') && 
+                  <Badge variant="destructive" className="animate-pulse">{article.priority.toUpperCase()}</Badge>
+              }
+          </div>
+          <CardTitle className="text-lg font-bold leading-tight mb-1">{article.title}</CardTitle>
+          <p className="text-gray-300 text-sm mb-3 line-clamp-3">{article.excerpt}</p>
+        </CardContent>
+        <CardFooter className="p-4 pt-0 mt-auto flex justify-between items-center">
+          <div className="flex items-center text-xs text-gray-400">
+              <Clock className="mr-1.5 h-3.5 w-3.5" />
+              <span>{formatDistanceToNow(new Date(article.date), { addSuffix: true })}</span>
+          </div>
+          <div className="flex items-center gap-2">
+              {onDelete ? (
+                  <Button variant="ghost" size="icon" className="text-gray-400 hover:text-red-500" onClick={handleDeleteClick} disabled={isDeleting}>
+                      <Trash2 className="h-5 w-5" />
+                      <span className="sr-only">Delete</span>
+                  </Button>
+              ) : (
+                  <Button variant="ghost" size="icon" className="text-gray-400 hover:text-green-400" onClick={handleSaveArticle} disabled={isSaving}>
+                      <Bookmark className="h-5 w-5" />
+                      <span className="sr-only">Bookmark</span>
+                  </Button>
+              )}
+              <Button asChild size="sm" className="bg-green-500 hover:bg-green-600 text-white">
+                  <Link href={article.link} target="_blank">
+                      Read More
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
+              </Button>
+          </div>
+        </CardFooter>
+      </Card>
+    </div>
   );
 }

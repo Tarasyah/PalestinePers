@@ -203,7 +203,8 @@ export default function Home() {
           <div className="space-y-8">
               {/* Featured Article */}
               {loading ? <Skeleton className="h-[250px] w-full rounded-lg" /> : featuredArticle && (
-                  <Card className="overflow-hidden bg-gray-800/60 border border-gray-700 text-white shadow-xl hover:shadow-2xl transition-shadow duration-300">
+                <div className="gradient-border">
+                  <Card className="overflow-hidden bg-gray-800/60 border border-gray-700 text-white shadow-xl transition-shadow duration-300">
                       <div className="grid">
                           <div className="p-6 flex flex-col justify-between">
                               <div>
@@ -223,6 +224,7 @@ export default function Home() {
                           </div>
                       </div>
                   </Card>
+                </div>
               )}
 
               {/* Article Grid */}
