@@ -115,19 +115,16 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           const isActive = pathname === item.href;
           return (
              <Link href={item.href} key={item.href}>
-                <button className="relative inline-flex h-10 overflow-hidden rounded-full p-[1px] focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50">
-                  <span className={cn(
-                    "absolute inset-[-1000%] animate-[spin_2s_linear_infinite]",
-                    isActive ? "bg-[conic-gradient(from_90deg_at_50%_50%,#34D399_0%,#10B981_50%,#34D399_100%)]" : "bg-[conic-gradient(from_90deg_at_50%_50%,#A78BFA_0%,#8B5CF6_50%,#A78BFA_100%)]"
-                  )} />
-                  <span className={cn(
-                    "inline-flex h-full w-full cursor-pointer items-center justify-center rounded-full px-4 py-1 text-sm font-medium text-white backdrop-blur-3xl gap-2",
-                    isActive ? "bg-slate-900" : "bg-slate-950"
-                    )}>
-                     <item.icon className="w-4 h-4" />
-                    <span>{item.label}</span>
-                  </span>
-                </button>
+                <Button
+                  variant="ghost"
+                  className={cn(
+                    "shadow-[0_0_0_2px_hsl(var(--primary))_inset] px-4 py-2 bg-transparent text-white rounded-lg font-bold transform hover:-translate-y-1 transition duration-400 flex items-center gap-2",
+                    isActive && "bg-primary/20"
+                  )}
+                >
+                  <item.icon className="w-4 h-4" />
+                  <span>{item.label}</span>
+                </Button>
               </Link>
           );
         })}
