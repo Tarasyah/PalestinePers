@@ -15,28 +15,48 @@ function GazaTracker({ refreshTrigger }: GazaTrackerProps) {
   const [loading, setLoading] = useState(true);
   const [days, setDays] = useState<number | null>(null);
 
-  useEffect(() => {
-    const calculateDays = () => {
-      const startDate = new Date('2023-10-07T00:00:00Z');
-      const currentDate = new Date();
-      const timeDiff = currentDate.getTime() - startDate.getTime();
-      const daysDiff = Math.floor(timeDiff / (1000 * 3600 * 24)) + 1;
-      setDays(daysDiff);
-    };
-
-    calculateDays();
-
-    const now = new Date();
-    const msUntilMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0, 0).getTime() - now.getTime();
+  const calculateDaysInWIB = useCallback(() => {
+    // WIB is UTC+7
+    const WIB_OFFSET = 7 * 60 * 60 * 1000;
     
+    // Get current time in UTC, then adjust to WIB
+    const nowUtc = new Date();
+    const nowWib = new Date(nowUtc.getTime() + WIB_OFFSET);
+
+    // Start date in UTC
+    const startDate = new Date('2023-10-07T00:00:00Z');
+
+    // To properly calculate the difference in days, we should work with dates only, ignoring time.
+    // We create a WIB version of the start date to be safe, although for 00:00:00Z it's the same calendar day in WIB.
+    const startDateInWIB = new Date(startDate.getTime() + WIB_OFFSET);
+    
+    // Get the start of the day for both dates in WIB
+    const startOfTodayWIB = new Date(nowWib.getFullYear(), nowWib.getMonth(), nowWib.getDate());
+    const startOfStartDateWIB = new Date(startDateInWIB.getFullYear(), startDateInWIB.getMonth(), startDateInWIB.getDate());
+
+    const timeDiff = startOfTodayWIB.getTime() - startOfStartDateWIB.getTime();
+    const daysDiff = Math.floor(timeDiff / (1000 * 3600 * 24));
+    
+    setDays(daysDiff);
+    return nowWib;
+  }, []);
+
+  useEffect(() => {
+    const nowWib = calculateDaysInWIB();
+
+    // Calculate time until next midnight in WIB
+    const tomorrowWib = new Date(nowWib.getFullYear(), nowWib.getMonth(), nowWib.getDate() + 1);
+    const msUntilMidnightWIB = tomorrowWib.getTime() - nowWib.getTime();
+
     const timeout = setTimeout(() => {
-      calculateDays();
-      const dailyInterval = setInterval(calculateDays, 1000 * 60 * 60 * 24);
+      calculateDaysInWIB(); // Recalculate right at midnight
+      // Then set up the daily interval
+      const dailyInterval = setInterval(calculateDaysInWIB, 24 * 60 * 60 * 1000);
       return () => clearInterval(dailyInterval);
-    }, msUntilMidnight);
+    }, msUntilMidnightWIB);
 
     return () => clearTimeout(timeout);
-  }, []);
+  }, [calculateDaysInWIB]);
 
   const fetchTrackerData = useCallback(async () => {
     setLoading(true);
