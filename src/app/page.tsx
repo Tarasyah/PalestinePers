@@ -9,7 +9,7 @@ import { getNewsArticles, NewsArticleWithReports } from "@/lib/data";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardTitle } from "@/components/ui/card";
-import { Search, RefreshCw } from "lucide-react";
+import { Search, RefreshCw, ArrowRight } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
@@ -150,8 +150,16 @@ export default function Home() {
                         </CardTitle>
                         <p className="text-gray-300 line-clamp-4 mb-4">{featuredArticle.excerpt}</p>
                       </div>
-                      <div className="text-xs text-gray-400">
-                        {formatDistanceToNow(new Date(featuredArticle.date), { addSuffix: true })}
+                      <div className="flex justify-between items-center mt-4">
+                        <div className="text-xs text-gray-400">
+                          {formatDistanceToNow(new Date(featuredArticle.date), { addSuffix: true })}
+                        </div>
+                         <Button asChild size="sm" className="bg-green-500 hover:bg-green-600 text-white">
+                            <Link href={featuredArticle.link} target="_blank">
+                                Read More
+                                <ArrowRight className="ml-2 h-4 w-4" />
+                            </Link>
+                        </Button>
                       </div>
                     </div>
                   </div>
