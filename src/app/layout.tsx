@@ -1,3 +1,5 @@
+import { Analytics } from '@vercel/analytics/next';
+
 import type {Metadata} from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster"
@@ -21,6 +23,7 @@ export default function RootLayout({
       </head>
       <body className="font-body antialiased">
         {children}
+        <Analytics />
         <Toaster />
       </body>
     </html>
