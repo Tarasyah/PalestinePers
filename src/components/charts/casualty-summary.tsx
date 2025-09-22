@@ -72,12 +72,14 @@ export default function CasualtySummary() {
     { title: "Women Killed", getValue: (data: SummaryData) => data.killed?.women },
     { title: "Journalists Killed", getValue: (data: SummaryData) => data.killed?.press },
     { title: "Civil Defence Killed", getValue: (data: SummaryData) => data.killed?.civil_defence },
+    { title: "Health Workers Killed", getValue: (data: SummaryData) => data.killed?.health_workers },
+    { title: "UN Staff Killed", getValue: (data: SummaryData) => data.killed?.un_staff },
   ];
 
   return (
     <div>
       <h2 className="text-3xl font-bold tracking-tight mb-4 text-center">Casualty Summary</h2>
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {stats.map((stat, index) => (
           <StatCard 
             key={index} 

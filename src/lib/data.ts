@@ -50,6 +50,30 @@ export interface DailyCasualtyEntry {
   injured_daily: number;
 }
 
+export interface ChildNameCount {
+  name: string;
+  count: number;
+}
+
+export interface PressKilled {
+    name: string;
+    date_of_death: string;
+    gender: string;
+    type: string; // Journalist, Media Worker, etc.
+    nationality: string;
+    location: string;
+    source_link: string;
+}
+
+export interface InfrastructureDamage {
+    report_date: string;
+    residential: number;
+    health: number;
+    education: number;
+    religious: number;
+    'govt buildings': number;
+}
+
 
 const mockArticles: NewsArticleWithReports[] = [
     {
@@ -361,4 +385,5 @@ export const mediaItems: MediaItem[] = [
     caption: 'Young Palestinians wait for a charity organization to distribute food in Gaza City on July 24.'
   },
 ];
+
 
