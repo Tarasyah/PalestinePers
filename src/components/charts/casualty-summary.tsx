@@ -66,12 +66,12 @@ export default function CasualtySummary() {
   }
 
   const stats = [
-    { title: "Total Killed", getValue: (data: SummaryData) => data.killed.total },
-    { title: "Total Injured", getValue: (data: SummaryData) => data.injured.total },
-    { title: "Children Killed", getValue: (data: SummaryData) => data.killed.children },
-    { title: "Women Killed", getValue: (data: SummaryData) => data.killed.women },
-    { title: "Journalists Killed", getValue: (data: SummaryData) => data.killed.press },
-    { title: "Civil Defence Killed", getValue: (data: SummaryData) => data.killed.civil_defence },
+    { title: "Total Killed", getValue: (data: SummaryData) => data.killed?.total },
+    { title: "Total Injured", getValue: (data: SummaryData) => data.injured?.total },
+    { title: "Children Killed", getValue: (data: SummaryData) => data.killed?.children },
+    { title: "Women Killed", getValue: (data: SummaryData) => data.killed?.women },
+    { title: "Journalists Killed", getValue: (data: SummaryData) => data.killed?.press },
+    { title: "Civil Defence Killed", getValue: (data: SummaryData) => data.killed?.civil_defence },
   ];
 
   return (
