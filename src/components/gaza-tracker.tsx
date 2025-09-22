@@ -2,13 +2,22 @@
 "use client";
 
 import { useState, useEffect, useCallback } from 'react';
-import { supabase } from '@/lib/supabase';
 import Image from 'next/image';
 import { Skeleton } from './ui/skeleton';
 
 interface GazaTrackerProps {
   refreshTrigger?: number;
 }
+
+const staticTrackerData = {
+    confirmed_killed: 62192,
+    children_killed: 18430,
+    injured: 157114,
+    starvation_deaths: 271,
+    children_starvation_deaths: 112,
+    deaths_chart_url: 'https://placehold.co/500x800?text=Deaths+Chart',
+    famine_chart_url: 'https://placehold.co/500x800?text=Famine+Chart',
+};
 
 function GazaTracker({ refreshTrigger }: GazaTrackerProps) {
   const [tracker, setTracker] = useState<any>(null);
@@ -60,19 +69,8 @@ function GazaTracker({ refreshTrigger }: GazaTrackerProps) {
 
   const fetchTrackerData = useCallback(async () => {
     setLoading(true);
-    const { data, error } = await supabase
-      .from('gaza_tracker')
-      .select('*')
-      .order('created_at', { ascending: false })
-      .limit(1)
-      .single();
-
-    if (error) {
-      console.error("Error fetching Gaza tracker data:", error.message);
-      setTracker(null);
-    } else {
-      setTracker(data);
-    }
+    // Use static data
+    setTracker(staticTrackerData);
     setLoading(false);
   }, []);
 
@@ -116,7 +114,7 @@ function GazaTracker({ refreshTrigger }: GazaTrackerProps) {
   }
   
   if (!tracker) {
-    return <div className="text-center text-muted-foreground">Could not load Gaza Tracker stats. Please check RLS policies on the 'gaza_tracker' table.</div>;
+    return <div className="text-center text-muted-foreground">Could not load Gaza Tracker stats.</div>;
   }
 
   return (

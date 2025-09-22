@@ -5,12 +5,8 @@ import type { NewsArticleWithReports } from '@/lib/data';
 import { Card, CardContent, CardTitle, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from './ui/button';
-import { ArrowRight, Bookmark, Clock, Trash2 } from 'lucide-react';
+import { ArrowRight, Clock } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
-import { cn } from '@/lib/utils';
-import { supabase } from '@/lib/supabase';
-import { useToast } from '@/hooks/use-toast';
-import { useState } from 'react';
 import { HoverBorderGradient } from './ui/hover-border-gradient';
 
 const topicColorMap: { [key: string]: string } = {
@@ -41,71 +37,7 @@ function getSourceBadgeClasses(source: string) {
 }
 
 
-export function NewsCard({ article, onDelete }: { article: NewsArticleWithReports, onDelete?: (articleId: string) => void }) {
-  const { toast } = useToast();
-  const [isSaving, setIsSaving] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
-
-  const handleSaveArticle = async () => {
-    setIsSaving(true);
-    const { data: { user } } = await supabase.auth.getUser();
-
-    if (!user) {
-      toast({
-        variant: "destructive",
-        title: "Not logged in",
-        description: "You must be logged in to save articles.",
-      });
-      setIsSaving(false);
-      return;
-    }
-
-    const { error } = await supabase
-      .from('saved_articles')
-      .insert({ user_id: user.id, article_id: article.id });
-
-    if (error) {
-       if (error.code === '23505') { // Unique constraint violation
-        toast({
-          title: "Already Saved",
-          description: "This article is already in your saved list.",
-        });
-      } else {
-        toast({
-          variant: "destructive",
-          title: "Save Failed",
-          description: error.message,
-        });
-      }
-    } else {
-      toast({
-        title: "Article Saved",
-        description: "You can find it in your 'Saved Articles' list.",
-      });
-    }
-    setIsSaving(false);
-  };
-  
-  const handleDeleteClick = async () => {
-    if (onDelete) {
-        setIsDeleting(true);
-        try {
-            await onDelete(article.id);
-            toast({
-                title: "Article Removed",
-                description: "The article has been removed from your saved list.",
-            });
-        } catch (error: any) {
-             toast({
-                variant: "destructive",
-                title: "Deletion Failed",
-                description: error.message || "Could not remove the article.",
-            });
-        } finally {
-            setIsDeleting(false);
-        }
-    }
-  }
+export function NewsCard({ article }: { article: NewsArticleWithReports }) {
 
   return (
     <HoverBorderGradient
@@ -131,17 +63,6 @@ export function NewsCard({ article, onDelete }: { article: NewsArticleWithReport
               <span>{formatDistanceToNow(new Date(article.date), { addSuffix: true })}</span>
           </div>
           <div className="flex items-center gap-2">
-              {onDelete ? (
-                  <Button variant="ghost" size="icon" className="text-gray-400 hover:text-red-500" onClick={handleDeleteClick} disabled={isDeleting}>
-                      <Trash2 className="h-5 w-5" />
-                      <span className="sr-only">Delete</span>
-                  </Button>
-              ) : (
-                  <Button variant="ghost" size="icon" className="text-gray-400 hover:text-green-400" onClick={handleSaveArticle} disabled={isSaving}>
-                      <Bookmark className="h-5 w-5" />
-                      <span className="sr-only">Bookmark</span>
-                  </Button>
-              )}
               <Button asChild size="sm" className="bg-green-500 hover:bg-green-600 text-white">
                   <Link href={article.link} target="_blank">
                       Read More

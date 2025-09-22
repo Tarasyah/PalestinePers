@@ -1,4 +1,4 @@
-import { Newspaper, Image as ImageIcon, BarChart2, Bookmark } from "lucide-react";
+import { Newspaper, Image as ImageIcon, BarChart2 } from "lucide-react";
 
 export const navItems = [
   { href: "/", label: "News Feed", icon: Newspaper },

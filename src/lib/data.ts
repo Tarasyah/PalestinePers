@@ -1,6 +1,4 @@
 
-import { supabase } from "./supabase";
-
 export type NewsArticle = {
   id: string;
   title: string;
@@ -25,34 +23,74 @@ export type OfficialReport = {
 // This type will be used in the front-end to handle both articles and reports
 export type NewsArticleWithReports = NewsArticle;
 
+const mockArticles: NewsArticleWithReports[] = [
+    {
+        id: '1',
+        title: 'Israel continues its assault on Gaza, with no ceasefire in sight',
+        source: 'Al Jazeera',
+        date: new Date(Date.now() - 3600000).toISOString(),
+        excerpt: 'Israeli forces have launched new airstrikes on Gaza, hitting residential buildings and causing civilian casualties. International calls for a ceasefire have so far been ignored.',
+        link: '#',
+        category: 'Conflict',
+        priority: 'breaking'
+    },
+    {
+        id: '2',
+        title: 'Humanitarian crisis deepens in Gaza as aid is blocked',
+        source: 'Middle East Eye',
+        date: new Date(Date.now() - 7200000).toISOString(),
+        excerpt: 'Aid organizations warn of a catastrophic humanitarian situation in Gaza as essential supplies like food, water, and medicine are unable to enter the besieged enclave.',
+        link: '#',
+        category: 'Humanitarian',
+        priority: 'urgent'
+    },
+    {
+        id: '3',
+        title: 'UN calls for investigation into war crimes in Palestine',
+        source: 'WAFA News',
+        date: new Date(Date.now() - 10800000).toISOString(),
+        excerpt: 'The United Nations Human Rights Council has passed a resolution to launch an independent investigation into alleged war crimes committed in the recent conflict.',
+        link: '#',
+        category: 'Politics',
+        priority: 'normal'
+    },
+    {
+        id: '4',
+        title: 'Regional powers meet to discuss de-escalation',
+        source: 'Reuters',
+        date: new Date(Date.now() - 21600000).toISOString(),
+        excerpt: 'Leaders from several Middle Eastern countries are holding an emergency summit to find a diplomatic solution and de-escalate the conflict.',
+        link: '#',
+        category: 'Regional News',
+        priority: 'normal'
+    },
+    {
+        id: '5',
+        title: 'Analysis: The shifting dynamics of the Israeli-Palestinian conflict',
+        source: 'Middle East Monitor',
+        date: new Date(Date.now() - 43200000).toISOString(),
+        excerpt: 'Experts analyze the long-term implications of the latest round of violence and what it means for the future of the region and the two-state solution.',
+        link: '#',
+        category: 'Analysis',
+        priority: 'normal'
+    },
+     {
+        id: '6',
+        title: '‘Moral imperative’: Hundreds of business leaders demand UK action on Israel',
+        source: 'Al Jazeera',
+        date: '2024-08-22T14:00:00.000Z',
+        excerpt: '‘Moral imperative’: Hundreds of business leaders demand UK action on Israel...',
+        link: 'https://www.aljazeera.com/news/2024/7/24/moral-imperative-hundreds-of-business-leaders-demand-uk-action-on-israel',
+        image: 'https://www.aljazeera.com/wp-content/uploads/2024/07/Office-of-Justin-Welby-1721821035.jpg?resize=770%2C513&quality=80',
+        category: 'International News',
+        priority: 'normal'
+    },
+];
+
 export async function getNewsArticles(): Promise<NewsArticleWithReports[]> {
-  console.log("Fetching articles from Supabase...");
-  const { data, error } = await supabase
-    .from('articles')
-    .select('*')
-    .order('published_at', { ascending: false });
-
-  if (error) {
-    console.error('Error fetching articles:', error);
-    return [];
-  }
-  
-  console.log("Raw data from Supabase:", data);
-
-  const articles = data.map((article: any) => ({
-    id: article.id,
-    title: article.title,
-    source: article.source,
-    date: article.published_at,
-    excerpt: article.summary,
-    link: article.link,
-    image: article.image_url,
-    category: article.category,
-    priority: article.priority
-  }));
-  
-  console.log("Processed articles:", articles);
-  return articles;
+  console.log("Fetching mock articles...");
+  // Return mock data instead of fetching from Supabase
+  return Promise.resolve(mockArticles);
 }
 
 export const officialReports: OfficialReport[] = [

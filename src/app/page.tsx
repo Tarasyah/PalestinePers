@@ -58,21 +58,23 @@ export default function Home() {
     });
 
     try {
-      const response = await fetch("https://pdmrygvnymhwgbvdrpki.supabase.co/functions/v1/scrape-news", {
+      const response = await fetch("https://api.parse.bot/scraper/7f768d3f-52ba-44f2-9d2a-02b49b376141/run", {
         method: "POST",
         headers: {
-          'Authorization': `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`
+          'Authorization': `Bearer 5ebc99eb-3b0e-4e84-b9fd-9371c9491201`,
         }
       });
-      const data = await response.json();
-
+      
       if (!response.ok) {
-        throw new Error(data.error || "Something went wrong during scraping.");
+        const errorData = await response.json().catch(() => ({ error: "Unknown scraping error" }));
+        throw new Error(errorData.error || `Scraping failed with status: ${response.status}`);
       }
+
+      const data = await response.json();
 
       toast({
         title: "Scraping Complete",
-        description: `Successfully scraped ${data.articlesScraped} articles.`,
+        description: `Scraping process finished.`,
       });
 
     } catch (error: any) {
@@ -82,7 +84,10 @@ export default function Home() {
         description: error.message,
       });
     } finally {
-      await fetchArticles();
+      // With static data, we just re-trigger animations and refresh tracker
+      setLoading(true);
+      await new Promise(res => setTimeout(res, 500)); // Simulate loading
+      setLoading(false);
       setTrackerRefreshKey(prevKey => prevKey + 1); // Trigger GazaTracker refresh
       setVisibleArticlesCount(ARTICLES_PER_PAGE); // Reset visible articles
       setIsScraping(false);
