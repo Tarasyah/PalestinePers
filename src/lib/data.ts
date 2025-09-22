@@ -1,4 +1,5 @@
 
+
 export type NewsArticle = {
   id: string;
   title: string;
@@ -22,6 +23,33 @@ export type OfficialReport = {
 
 // This type will be used in the front-end to handle both articles and reports
 export type NewsArticleWithReports = NewsArticle;
+
+// New types for the dashboard data from techforpalestine.org
+export interface SummaryData {
+  killed: {
+    total: number;
+    women: number;
+    children: number;
+    press: number;
+    civil_defence: number;
+    health_workers: number;
+    un_staff: number;
+    foreigners: number;
+  };
+  injured: {
+    total: number;
+  };
+  last_update: string; // ISO 8601 date string
+}
+
+export interface DailyCasualtyEntry {
+  report_date: string; // "YYYY-MM-DD"
+  killed_total: number;
+  injured_total: number;
+  killed_daily: number;
+  injured_daily: number;
+}
+
 
 const mockArticles: NewsArticleWithReports[] = [
     {
@@ -333,3 +361,4 @@ export const mediaItems: MediaItem[] = [
     caption: 'Young Palestinians wait for a charity organization to distribute food in Gaza City on July 24.'
   },
 ];
+
