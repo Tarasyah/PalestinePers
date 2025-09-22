@@ -61,25 +61,30 @@ export default function CasualtySummary() {
     fetchData();
   }, []);
 
-  const stats = [
-    { title: "Total Killed", value: summaryData?.killed.total },
-    { title: "Total Injured", value: summaryData?.injured.total },
-    { title: "Children Killed", value: summaryData?.killed.children },
-    { title: "Women Killed", value: summaryData?.killed.women },
-    { title: "Journalists Killed", value: summaryData?.killed.press },
-    { title: "Civil Defence Killed", value: summaryData?.killed.civil_defence },
-  ];
-
   if (error) {
     return <div className="text-center text-red-500">Error loading summary: {error}</div>;
   }
+
+  const stats = [
+    { title: "Total Killed", getValue: (data: SummaryData) => data.killed.total },
+    { title: "Total Injured", getValue: (data: SummaryData) => data.injured.total },
+    { title: "Children Killed", getValue: (data: SummaryData) => data.killed.children },
+    { title: "Women Killed", getValue: (data: SummaryData) => data.killed.women },
+    { title: "Journalists Killed", getValue: (data: SummaryData) => data.killed.press },
+    { title: "Civil Defence Killed", getValue: (data: SummaryData) => data.killed.civil_defence },
+  ];
 
   return (
     <div>
       <h2 className="text-3xl font-bold tracking-tight mb-4 text-center">Casualty Summary</h2>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {stats.map((stat, index) => (
-          <StatCard key={index} title={stat.title} value={stat.value} isLoading={loading} />
+          <StatCard 
+            key={index} 
+            title={stat.title} 
+            value={loading || !summaryData ? undefined : stat.getValue(summaryData)} 
+            isLoading={loading} 
+          />
         ))}
       </div>
         { !loading && summaryData && (
@@ -90,4 +95,3 @@ export default function CasualtySummary() {
     </div>
   );
 }
-
