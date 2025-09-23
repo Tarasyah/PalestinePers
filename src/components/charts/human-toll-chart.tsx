@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect, useMemo } from 'react';
@@ -13,6 +12,16 @@ import { Skeleton } from '@/components/ui/skeleton';
 import type { SummaryData } from '@/lib/data';
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
 import { AlertTriangle } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 
 interface DailyCasualtyEntry {
   report_date: string;
@@ -33,7 +42,6 @@ const START_DATE = new Date('2023-10-07');
 const events = [
   { date: '2024-01-26', label: 'ICJ Ruling' },
   { date: '2024-05-24', label: 'ICJ Orders Halt' },
-  { date: '2024-07-01', label: 'GHF Start' },
 ];
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
@@ -43,7 +51,6 @@ const CustomDot = (props: any) => {
   
     if (!eventLabel) return null;
   
-    // Position dot based on chart data, not hardcoded coordinates
     const chartHeight = 350; // Approximate height of the chart content area
     const yPosition = cy > chartHeight / 2 ? cy - 30 : cy + 50;
     const lineEndY = cy > chartHeight / 2 ? cy - 20 : cy + 40;
@@ -60,16 +67,26 @@ const CustomDot = (props: any) => {
     );
 };
 
-const StatItem = ({ value, label, subLabel }: { value?: number, label: string, subLabel: string }) => (
-    <div className="text-center md:text-left">
-      <span className="text-lg font-bold">
-        {value !== undefined ? <CountUp end={value} separator="," duration={1.5} /> : 'N/A'}
-      </span>
-      <span className="text-destructive ml-1">{label}</span>
-      <span className="text-muted-foreground ml-1">{subLabel}</span>
-    </div>
-);
-
+const StatItem = ({ value, label, subLabel }: { value?: number, label: string, subLabel: string }) => {
+    if (value === undefined || value === null) {
+        return (
+            <div className="text-center md:text-left">
+              <span className="text-lg font-bold">N/A</span>
+              <span className="text-destructive ml-1">{label}</span>
+              <span className="text-muted-foreground ml-1">{subLabel}</span>
+            </div>
+        )
+    }
+    return (
+        <div className="text-center md:text-left">
+        <span className="text-lg font-bold">
+            <CountUp end={value} separator="," duration={1.5} />
+        </span>
+        <span className="text-destructive ml-1">{label}</span>
+        <span className="text-muted-foreground ml-1">{subLabel}</span>
+        </div>
+    );
+};
 
 export default function HumanTollChart() {
   const { data: gazaData, error: gazaError, isLoading: gazaLoading } = useSWR<DailyCasualtyEntry[]>('https://data.techforpalestine.org/api/v2/casualties_daily.min.json', fetcher);
@@ -136,17 +153,34 @@ export default function HumanTollChart() {
   }
 
   return (
-    <Card className="bg-card/80 backdrop-blur-sm border-none shadow-2xl">
+    <Card className="bg-card/80 backdrop-blur-sm border-none shadow-2xl w-full">
       <CardHeader className="pb-2">
         <CardTitle className="text-2xl md:text-3xl font-bold">The Human Toll | Daily Casualties Datasets</CardTitle>
         <p className="text-muted-foreground">Since October 7, 2023 for Gaza and the West Bank</p>
-         <Alert variant="destructive" className="max-w-lg mt-2 bg-destructive/10 border-destructive/30">
-            <AlertTriangle className="h-4 w-4 !text-destructive" />
-            <AlertTitle className="font-semibold !text-destructive">Disclaimer</AlertTitle>
-            <AlertDescription className="!text-destructive/80">
-                These numbers do not fully reflect the human toll. <a href="#" className="underline">Learn why</a>.
-            </AlertDescription>
-        </Alert>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+                <Alert variant="destructive" className="max-w-lg mt-2 bg-destructive/10 border-destructive/30 cursor-pointer hover:bg-destructive/20">
+                    <AlertTriangle className="h-4 w-4 !text-destructive" />
+                    <AlertTitle className="font-semibold !text-destructive">Disclaimer</AlertTitle>
+                    <AlertDescription className="!text-destructive/80">
+                        These numbers do not fully reflect the human toll. <span className="underline">Learn why</span>.
+                    </AlertDescription>
+                </Alert>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+                <AlertDialogHeader>
+                <AlertDialogTitle>About the Data</AlertDialogTitle>
+                <AlertDialogDescription>
+                    The casualty numbers presented here are based on the best available data from sources like the Palestinian Ministry of Health. However, the true human toll is likely much higher.
+                    <br/><br/>
+                    Factors include thousands of individuals missing under the rubble, undocumented deaths, and the difficulty of data collection in an active conflict zone. These numbers should be considered a conservative estimate.
+                </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                <AlertDialogAction>Understand</AlertDialogAction>
+                </AlertDialogFooter>
+            </AlertDialogContent>
+        </AlertDialog>
       </CardHeader>
       <CardContent className="p-4 md:p-6">
         {summaryLoading ? (
@@ -183,7 +217,7 @@ export default function HumanTollChart() {
             <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={chartData} margin={{ top: 20, right: 30, left: 0, bottom: 40 }}>
                 <defs>
-                <linearGradient id="colorKilled" x1="0" y1="0" x2="0" y2="1">
+                <linearGradient id="colorCumulativeKilled" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.7}/>
                     <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
                 </linearGradient>
@@ -213,7 +247,7 @@ export default function HumanTollChart() {
                     dataKey="cumulativeKilled" 
                     stroke="hsl(var(--primary))" 
                     strokeWidth={2}
-                    fill="url(#colorKilled)" 
+                    fill="url(#colorCumulativeKilled)" 
                     dot={false}
                     activeDot={{ r: 6, stroke: 'white', strokeWidth: 2, fill: 'hsl(var(--primary))' }}
                 />

@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -67,9 +66,9 @@ export default function KilledChildrenNames() {
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={400}>
-          <BarChart data={chartData} layout="vertical" margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+          <BarChart data={chartData} layout="vertical" margin={{ top: 5, right: 30, left: 10, bottom: 5 }}>
             <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.2} />
-            <XAxis type="number" />
+            <XAxis type="number" tick={{ fontSize: 12 }} />
             <YAxis 
                 type="category" 
                 dataKey="name" 
@@ -85,7 +84,7 @@ export default function KilledChildrenNames() {
               formatter={(value: number) => [value.toLocaleString(), "Count"]}
             />
             <Bar dataKey="count" fill="hsl(var(--primary))" radius={[0, 4, 4, 0]}>
-                <LabelList dataKey="count" position="right" style={{ fill: 'hsl(var(--foreground))' }} />
+                <LabelList dataKey="count" position="right" style={{ fill: 'hsl(var(--foreground))', fontSize: 12 }} />
             </Bar>
           </BarChart>
         </ResponsiveContainer>

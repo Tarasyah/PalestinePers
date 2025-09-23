@@ -8,8 +8,8 @@ export default function StatisticsPage() {
     <AppLayout>
       <div className="space-y-8">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight mb-4">oPt Unified Health Dashboard</h2>
-          <div className="w-full" style={{ height: '600px' }}>
+          <h2 className="text-2xl font-bold tracking-tight text-center mb-4">oPt Unified Health Dashboard</h2>
+          <div className="w-full aspect-video">
             <iframe
               title="oPt Unified Health Dashboard"
               width="100%"
@@ -22,8 +22,8 @@ export default function StatisticsPage() {
           </div>
         </div>
         <div>
-          <h2 className="text-2xl font-bold tracking-tight mb-4">Data on demolition and displacement in the West Bank</h2>
-          <div className="w-3/4 mx-auto" style={{ height: '800px' }}>
+          <h2 className="text-2xl font-bold tracking-tight text-center mb-4">Data on demolition and displacement in the West Bank</h2>
+          <div className="w-full aspect-[4/3]">
             <iframe
               title="Data on demolition and displacement in the West Bank"
               width="100%"

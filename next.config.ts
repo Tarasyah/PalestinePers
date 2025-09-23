@@ -35,6 +35,7 @@ const nextConfig: NextConfig = {
       bodySizeLimit: '2mb',
     },
   },
+  transpilePackages: ['recharts', 'd3-shape'],
 };
 
 export default nextConfig;

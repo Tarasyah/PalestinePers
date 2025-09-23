@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -6,7 +5,7 @@ import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import type { DailyCasualtyEntry } from '@/lib/data';
-import { subDays, startOfWeek, isSameWeek } from 'date-fns';
+import { startOfWeek, isSameWeek } from 'date-fns';
 
 interface ChartDataItem {
   date: string;
@@ -73,6 +72,13 @@ function mergeAndProcessData(gazaData: DailyCasualtyEntry[], westBankData: Daily
   return weeklyData;
 }
 
+const yAxisFormatter = (value: number) => {
+  if (value >= 1000) {
+    return `${(value / 1000).toFixed(1)}k`;
+  }
+  return value.toString();
+};
+
 
 export default function CasualtiesOverTime() {
   const [chartData, setChartData] = useState<ChartDataItem[]>([]);
@@ -136,11 +142,11 @@ export default function CasualtiesOverTime() {
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={400}>
-          <AreaChart data={chartData} margin={{ top: 10, right: 30, left: 20, bottom: 0 }}>
+          <AreaChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
             <defs>
               <linearGradient id="colorKilled" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#b91c1c" stopOpacity={0.8}/>
-                <stop offset="95%" stopColor="#b91c1c" stopOpacity={0}/>
+                <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.8}/>
+                <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
               </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.2} />
@@ -148,10 +154,12 @@ export default function CasualtiesOverTime() {
               dataKey="date" 
               tickFormatter={(dateStr) => new Date(dateStr).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
               minTickGap={30}
+              tick={{ fontSize: 12 }}
               />
             <YAxis 
-                tickFormatter={(value) => value.toLocaleString()} 
-                width={80}
+                tickFormatter={yAxisFormatter} 
+                width={40}
+                tick={{ fontSize: 12 }}
             />
             <Tooltip
               contentStyle={{
@@ -166,7 +174,7 @@ export default function CasualtiesOverTime() {
                 type="monotone" 
                 dataKey="TotalKilled"
                 name="Total Killed (Weekly)"
-                stroke="#ef4444"
+                stroke="hsl(var(--primary))"
                 fillOpacity={1} 
                 fill="url(#colorKilled)" />
           </AreaChart>
@@ -175,4 +183,3 @@ export default function CasualtiesOverTime() {
     </Card>
   );
 }
-

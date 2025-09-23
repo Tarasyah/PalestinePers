@@ -96,10 +96,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
              <Link href={item.href} key={item.href}>
                 <Button
                   variant={isActive ? "secondary" : "ghost"}
-                  className={cn(
-                    "font-bold",
-                    !isActive && "shadow-[0_0_0_2px_hsl(var(--primary))_inset] text-foreground"
-                  )}
+                  className="font-bold"
                 >
                   <item.icon className="w-4 h-4" />
                   <span>{item.label}</span>
@@ -121,7 +118,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
             isAtTop ? "bg-transparent border-transparent" : "bg-background/50 border-border"
         )}
       >
-        <div className="container flex items-center h-16 px-4 mx-auto sm:px-6 lg:px-8">
+        <div className="w-full max-w-7xl mx-auto flex items-center h-16 px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-3 mr-auto">
             <Globe className="w-8 h-8 text-primary" />
             <div className="hidden sm:block">
@@ -134,11 +131,11 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           {renderNav()}
         </div>
       </header>
-      <main className="container flex-grow px-4 py-8 mx-auto sm:px-6 lg:px-8 pt-24">
+      <main className="flex-grow w-full max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8 pt-24">
         {children}
       </main>
        <footer className="py-6 md:px-8 md:py-0 bg-background/50 border-t">
-        <div className="container flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
+        <div className="w-full max-w-7xl mx-auto flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row px-4 sm:px-6 lg:px-8">
             <p className="text-balance text-center text-sm leading-loose text-muted-foreground md:text-left">
             Built by activists, for activists. This is an open-source project.
             </p>

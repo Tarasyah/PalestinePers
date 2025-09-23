@@ -1,5 +1,3 @@
-
-
 import { AppLayout } from "@/components/app-layout";
 import CasualtiesOverTime from "@/components/charts/casualties-over-time";
 import CasualtySummary from "@/components/charts/casualty-summary";
@@ -14,12 +12,14 @@ export default function DashboardPage() {
       <div className="space-y-8">
         <HumanTollChart />
         <CasualtySummary />
-        <div className="grid gap-8 md:grid-cols-2">
+        <div className="grid gap-8 md:grid-cols-1 lg:grid-cols-2">
             <KilledChildrenNames />
             <VictimsTable />
         </div>
-        <CasualtiesOverTime />
-        <InfrastructureDamageChart />
+        <div className="grid gap-8 md:grid-cols-1 lg:grid-cols-2">
+          <CasualtiesOverTime />
+          <InfrastructureDamageChart />
+        </div>
       </div>
     </AppLayout>
   );
