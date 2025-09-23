@@ -1,6 +1,8 @@
+
 "use client";
 
 import { useState, useEffect, useMemo } from 'react';
+import useSWR from 'swr';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine, Dot } from 'recharts';
 import CountUp from 'react-countup';
 import { format, differenceInDays, addDays } from 'date-fns';
@@ -8,65 +10,37 @@ import { format, differenceInDays, addDays } from 'date-fns';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Slider } from '@/components/ui/slider';
 import { Skeleton } from '@/components/ui/skeleton';
-import type { DailyCasualtyEntry, SummaryData } from '@/lib/data';
+import type { SummaryData } from '@/lib/data';
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
 import { AlertTriangle } from 'lucide-react';
+
+interface DailyCasualtyEntry {
+  report_date: string;
+  killed_total: number;
+  injured_total: number;
+  killed_daily: number;
+  injured_daily: number;
+}
 
 interface ChartDataItem {
   date: string;
   dayNumber: number;
-  gazaKilled: number;
-  westBankKilled: number;
-  totalKilled: number;
   cumulativeKilled: number;
 }
 
 const START_DATE = new Date('2023-10-07');
 
-// Data for notable events
 const events = [
-  { date: '2024-01-26', label: 'ICJ Ruling', y: 30000 },
-  { date: '2024-05-24', label: 'ICJ Orders Halt', y: 45000 },
-  { date: '2024-07-01', label: 'GHF Start', y: 55000 },
+  { date: '2024-01-26', label: 'ICJ Ruling' },
+  { date: '2024-05-24', label: 'ICJ Orders Halt' },
+  { date: '2024-07-01', label: 'GHF Start' },
 ];
 
-function processData(gazaData: DailyCasualtyEntry[], westBankData: DailyCasualtyEntry[]): ChartDataItem[] {
-  const combined: { [date: string]: { gaza: number; westBank: number } } = {};
-
-  gazaData.forEach(entry => {
-    if (!combined[entry.report_date]) combined[entry.report_date] = { gaza: 0, westBank: 0 };
-    combined[entry.report_date].gaza = entry.killed_daily || 0;
-  });
-
-  westBankData.forEach(entry => {
-    if (!combined[entry.report_date]) combined[entry.report_date] = { gaza: 0, westBank: 0 };
-    combined[entry.report_date].westBank = entry.killed_daily || 0;
-  });
-
-  const sortedDates = Object.keys(combined).sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
-  
-  let cumulativeKilled = 0;
-  return sortedDates.map(date => {
-    const dayData = combined[date];
-    const totalKilled = dayData.gaza + dayData.westBank;
-    cumulativeKilled += totalKilled;
-    const dayNumber = differenceInDays(new Date(date), START_DATE) + 1;
-    return {
-      date,
-      dayNumber,
-      gazaKilled: dayData.gaza,
-      westBankKilled: dayData.westBank,
-      totalKilled,
-      cumulativeKilled,
-    };
-  });
-}
-
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 const CustomDot = (props: any) => {
     const { cx, cy, payload, eventLabel } = props;
   
-    // Don't render a dot if it's not an event
     if (!eventLabel) return null;
   
     return (
@@ -92,67 +66,69 @@ const StatItem = ({ value, label, subLabel }: { value?: number, label: string, s
 
 
 export default function HumanTollChart() {
-  const [data, setData] = useState<ChartDataItem[]>([]);
-  const [summaryData, setSummaryData] = useState<SummaryData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data: gazaData, error: gazaError, isLoading: gazaLoading } = useSWR<DailyCasualtyEntry[]>('https://data.techforpalestine.org/api/v2/casualties_daily.min.json', fetcher);
+  const { data: westBankData, error: westBankError, isLoading: westBankLoading } = useSWR<DailyCasualtyEntry[]>('https://data.techforpalestine.org/api/v2/west_bank_daily.min.json', fetcher);
+  const { data: summaryData, error: summaryError, isLoading: summaryLoading } = useSWR<SummaryData>('https://data.techforpalestine.org/api/v3/summary.min.json', fetcher);
+  
   const [sliderValue, setSliderValue] = useState<number>(0);
 
+  const chartData = useMemo<ChartDataItem[] | null>(() => {
+    if (!gazaData || !westBankData) return null;
+
+    const combined: { [date: string]: number } = {};
+
+    gazaData.forEach(entry => {
+        combined[entry.report_date] = (combined[entry.report_date] || 0) + entry.killed_daily;
+    });
+    westBankData.forEach(entry => {
+        combined[entry.report_date] = (combined[entry.report_date] || 0) + entry.killed_daily;
+    });
+
+    const sortedDates = Object.keys(combined).sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
+    
+    let cumulativeKilled = 0;
+    return sortedDates.map(date => {
+      cumulativeKilled += combined[date];
+      const dayNumber = differenceInDays(new Date(date), START_DATE) + 1;
+      return {
+        date,
+        dayNumber,
+        cumulativeKilled,
+      };
+    });
+  }, [gazaData, westBankData]);
+
   useEffect(() => {
-    async function fetchData() {
-      try {
-        setLoading(true);
-        const [gazaRes, westBankRes, summaryRes] = await Promise.all([
-          fetch('https://data.techforpalestine.org/api/v2/casualties_daily.min.json'),
-          fetch('https://data.techforpalestine.org/api/v2/west_bank_daily.min.json'),
-          fetch('https://data.techforpalestine.org/api/v3/summary.min.json'),
-        ]);
-
-        if (!gazaRes.ok || !westBankRes.ok || !summaryRes.ok) {
-          throw new Error('Failed to fetch all required data');
-        }
-
-        const gazaData: DailyCasualtyEntry[] = await gazaRes.json();
-        const westBankData: DailyCasualtyEntry[] = await westBankRes.json();
-        const summary: SummaryData = await summaryRes.json();
-        
-        const processed = processData(gazaData, westBankData);
-        setData(processed);
-        setSummaryData(summary);
-        setSliderValue(processed.length); // Set slider to the latest day
-        setError(null);
-      } catch (err: any) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
+    if (chartData && chartData.length > 0 && sliderValue === 0) {
+      setSliderValue(chartData.length);
     }
-    fetchData();
-  }, []);
+  }, [chartData, sliderValue]);
 
   const activeData = useMemo(() => {
-    if (data.length === 0) return null;
-    // Slider value is 1-based day number, index is 0-based
-    const index = Math.min(Math.max(sliderValue - 1, 0), data.length - 1);
-    return data[index];
-  }, [sliderValue, data]);
-  
+    if (!chartData || chartData.length === 0) return null;
+    const index = Math.min(Math.max(sliderValue - 1, 0), chartData.length - 1);
+    return chartData[index];
+  }, [sliderValue, chartData]);
+
   const eventDots = useMemo(() => {
+    if (!chartData) return [];
     return events.map(event => {
       const eventDayNumber = differenceInDays(new Date(event.date), START_DATE) + 1;
-      const dataPoint = data.find(d => d.dayNumber === eventDayNumber);
+      const dataPoint = chartData.find(d => d.dayNumber === eventDayNumber);
       if (!dataPoint) return null;
       return { ...dataPoint, eventLabel: event.label };
     }).filter(Boolean);
-  }, [data]);
+  }, [chartData]);
+  
+  const isLoading = gazaLoading || westBankLoading || summaryLoading;
+  const error = gazaError || westBankError || summaryError;
 
-
-  if (loading) {
+  if (isLoading) {
     return <Skeleton className="w-full h-[700px]" />;
   }
 
-  if (error) {
-    return <div className="text-center text-red-500 p-8">Error loading data: {error}</div>;
+  if (error || !chartData) {
+    return <div className="text-center text-red-500 p-8">Error loading data: {error?.message || 'Could not process chart data.'}</div>;
   }
 
   return (
@@ -202,7 +178,7 @@ export default function HumanTollChart() {
                 </div>
             </div>
             <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={data} margin={{ top: 20, right: 30, left: 0, bottom: 20 }}>
+            <AreaChart data={chartData} margin={{ top: 20, right: 30, left: 0, bottom: 20 }}>
                 <defs>
                 <linearGradient id="colorKilled" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.7}/>
@@ -224,9 +200,9 @@ export default function HumanTollChart() {
                         borderRadius: 'var(--radius)',
                     }}
                     labelFormatter={(label) => `Day ${label}`}
-                    formatter={(value: number, name: string, props) => {
+                    formatter={(value: number, name: string, props: any) => {
                         const date = format(new Date(props.payload.date), 'MMM d, yyyy');
-                        return [value.toLocaleString(), `Killed on ${date}`];
+                        return [value.toLocaleString(), `Total Killed by ${date}`];
                     }}
                 />
                 <Area 
@@ -238,10 +214,8 @@ export default function HumanTollChart() {
                     dot={false}
                     activeDot={{ r: 6, stroke: 'white', strokeWidth: 2, fill: 'hsl(var(--primary))' }}
                 />
-
-                {/* Event Markers */}
                 {eventDots.map((event, index) => event && (
-                    <ReferenceLine key={index} x={event.dayNumber} stroke="transparent" >
+                    <ReferenceLine key={index} x={event.dayNumber} stroke="transparent" ifOverflow="extendDomain">
                         <CustomDot cx={0} cy={0} payload={event} eventLabel={event.eventLabel} />
                     </ReferenceLine>
                 ))}
@@ -252,7 +226,7 @@ export default function HumanTollChart() {
         <div className="mt-4 px-4">
             <Slider
                 min={1}
-                max={data.length}
+                max={chartData.length}
                 step={1}
                 value={[sliderValue]}
                 onValueChange={(value) => setSliderValue(value[0])}
