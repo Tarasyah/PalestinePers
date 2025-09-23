@@ -4,7 +4,7 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table';
+import { Table, TableBody, TableCell, TableRow, TableHead, TableHeader } from '@/components/ui/table';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import type { PressKilled } from '@/lib/data';
@@ -40,7 +40,8 @@ export default function PressKilledTable() {
 
   useEffect(() => {
     const results = journalists.filter(j =>
-      j.name.toLowerCase().includes(searchTerm.toLowerCase())
+      j.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      j.name_ar.includes(searchTerm)
     );
     setFilteredJournalists(results);
   }, [searchTerm, journalists]);
@@ -74,14 +75,25 @@ export default function PressKilledTable() {
             <Skeleton className="h-8 w-full" />
           </div>
         ) : (
-          <ScrollArea className="h-[400px]">
+          <ScrollArea className="h-[350px]">
             <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Name (Latin)</TableHead>
+                  <TableHead className="text-right">Name (Arabic)</TableHead>
+                </TableRow>
+              </TableHeader>
               <TableBody>
                 {filteredJournalists.map((j, index) => (
                   <TableRow key={index}>
                     <TableCell className="font-medium">
                         <a href={j.source_link} target="_blank" rel="noopener noreferrer" className="hover:underline">
                             {j.name}
+                        </a>
+                    </TableCell>
+                    <TableCell className="text-right font-medium" dir="rtl">
+                       <a href={j.source_link} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                            {j.name_ar}
                         </a>
                     </TableCell>
                   </TableRow>
@@ -94,3 +106,4 @@ export default function PressKilledTable() {
     </Card>
   );
 }
+

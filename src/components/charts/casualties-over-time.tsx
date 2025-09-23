@@ -6,82 +6,71 @@ import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import type { DailyCasualtyEntry } from '@/lib/data';
+import { subDays, startOfWeek, isSameWeek } from 'date-fns';
 
 interface ChartDataItem {
   date: string;
   GazaKilled: number;
-  GazaInjured: number;
   WestBankKilled: number;
-  WestBankInjured: number;
   TotalKilled: number;
 }
 
 function mergeAndProcessData(gazaData: DailyCasualtyEntry[], westBankData: DailyCasualtyEntry[]): ChartDataItem[] {
-  const combined: { [date: string]: Partial<ChartDataItem> } = {};
+  const combined: { [date: string]: { gazaKilled: number; westBankKilled: number } } = {};
 
   gazaData.forEach(entry => {
     const date = entry.report_date;
-    if (!combined[date]) combined[date] = { date };
-    combined[date].GazaKilled = entry.killed_total;
-    combined[date].GazaInjured = entry.injured_total;
+    if (!combined[date]) combined[date] = { gazaKilled: 0, westBankKilled: 0 };
+    combined[date].gazaKilled = entry.killed_daily;
   });
 
   westBankData.forEach(entry => {
     const date = entry.report_date;
-    if (!combined[date]) combined[date] = { date };
-    combined[date].WestBankKilled = entry.killed_total;
-    combined[date].WestBankInjured = entry.injured_total;
+    if (!combined[date]) combined[date] = { gazaKilled: 0, westBankKilled: 0 };
+    combined[date].westBankKilled = entry.killed_daily;
   });
 
-  const chartData = Object.values(combined)
-    .map(d => ({
-      date: d.date!,
-      GazaKilled: d.GazaKilled || 0,
-      GazaInjured: d.GazaInjured || 0,
-      WestBankKilled: d.WestBankKilled || 0,
-      WestBankInjured: d.WestBankInjured || 0,
-      TotalKilled: (d.GazaKilled || 0) + (d.WestBankKilled || 0),
+  const dailyData = Object.keys(combined)
+    .map(date => ({
+      date: date,
+      GazaKilled: combined[date].gazaKilled || 0,
+      WestBankKilled: combined[date].westBankKilled || 0,
+      TotalKilled: (combined[date].gazaKilled || 0) + (combined[date].westBankKilled || 0),
     }))
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-    
-    // Aggregate to weekly data to make chart more readable
-    const weeklyData: ChartDataItem[] = [];
-    if (chartData.length > 0) {
-        let weekStart = new Date(chartData[0].date);
-        weekStart.setDate(weekStart.getDate() - weekStart.getDay());
-        let weeklyTotals: ChartDataItem = {
-            date: weekStart.toISOString().split('T')[0],
-            GazaKilled: 0,
-            GazaInjured: 0,
-            WestBankKilled: 0,
-            WestBankInjured: 0,
-            TotalKilled: 0
-        };
 
-        chartData.forEach(daily => {
-            const currentDate = new Date(daily.date);
-            if (currentDate.getTime() < weekStart.getTime() + 7 * 24 * 60 * 60 * 1000) {
-                weeklyTotals.GazaKilled += daily.GazaKilled;
-                weeklyTotals.GazaInjured += daily.GazaInjured;
-                weeklyTotals.WestBankKilled += daily.WestBankKilled;
-                weeklyTotals.WestBankInjured += daily.WestBankInjured;
-                weeklyTotals.TotalKilled += daily.TotalKilled;
-            } else {
-                weeklyData.push(weeklyTotals);
-                weekStart.setDate(weekStart.getDate() + 7);
-                weeklyTotals = {
-                    date: weekStart.toISOString().split('T')[0],
-                    GazaKilled: daily.GazaKilled,
-                    GazaInjured: daily.GazaInjured,
-                    WestBankKilled: daily.WestBankKilled,
-                    WestBankInjured: daily.TotalKilled,
-                    TotalKilled: daily.TotalKilled,
-                };
-            }
-        });
-        weeklyData.push(weeklyTotals);
-    }
-    return weeklyData;
+  // Aggregate to weekly data
+  const weeklyData: ChartDataItem[] = [];
+  if (dailyData.length === 0) return [];
+  
+  let currentWeekStart = startOfWeek(new Date(dailyData[0].date));
+  let weeklyTotals: ChartDataItem = {
+      date: currentWeekStart.toISOString().split('T')[0],
+      GazaKilled: 0,
+      WestBankKilled: 0,
+      TotalKilled: 0
+  };
+
+  dailyData.forEach(day => {
+      const dayDate = new Date(day.date);
+      if (isSameWeek(dayDate, currentWeekStart)) {
+          weeklyTotals.GazaKilled += day.GazaKilled;
+          weeklyTotals.WestBankKilled += day.WestBankKilled;
+          weeklyTotals.TotalKilled += day.TotalKilled;
+      } else {
+          weeklyData.push(weeklyTotals);
+          currentWeekStart = startOfWeek(dayDate);
+          weeklyTotals = {
+              date: currentWeekStart.toISOString().split('T')[0],
+              GazaKilled: day.GazaKilled,
+              WestBankKilled: day.WestBankKilled,
+              TotalKilled: day.TotalKilled,
+          };
+      }
+  });
+  weeklyData.push(weeklyTotals);
+
+  return weeklyData;
 }
 
 
@@ -169,7 +158,7 @@ export default function CasualtiesOverTime() {
                 backgroundColor: 'hsl(var(--background))',
                 borderColor: 'hsl(var(--border))'
               }}
-              labelFormatter={(label) => new Date(label).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+              labelFormatter={(label) => `Week of ${new Date(label).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}`}
               formatter={(value: number, name: string) => [value.toLocaleString(), name]}
             />
             <Legend />
@@ -186,3 +175,4 @@ export default function CasualtiesOverTime() {
     </Card>
   );
 }
+
