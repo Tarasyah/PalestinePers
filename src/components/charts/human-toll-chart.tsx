@@ -169,17 +169,28 @@ export default function HumanTollChart() {
         </Alert>
       </CardHeader>
       <CardContent className="p-4 md:p-6">
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-x-4 gap-y-1 text-sm mb-6">
-            <StatItem value={summaryData?.killed?.total} label="killed" subLabel="seeking aid" />
-            <StatItem value={summaryData?.injured?.total} label="injured" subLabel="" />
-            <StatItem value={summaryData?.killed?.children} label="children" subLabel="killed" />
-            <StatItem value={0} label="starved" subLabel="to death" />
-            <StatItem value={summaryData?.killed?.women} label="women" subLabel="killed" />
-            <StatItem value={summaryData?.killed?.health_workers} label="medical personnel" subLabel="killed" />
-            <StatItem value={summaryData?.killed?.press} label="journalists" subLabel="killed" />
-            <StatItem value={summaryData?.killed?.civil_defence} label="first responders" subLabel="killed" />
-            <StatItem value={0} label="settler" subLabel="attacks" />
-        </div>
+        {summaryData ? (
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-x-4 gap-y-1 text-sm mb-6">
+              <StatItem value={summaryData?.killed?.total} label="killed" subLabel="seeking aid" />
+              <StatItem value={summaryData?.injured?.total} label="injured" subLabel="" />
+              <StatItem value={summaryData?.killed?.children} label="children" subLabel="killed" />
+              <StatItem value={undefined} label="starved" subLabel="to death" />
+              <StatItem value={summaryData?.killed?.women} label="women" subLabel="killed" />
+              <StatItem value={summaryData?.killed?.health_workers} label="medical personnel" subLabel="killed" />
+              <StatItem value={summaryData?.killed?.press} label="journalists" subLabel="killed" />
+              <StatItem value={summaryData?.killed?.civil_defence} label="first responders" subLabel="killed" />
+              <StatItem value={undefined} label="settler" subLabel="attacks" />
+          </div>
+        ) : (
+           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-x-4 gap-y-1 text-sm mb-6">
+             {Array.from({ length: 9 }).map((_, i) => (
+                <div key={i} className="space-y-1">
+                    <Skeleton className="h-6 w-1/2" />
+                    <Skeleton className="h-4 w-3/4" />
+                </div>
+             ))}
+           </div>
+        )}
 
         <div className="relative w-full h-[400px]">
            <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
