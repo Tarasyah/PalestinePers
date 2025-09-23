@@ -3,9 +3,9 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import useSWR from 'swr';
-import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine, Dot } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 import CountUp from 'react-countup';
-import { format, differenceInDays, addDays } from 'date-fns';
+import { format, differenceInDays } from 'date-fns';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Slider } from '@/components/ui/slider';
@@ -43,14 +43,20 @@ const CustomDot = (props: any) => {
   
     if (!eventLabel) return null;
   
+    // Position dot based on chart data, not hardcoded coordinates
+    const chartHeight = 350; // Approximate height of the chart content area
+    const yPosition = cy > chartHeight / 2 ? cy - 30 : cy + 50;
+    const lineEndY = cy > chartHeight / 2 ? cy - 20 : cy + 40;
+    const textY = cy > chartHeight / 2 ? cy - 40 : cy + 60;
+
     return (
-      <>
-        <Dot cx={cx} cy={cy} r={6} stroke="white" strokeWidth={2} fill="hsl(var(--primary))" />
-        <line x1={cx} y1={cy} x2={cx} y2={cy + 30} stroke="hsl(var(--foreground))" strokeDasharray="3 3" />
-        <text x={cx} y={cy + 45} textAnchor="middle" fill="hsl(var(--muted-foreground))" fontSize="12">
+      <g>
+        <circle cx={cx} cy={cy} r={5} stroke="hsl(var(--primary))" strokeWidth={2} fill="hsl(var(--background))" />
+        <line x1={cx} y1={cy} x2={cx} y2={lineEndY} stroke="hsl(var(--foreground))" strokeDasharray="2 2" />
+        <text x={cx} y={textY} textAnchor="middle" fill="hsl(var(--muted-foreground))" fontSize="11">
           {eventLabel}
         </text>
-      </>
+      </g>
     );
 };
 
@@ -70,7 +76,7 @@ export default function HumanTollChart() {
   const { data: westBankData, error: westBankError, isLoading: westBankLoading } = useSWR<DailyCasualtyEntry[]>('https://data.techforpalestine.org/api/v2/west_bank_daily.min.json', fetcher);
   const { data: summaryData, error: summaryError, isLoading: summaryLoading } = useSWR<SummaryData>('https://data.techforpalestine.org/api/v3/summary.min.json', fetcher);
   
-  const [sliderValue, setSliderValue] = useState<number>(0);
+  const [sliderValue, setSliderValue] = useState<number[]>([0]);
 
   const chartData = useMemo<ChartDataItem[] | null>(() => {
     if (!gazaData || !westBankData) return null;
@@ -78,17 +84,17 @@ export default function HumanTollChart() {
     const combined: { [date: string]: number } = {};
 
     gazaData.forEach(entry => {
-        combined[entry.report_date] = (combined[entry.report_date] || 0) + entry.killed_daily;
+        combined[entry.report_date] = (combined[entry.report_date] || 0) + (entry.killed_daily || 0);
     });
     westBankData.forEach(entry => {
-        combined[entry.report_date] = (combined[entry.report_date] || 0) + entry.killed_daily;
+        combined[entry.report_date] = (combined[entry.report_date] || 0) + (entry.killed_daily || 0);
     });
 
     const sortedDates = Object.keys(combined).sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
     
     let cumulativeKilled = 0;
     return sortedDates.map((date, index) => {
-      cumulativeKilled += combined[date] || 0;
+      cumulativeKilled += combined[date];
       return {
         date,
         dayNumber: index + 1,
@@ -98,31 +104,24 @@ export default function HumanTollChart() {
   }, [gazaData, westBankData]);
 
   useEffect(() => {
-    if (chartData && chartData.length > 0 && sliderValue === 0) {
-      setSliderValue(chartData.length);
+    if (chartData && chartData.length > 0 && sliderValue[0] === 0) {
+      setSliderValue([chartData.length]);
     }
   }, [chartData, sliderValue]);
 
   const activeData = useMemo(() => {
     if (!chartData || chartData.length === 0) return null;
-    const index = Math.min(Math.max(sliderValue - 1, 0), chartData.length - 1);
+    const index = Math.min(Math.max(sliderValue[0] - 1, 0), chartData.length - 1);
     return chartData[index];
   }, [sliderValue, chartData]);
-
+  
   const eventDots = useMemo(() => {
     if (!chartData) return [];
     return events.map(event => {
-      const eventDate = new Date(event.date);
-      const eventDayNumber = differenceInDays(eventDate, START_DATE) + 1;
-      const dataPoint = chartData.find(d => {
-        const dDate = new Date(d.date);
-        return dDate.getUTCFullYear() === eventDate.getUTCFullYear() &&
-               dDate.getUTCMonth() === eventDate.getUTCMonth() &&
-               dDate.getUTCDate() === eventDate.getUTCDate();
-      });
+      const dataPoint = chartData.find(d => d.date === event.date);
       if (!dataPoint) return null;
       return { ...dataPoint, eventLabel: event.label };
-    }).filter(Boolean);
+    }).filter(Boolean as unknown as (value: any) => value is { date: string; dayNumber: number; cumulativeKilled: number; eventLabel: string; });
   }, [chartData]);
   
   const isLoading = gazaLoading || westBankLoading || summaryLoading;
@@ -182,7 +181,7 @@ export default function HumanTollChart() {
                 </div>
             </div>
             <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={chartData} margin={{ top: 20, right: 30, left: 0, bottom: 20 }}>
+            <AreaChart data={chartData} margin={{ top: 20, right: 30, left: 0, bottom: 40 }}>
                 <defs>
                 <linearGradient id="colorKilled" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.7}/>
@@ -218,9 +217,10 @@ export default function HumanTollChart() {
                     dot={false}
                     activeDot={{ r: 6, stroke: 'white', strokeWidth: 2, fill: 'hsl(var(--primary))' }}
                 />
-                {eventDots.map((event, index) => event && (
+                {eventDots.map((event, index) => (
                     <ReferenceLine key={index} x={event.dayNumber} stroke="transparent" ifOverflow="extendDomain">
-                        <CustomDot cx={0} cy={0} payload={event} eventLabel={event.eventLabel} />
+                       {/* @ts-ignore */}
+                      <CustomDot eventLabel={event.eventLabel} />
                     </ReferenceLine>
                 ))}
             </AreaChart>
@@ -232,8 +232,8 @@ export default function HumanTollChart() {
                 min={1}
                 max={chartData.length}
                 step={1}
-                value={[sliderValue]}
-                onValueeChange={(value) => setSliderValue(value[0])}
+                value={sliderValue}
+                onValueChange={setSliderValue}
             />
             <div className="flex justify-between text-xs text-muted-foreground mt-2">
                 <span>Oct 7, 2023</span>
@@ -248,5 +248,3 @@ export default function HumanTollChart() {
     </Card>
   );
 }
-
-    
