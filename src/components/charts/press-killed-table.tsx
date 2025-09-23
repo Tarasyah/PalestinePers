@@ -33,11 +33,13 @@ export default function VictimsTable() {
   }, [loading, hasMore]);
 
   useEffect(() => {
+    // Only fetch if there are more pages to load.
+    if (!hasMore) {
+      setLoading(false);
+      return;
+    };
+    
     async function fetchData() {
-      if (page > TOTAL_PAGES) {
-        setHasMore(false);
-        return;
-      }
       setLoading(true);
       try {
         const res = await fetch(`https://data.techforpalestine.org/api/v2/killed-in-gaza/page-${page}.json`);
@@ -50,13 +52,14 @@ export default function VictimsTable() {
         setError(null);
       } catch (err: any) {
         setError(err.message);
+        // If one page fails, we assume there are no more pages.
         setHasMore(false);
       } finally {
         setLoading(false);
       }
     }
     fetchData();
-  }, [page]);
+  }, [page, hasMore]);
 
   useEffect(() => {
     const results = victims.filter(v =>
@@ -66,8 +69,34 @@ export default function VictimsTable() {
     setFilteredVictims(results);
   }, [searchTerm, victims]);
 
+  // Initial loading state
+  if (loading && page === 1) {
+    return (
+        <Card>
+            <CardHeader>
+                <Skeleton className="h-8 w-3/4" />
+                <Skeleton className="h-4 w-1/2" />
+                <Skeleton className="h-10 w-full max-w-sm" />
+            </CardHeader>
+            <CardContent>
+                <Skeleton className="w-full h-[350px]" />
+            </CardContent>
+        </Card>
+    );
+  }
+  
   if (error && victims.length === 0) {
-    return <div className="text-center text-red-500">Error loading data: {error}</div>;
+    return (
+        <Card>
+             <CardHeader>
+                <CardTitle>Victims in Gaza</CardTitle>
+                <CardDescription>Could not load victim data.</CardDescription>
+             </CardHeader>
+            <CardContent>
+                <div className="text-center text-red-500 p-4">{error}</div>
+            </CardContent>
+        </Card>
+    )
   }
 
   return (
