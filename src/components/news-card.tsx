@@ -43,9 +43,9 @@ export function NewsCard({ article }: { article: NewsArticleWithReports }) {
     <HoverBorderGradient
       as="div"
       containerClassName="rounded-lg h-full"
-      className="bg-transparent"
+      className="bg-card w-full"
     >
-      <Card className="relative flex flex-col h-full overflow-hidden bg-transparent text-white transition-all duration-300 border-none shadow-none">
+      <Card className="relative flex flex-col h-full overflow-hidden bg-transparent text-card-foreground transition-all duration-300 border-none shadow-none">
         <CardContent className="p-4 flex-grow">
           <div className="flex flex-wrap items-center gap-2 mb-2">
               <Badge className={getSourceBadgeClasses(article.source)}>{article.source}</Badge>
@@ -55,15 +55,15 @@ export function NewsCard({ article }: { article: NewsArticleWithReports }) {
               }
           </div>
           <CardTitle className="text-lg font-bold leading-tight mb-1">{article.title}</CardTitle>
-          <p className="text-gray-300 text-sm mb-3 line-clamp-3">{article.excerpt}</p>
+          <p className="text-muted-foreground text-sm mb-3 line-clamp-3">{article.excerpt}</p>
         </CardContent>
         <CardFooter className="p-4 pt-0 mt-auto flex justify-between items-center">
-          <div className="flex items-center text-xs text-gray-400">
+          <div className="flex items-center text-xs text-muted-foreground">
               <Clock className="mr-1.5 h-3.5 w-3.5" />
               <span>{formatDistanceToNow(new Date(article.date), { addSuffix: true })}</span>
           </div>
           <div className="flex items-center gap-2">
-              <Button asChild size="sm" className="bg-green-500 hover:bg-green-600 text-white">
+              <Button asChild size="sm" variant="secondary">
                   <Link href={article.link} target="_blank">
                       Read More
                       <ArrowRight className="ml-2 h-4 w-4" />

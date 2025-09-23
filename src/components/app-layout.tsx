@@ -15,6 +15,7 @@ import {
 import { useIsMobile } from "@/hooks/use-mobile";
 import { navItems } from "@/lib/nav-items";
 import { cn } from "@/lib/utils";
+import { ThemeToggle } from "./theme-toggle";
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -64,23 +65,26 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const renderNav = () => {
     if (isMobile) {
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon">
-              <Menu className="h-5 w-5" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {navItems.map((item) => (
-              <DropdownMenuItem key={item.href} asChild>
-                <Link href={item.href} className="flex items-center gap-2">
-                  <item.icon className="w-4 h-4" />
-                  <span>{item.label}</span>
-                </Link>
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <Menu className="h-5 w-5" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {navItems.map((item) => (
+                <DropdownMenuItem key={item.href} asChild>
+                  <Link href={item.href} className="flex items-center gap-2">
+                    <item.icon className="w-4 h-4" />
+                    <span>{item.label}</span>
+                  </Link>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       );
     }
 
@@ -91,10 +95,10 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           return (
              <Link href={item.href} key={item.href}>
                 <Button
-                  variant="ghost"
+                  variant={isActive ? "secondary" : "ghost"}
                   className={cn(
-                    "shadow-[0_0_0_2px_hsl(var(--primary))_inset] px-4 py-2 bg-transparent text-white rounded-lg font-bold transform hover:-translate-y-1 transition duration-400 flex items-center gap-2",
-                    isActive && "bg-primary/20"
+                    "font-bold",
+                    !isActive && "shadow-[0_0_0_2px_hsl(var(--primary))_inset] text-foreground"
                   )}
                 >
                   <item.icon className="w-4 h-4" />
@@ -103,25 +107,26 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               </Link>
           );
         })}
+        <ThemeToggle />
       </nav>
     );
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
+    <div className="flex flex-col min-h-screen">
       <header 
         className={cn(
             "fixed top-0 z-50 w-full border-b backdrop-blur-sm transition-all duration-300",
             (hidden && !isAtTop) ? "-translate-y-full" : "translate-y-0",
-            isAtTop ? "bg-transparent border-transparent" : "bg-black/50 border-white/20"
+            isAtTop ? "bg-transparent border-transparent" : "bg-background/50 border-border"
         )}
       >
         <div className="container flex items-center h-16 px-4 mx-auto sm:px-6 lg:px-8">
           <div className="flex items-center gap-3 mr-auto">
-            <Globe className="w-8 h-8 text-green-400" />
+            <Globe className="w-8 h-8 text-primary" />
             <div className="hidden sm:block">
               <h1 className="text-xl font-bold">Palestine Perspectives</h1>
-              <p className="text-sm text-green-300/70">
+              <p className="text-sm text-primary/80">
                 Independent news aggregation
               </p>
             </div>
@@ -132,9 +137,9 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
       <main className="container flex-grow px-4 py-8 mx-auto sm:px-6 lg:px-8 pt-24">
         {children}
       </main>
-       <footer className="py-6 md:px-8 md:py-0 bg-black/20 border-t border-white/20">
+       <footer className="py-6 md:px-8 md:py-0 bg-background/50 border-t">
         <div className="container flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
-            <p className="text-balance text-center text-sm leading-loose text-gray-400 md:text-left">
+            <p className="text-balance text-center text-sm leading-loose text-muted-foreground md:text-left">
             Built by activists, for activists. This is an open-source project.
             </p>
         </div>
