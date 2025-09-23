@@ -87,12 +87,11 @@ export default function HumanTollChart() {
     const sortedDates = Object.keys(combined).sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
     
     let cumulativeKilled = 0;
-    return sortedDates.map(date => {
-      cumulativeKilled += combined[date];
-      const dayNumber = differenceInDays(new Date(date), START_DATE) + 1;
+    return sortedDates.map((date, index) => {
+      cumulativeKilled += combined[date] || 0;
       return {
         date,
-        dayNumber,
+        dayNumber: index + 1,
         cumulativeKilled,
       };
     });
@@ -113,8 +112,14 @@ export default function HumanTollChart() {
   const eventDots = useMemo(() => {
     if (!chartData) return [];
     return events.map(event => {
-      const eventDayNumber = differenceInDays(new Date(event.date), START_DATE) + 1;
-      const dataPoint = chartData.find(d => d.dayNumber === eventDayNumber);
+      const eventDate = new Date(event.date);
+      const eventDayNumber = differenceInDays(eventDate, START_DATE) + 1;
+      const dataPoint = chartData.find(d => {
+        const dDate = new Date(d.date);
+        return dDate.getUTCFullYear() === eventDate.getUTCFullYear() &&
+               dDate.getUTCMonth() === eventDate.getUTCMonth() &&
+               dDate.getUTCDate() === eventDate.getUTCDate();
+      });
       if (!dataPoint) return null;
       return { ...dataPoint, eventLabel: event.label };
     }).filter(Boolean);
@@ -244,5 +249,3 @@ export default function HumanTollChart() {
     </Card>
   );
 }
-
-    

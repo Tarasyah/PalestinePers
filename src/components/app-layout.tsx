@@ -125,9 +125,9 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           <div className="flex items-center gap-3 mr-auto">
             <Globe className="w-8 h-8 text-primary" />
             <div className="hidden sm:block">
-              <h1 className="text-xl font-bold">Palestine Perspectives</h1>
+              <h1 className="text-xl font-bold">Genocide Watch</h1>
               <p className="text-sm text-primary/80">
-                Independent news aggregation
+                Independent news and data aggregation
               </p>
             </div>
           </div>
