@@ -61,6 +61,16 @@ export interface PressKilled {
     notes: string;
 }
 
+export interface GazaCasualty {
+  name: string;
+  en_name: string;
+  id: string;
+  dob: string;
+  sex: 'm' | 'f';
+  age: number;
+  source: string;
+}
+
 export interface InfrastructureDamage {
     report_date: string;
     residential: number;
@@ -381,6 +391,7 @@ export const mediaItems: MediaItem[] = [
     caption: 'Young Palestinians wait for a charity organization to distribute food in Gaza City on July 24.'
   },
 ];
+
 
 
 

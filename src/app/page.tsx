@@ -1,10 +1,11 @@
 
+
 import { AppLayout } from "@/components/app-layout";
 import CasualtiesOverTime from "@/components/charts/casualties-over-time";
 import CasualtySummary from "@/components/charts/casualty-summary";
 import InfrastructureDamageChart from "@/components/charts/infrastructure-damage-chart";
 import KilledChildrenNames from "@/components/charts/killed-children-names";
-import PressKilledTable from "@/components/charts/press-killed-table";
+import VictimsTable from "@/components/charts/press-killed-table";
 
 export default function DashboardPage() {
   return (
@@ -13,7 +14,7 @@ export default function DashboardPage() {
         <CasualtySummary />
         <div className="grid gap-8 md:grid-cols-2">
             <KilledChildrenNames />
-            <PressKilledTable />
+            <VictimsTable />
         </div>
         <CasualtiesOverTime />
         <InfrastructureDamageChart />
