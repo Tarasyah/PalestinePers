@@ -4,7 +4,7 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import type { PressKilled } from '@/lib/data';
@@ -25,7 +25,7 @@ export default function PressKilledTable() {
           throw new Error('Failed to fetch press killed data');
         }
         const data: PressKilled[] = await res.json();
-        const sortedData = data.sort((a,b) => new Date(b.date_of_death).getTime() - new Date(a.date_of_death).getTime())
+        const sortedData = data.sort((a,b) => a.name.localeCompare(b.name));
         setJournalists(sortedData);
         setFilteredJournalists(sortedData);
         setError(null);
@@ -40,8 +40,7 @@ export default function PressKilledTable() {
 
   useEffect(() => {
     const results = journalists.filter(j =>
-      j.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      j.location.toLowerCase().includes(searchTerm.toLowerCase())
+      j.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setFilteredJournalists(results);
   }, [searchTerm, journalists]);
@@ -53,13 +52,13 @@ export default function PressKilledTable() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Journalists & Media Workers Killed in Gaza</CardTitle>
+        <CardTitle>Journalists & Media Workers Killed</CardTitle>
         <CardDescription>
-          A list of journalists and media workers killed since October 7th, 2023.
+          A list of {journalists.length} journalists and media workers killed since October 7th, 2023.
         </CardDescription>
          <Input
             type="text"
-            placeholder="Search by name or location..."
+            placeholder="Search by name..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="max-w-sm"
@@ -71,17 +70,12 @@ export default function PressKilledTable() {
             <Skeleton className="h-8 w-full" />
             <Skeleton className="h-8 w-full" />
             <Skeleton className="h-8 w-full" />
+             <Skeleton className="h-8 w-full" />
+            <Skeleton className="h-8 w-full" />
           </div>
         ) : (
           <ScrollArea className="h-[400px]">
             <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Date of Death</TableHead>
-                  <TableHead>Location</TableHead>
-                </TableRow>
-              </TableHeader>
               <TableBody>
                 {filteredJournalists.map((j, index) => (
                   <TableRow key={index}>
@@ -90,8 +84,6 @@ export default function PressKilledTable() {
                             {j.name}
                         </a>
                     </TableCell>
-                    <TableCell>{new Date(j.date_of_death).toLocaleDateString()}</TableCell>
-                    <TableCell>{j.location}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>

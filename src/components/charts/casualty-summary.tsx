@@ -2,11 +2,12 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import CountUp from 'react-countup';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import type { SummaryData } from '@/lib/data';
 
-function StatCard({ title, value, isLoading }: { title: string; value: string | number | undefined; isLoading: boolean }) {
+function StatCard({ title, value, isLoading }: { title: string; value: number | undefined; isLoading: boolean }) {
   if (isLoading) {
     return (
       <Card>
@@ -27,13 +28,18 @@ function StatCard({ title, value, isLoading }: { title: string; value: string | 
       </CardHeader>
       <CardContent>
         <div className="text-2xl font-bold">
-          {value !== undefined ? value.toLocaleString() : <Skeleton className="h-8 w-1/2" />}
+          {value !== undefined ? (
+            <CountUp
+              end={value}
+              duration={2.5}
+              separator=","
+            />
+          ) : 'N/A'}
         </div>
       </CardContent>
     </Card>
   );
 }
-
 
 export default function CasualtySummary() {
   const [summaryData, setSummaryData] = useState<SummaryData | null>(null);
@@ -89,7 +95,7 @@ export default function CasualtySummary() {
           />
         ))}
       </div>
-        { !loading && summaryData && (
+        { !loading && summaryData?.last_update && (
              <p className="text-xs text-muted-foreground mt-2 text-center">
                 Last updated: {new Date(summaryData.last_update).toLocaleString()}
             </p>

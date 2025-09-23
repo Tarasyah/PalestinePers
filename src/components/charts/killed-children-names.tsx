@@ -74,7 +74,8 @@ export default function KilledChildrenNames() {
                 type="category" 
                 dataKey="name" 
                 width={80} 
-                tick={{ fontSize: 12 }}
+                tick={{ fontSize: 12, fill: 'hsl(var(--foreground))' }}
+                interval={0}
             />
             <Tooltip
               contentStyle={{
@@ -83,7 +84,7 @@ export default function KilledChildrenNames() {
               }}
               formatter={(value: number) => [value.toLocaleString(), "Count"]}
             />
-            <Bar dataKey="count" fill="hsl(var(--primary))">
+            <Bar dataKey="count" fill="hsl(var(--primary))" radius={[0, 4, 4, 0]}>
                 <LabelList dataKey="count" position="right" style={{ fill: 'hsl(var(--foreground))' }} />
             </Bar>
           </BarChart>
