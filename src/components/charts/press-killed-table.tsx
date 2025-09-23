@@ -25,7 +25,7 @@ export default function PressKilledTable() {
           throw new Error('Failed to fetch press killed data');
         }
         const data: PressKilled[] = await res.json();
-        const sortedData = data.sort((a,b) => a.name.localeCompare(b.name));
+        const sortedData = data.sort((a,b) => a.name_en.localeCompare(b.name_en));
         setJournalists(sortedData);
         setFilteredJournalists(sortedData);
         setError(null);
@@ -40,8 +40,8 @@ export default function PressKilledTable() {
 
   useEffect(() => {
     const results = journalists.filter(j =>
-      j.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      j.name_ar.includes(searchTerm)
+      j.name_en.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      j.name.includes(searchTerm)
     );
     setFilteredJournalists(results);
   }, [searchTerm, journalists]);
@@ -79,23 +79,17 @@ export default function PressKilledTable() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Name (Latin)</TableHead>
-                  <TableHead className="text-right">Name (Arabic)</TableHead>
+                  <TableHead>Name (English)</TableHead>
+                  <TableHead>Name (Arabic)</TableHead>
+                  <TableHead>Notes</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredJournalists.map((j, index) => (
                   <TableRow key={index}>
-                    <TableCell className="font-medium">
-                        <a href={j.source_link} target="_blank" rel="noopener noreferrer" className="hover:underline">
-                            {j.name}
-                        </a>
-                    </TableCell>
-                    <TableCell className="text-right font-medium" dir="rtl">
-                       <a href={j.source_link} target="_blank" rel="noopener noreferrer" className="hover:underline">
-                            {j.name_ar}
-                        </a>
-                    </TableCell>
+                    <TableCell className="font-medium">{j.name_en}</TableCell>
+                    <TableCell className="font-medium text-right" dir="rtl">{j.name}</TableCell>
+                    <TableCell className="text-sm text-muted-foreground">{j.notes}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -106,4 +100,3 @@ export default function PressKilledTable() {
     </Card>
   );
 }
-
