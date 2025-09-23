@@ -80,6 +80,17 @@ const CustomDot = (props: any) => {
     );
 };
 
+const StatItem = ({ value, label, subLabel }: { value?: number, label: string, subLabel: string }) => (
+    <div className="text-center md:text-left">
+      <span className="text-lg font-bold">
+        {value !== undefined ? <CountUp end={value} separator="," duration={1.5} /> : 'N/A'}
+      </span>
+      <span className="text-destructive ml-1">{label}</span>
+      <span className="text-muted-foreground ml-1">{subLabel}</span>
+    </div>
+);
+
+
 export default function HumanTollChart() {
   const [data, setData] = useState<ChartDataItem[]>([]);
   const [summaryData, setSummaryData] = useState<SummaryData | null>(null);
@@ -143,16 +154,6 @@ export default function HumanTollChart() {
   if (error) {
     return <div className="text-center text-red-500 p-8">Error loading data: {error}</div>;
   }
-
-  const StatItem = ({ value, label, subLabel }: { value?: number, label: string, subLabel: string }) => (
-    <div className="text-center md:text-left">
-      <span className="text-lg font-bold">
-        {value !== undefined ? <CountUp end={value} separator="," duration={1.5} /> : 'N/A'}
-      </span>
-      <span className="text-destructive ml-1">{label}</span>
-      <span className="text-muted-foreground ml-1">{subLabel}</span>
-    </div>
-  );
 
   return (
     <Card className="bg-card/80 backdrop-blur-sm border-none shadow-2xl">
@@ -258,3 +259,5 @@ export default function HumanTollChart() {
     </Card>
   );
 }
+
+    
