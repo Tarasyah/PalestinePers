@@ -150,27 +150,26 @@ export default function HumanTollChart() {
         </Alert>
       </CardHeader>
       <CardContent className="p-4 md:p-6">
-        {summaryData ? (
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-x-4 gap-y-1 text-sm mb-6">
-              <StatItem value={summaryData?.killed?.total} label="killed" subLabel="seeking aid" />
-              <StatItem value={summaryData?.injured?.total} label="injured" subLabel="" />
-              <StatItem value={summaryData?.killed?.children} label="children" subLabel="killed" />
-              <StatItem value={undefined} label="starved" subLabel="to death" />
-              <StatItem value={summaryData?.killed?.women} label="women" subLabel="killed" />
-              <StatItem value={summaryData?.killed?.health_workers} label="medical personnel" subLabel="killed" />
-              <StatItem value={summaryData?.killed?.press} label="journalists" subLabel="killed" />
-              <StatItem value={summaryData?.killed?.civil_defence} label="first responders" subLabel="killed" />
-              <StatItem value={undefined} label="settler" subLabel="attacks" />
-          </div>
-        ) : (
+        {summaryLoading ? (
            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-x-4 gap-y-1 text-sm mb-6">
-             {Array.from({ length: 9 }).map((_, i) => (
+             {Array.from({ length: 8 }).map((_, i) => (
                 <div key={i} className="space-y-1">
                     <Skeleton className="h-6 w-1/2" />
                     <Skeleton className="h-4 w-3/4" />
                 </div>
              ))}
            </div>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-x-4 gap-y-1 text-sm mb-6">
+              <StatItem value={summaryData?.killed?.total} label="killed" subLabel="in total" />
+              <StatItem value={summaryData?.injured?.total} label="injured" subLabel="" />
+              <StatItem value={summaryData?.killed?.children} label="children" subLabel="killed" />
+              <StatItem value={summaryData?.killed?.women} label="women" subLabel="killed" />
+              <StatItem value={summaryData?.killed?.health_workers} label="medical personnel" subLabel="killed" />
+              <StatItem value={summaryData?.killed?.press} label="journalists" subLabel="killed" />
+              <StatItem value={summaryData?.killed?.civil_defence} label="first responders" subLabel="killed" />
+              <StatItem value={summaryData?.killed?.un_staff} label="UN staff" subLabel="killed" />
+          </div>
         )}
 
         <div className="relative w-full h-[400px]">
@@ -234,7 +233,7 @@ export default function HumanTollChart() {
                 max={chartData.length}
                 step={1}
                 value={[sliderValue]}
-                onValueChange={(value) => setSliderValue(value[0])}
+                onValueeChange={(value) => setSliderValue(value[0])}
             />
             <div className="flex justify-between text-xs text-muted-foreground mt-2">
                 <span>Oct 7, 2023</span>
@@ -249,3 +248,5 @@ export default function HumanTollChart() {
     </Card>
   );
 }
+
+    
