@@ -1,22 +1,20 @@
-import { AppLayout } from "@/components/app-layout";
-import { CasualtyChart } from "@/components/charts/CasualtyChart";
-import CasualtySummary from "@/components/charts/casualty-summary";
-import InfrastructureDamageChart from "@/components/charts/infrastructure-damage-chart";
-import KilledChildrenNames from "@/components/charts/killed-children-names";
-import VictimsTable from "@/components/charts/press-killed-table";
 
-export default function DashboardPage() {
+import { AppLayout } from "@/components/app-layout";
+import { MediaCard } from "@/components/media-card";
+import { mediaItems } from "@/lib/data";
+import type { MediaItem } from "@/lib/data";
+
+export default function MediaPage() {
   return (
     <AppLayout>
-      <div className="space-y-8">
-        <CasualtyChart />
-        <CasualtySummary />
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <InfrastructureDamageChart />
-          <KilledChildrenNames />
+        <div className="space-y-4">
+            <h2 className="text-2xl font-bold tracking-tight text-center">A chapter we can never forget</h2>
+            <div className="flex flex-wrap justify-center items-center gap-4">
+                {mediaItems.map((item: MediaItem) => (
+                    <MediaCard key={item.id} item={item} />
+                ))}
+            </div>
         </div>
-        <VictimsTable />
-      </div>
     </AppLayout>
   );
 }

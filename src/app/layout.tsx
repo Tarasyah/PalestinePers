@@ -5,8 +5,8 @@ import { Toaster } from "@/components/ui/toaster"
 import { CustomThemeProvider } from '@/components/custom-theme-provider';
 
 export const metadata: Metadata = {
-  title: 'Genocide Watch',
-  description: 'Independent news and data aggregation',
+  title: 'Genocide Media',
+  description: 'A chapter we can never forget',
 };
 
 export default function RootLayout({
