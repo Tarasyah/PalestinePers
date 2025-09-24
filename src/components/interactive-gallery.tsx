@@ -149,7 +149,7 @@ export function InteractiveGallery({ items, onImageSelect }: InteractiveGalleryP
         }
         
         ctx.save();
-        ctx.strokeStyle = 'hsl(var(--primary))';
+        ctx.strokeStyle = '#FF0000'; // Bright Red
         ctx.lineWidth = hoveredShape ? 3 * hoveredShape.ratio : 1;
         ctx.strokeRect(
             focus.current.x - focus.current.s / 2, 
