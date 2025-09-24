@@ -29,11 +29,11 @@ const fetcher = (url: string) => fetch(url).then(res => res.json());
 const StatItem = ({ value, label }: { value?: number, label: string }) => (
     <div className="text-center md:text-left">
       {value !== undefined ? (
-        <span className="text-lg font-bold text-white"><CountUp end={value} separator="," duration={1} /></span>
+        <span className="text-lg font-bold"><CountUp end={value} separator="," duration={1} /></span>
       ) : (
-        <Skeleton className="h-6 w-1/2" />
+        <Skeleton className="h-6 w-20" />
       )}
-      <span className={`ml-1 text-sm text-destructive`}>{label}</span>
+      <span className={`ml-1 text-sm text-muted-foreground`}>{label}</span>
     </div>
 );
 
@@ -61,10 +61,9 @@ export function CasualtyChart() {
   if (!combinedData) return null;
 
   const currentDataPoint = combinedData[dayIndex];
-  const lastDataPoint = combinedData[combinedData.length - 1];
 
   return (
-    <div className="w-full max-w-5xl mx-auto p-4 md:p-6 bg-card text-foreground rounded-xl shadow-2xl border border-border">
+    <div className="w-full max-w-5xl mx-auto p-4 md:p-6 bg-card text-foreground rounded-xl shadow-lg border border-border/20">
       {/* HEADER */}
       <div>
         <h1 className="text-2xl font-bold">The Human Toll | Daily Casualties Datasets</h1>
@@ -98,7 +97,7 @@ export function CasualtyChart() {
         </AlertDialog>
 
       {/* STATS GRID */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-x-4 gap-y-2 mb-6 text-foreground">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-x-4 gap-y-2 mb-6">
         <StatItem value={summaryData?.killed?.total} label="killed" />
         <StatItem value={summaryData?.injured?.total} label="injured" />
         <StatItem value={summaryData?.killed?.children} label="children killed" />
