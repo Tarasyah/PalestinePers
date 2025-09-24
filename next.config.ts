@@ -28,12 +28,6 @@ const nextConfig: NextConfig = {
         hostname: 'app.powerbi.com',
         port: '',
         pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'picsum.photos',
-        port: '',
-        pathname: '/**',
       }
     ],
   },
