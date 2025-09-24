@@ -22,11 +22,10 @@ export function MediaCard({ item }: { item: MediaItem }) {
         />
         <div className="absolute inset-0 p-4 text-white tab-text overflow-hidden">
           <figcaption className="relative z-10 h-full flex flex-col justify-center items-center text-center">
-            <h2 className="text-lg font-bold transition-transform duration-300 transform-gpu translate-y-1.5 group-hover:translate-y-0">
-              {/* Shortening caption for title */}
+            <h2 className="text-lg font-bold transition-transform duration-300 transform-gpu translate-y-1.5 opacity-0 group-hover:translate-y-0 group-hover:opacity-100">
               {item.caption.split(',')[0]}
             </h2>
-            <p className="text-sm transition-transform duration-300 transform-gpu translate-y-2.5 group-hover:translate-y-0 opacity-0 group-hover:opacity-100">
+            <p className="text-sm transition-transform duration-300 transform-gpu translate-y-2.5 opacity-0 group-hover:translate-y-0 group-hover:opacity-100">
               {item.caption}
             </p>
           </figcaption>

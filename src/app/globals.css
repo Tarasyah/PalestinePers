@@ -86,6 +86,7 @@
     top: 0;
     left: 0;
     transition: all .4s linear;
+    opacity: 0;
   }
 
   .effect-ten .tab-text:before {
@@ -99,12 +100,14 @@
     transform: rotate3d(-1, 1, 0, 20deg);
     transform-origin: 50% 50%;
     transition: width .2s linear .2s, height .2s linear .2s, bottom .2s linear 0s, right .2s linear 0s;
+    opacity: 0;
   }
 
   .effect-ten:hover .tab-text:after {
     top: -80%;
     left: -80%;
     background: linear-gradient(-45deg, rgba(0, 0, 0, 0) 49%, rgba(0, 0, 0, .45) 60%);
+    opacity: 1;
   }
 
   .effect-ten:hover .tab-text:before {
@@ -113,5 +116,6 @@
     bottom: 50%;
     right: 50%;
     transition: width .2s linear 0s, height .2s linear 0s, bottom .2s linear .2s, right .2s linear .2s;
+    opacity: 1;
   }
 }
