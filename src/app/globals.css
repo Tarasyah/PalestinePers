@@ -66,4 +66,52 @@
   .gallery-image-caption-visible::after {
     @apply -left-6 -top-6;
   }
+
+  /* Effect Ten */
+  .effect-ten {
+    background-color: #162633;
+  }
+
+  .effect-ten .tab-text {
+    transform-style: preserve-3d;
+    perspective: 300px;
+  }
+
+  .effect-ten .tab-text:after {
+    content: "";
+    width: 180%;
+    height: 180%;
+    background: linear-gradient(-45deg, rgba(0, 0, 0, 0) 49%, rgba(0, 0, 0, .45) 50%);
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: all .4s linear;
+  }
+
+  .effect-ten .tab-text:before {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(-45deg, rgba(0, 0, 0, 0) 49%, rgba(132, 132, 132, .45) 50%, rgba(255, 255, 255, .65) 65%);
+    transform: rotate3d(-1, 1, 0, 20deg);
+    transform-origin: 50% 50%;
+    transition: width .2s linear .2s, height .2s linear .2s, bottom .2s linear 0s, right .2s linear 0s;
+  }
+
+  .effect-ten:hover .tab-text:after {
+    top: -80%;
+    left: -80%;
+    background: linear-gradient(-45deg, rgba(0, 0, 0, 0) 49%, rgba(0, 0, 0, .45) 60%);
+  }
+
+  .effect-ten:hover .tab-text:before {
+    width: 100%;
+    height: 100%;
+    bottom: 50%;
+    right: 50%;
+    transition: width .2s linear 0s, height .2s linear 0s, bottom .2s linear .2s, right .2s linear .2s;
+  }
 }
