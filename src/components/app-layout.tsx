@@ -131,13 +131,6 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
       <main className="flex-grow w-full max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8 pt-24">
         {children}
       </main>
-       <footer className="py-6 md:px-8 md:py-0 bg-background/50 border-t">
-        <div className="w-full max-w-7xl mx-auto flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row px-4 sm:px-6 lg:px-8">
-            <p className="text-balance text-center text-sm leading-loose text-muted-foreground md:text-left">
-            Built by activists, for activists. This is an open-source project.
-            </p>
-        </div>
-      </footer>
     </div>
   );
 }
