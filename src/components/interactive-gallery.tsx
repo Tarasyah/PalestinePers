@@ -109,10 +109,9 @@ export function InteractiveGallery({ items, onImageSelect }: InteractiveGalleryP
         focus.current.s = size.current;
         shapes.current = [];
         
-        let imageIndex = 0;
         for (let x = 0; x < numberOfShape; x++) {
             for (let y = 0; y < numberOfShape; y++) {
-                if (imageIndex >= preloadedImages.current.length) imageIndex = 0; // Loop images
+                const imageIndex = Math.floor(Math.random() * preloadedImages.current.length);
                 const params = {
                     x, y,
                     c: ctx,
@@ -123,7 +122,6 @@ export function InteractiveGallery({ items, onImageSelect }: InteractiveGalleryP
                     item: items[imageIndex],
                 };
                 shapes.current.push(new Shape(params));
-                imageIndex++;
             }
         }
     }, [items]);
@@ -192,6 +190,7 @@ export function InteractiveGallery({ items, onImageSelect }: InteractiveGalleryP
     useEffect(() => {
         let loadedCount = 0;
         const imagesToLoad = items.length;
+        preloadedImages.current = []; // Clear previous images
         
         items.forEach(item => {
             const img = new Image();
