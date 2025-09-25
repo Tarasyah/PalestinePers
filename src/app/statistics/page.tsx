@@ -4,8 +4,8 @@
 import { AppLayout } from "@/components/app-layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-const demolitionsUrl = "https://app.powerbi.com/view?r=eyJrIjoiNzI3N2QwMTMtNjEwZC00YjFhLWEzMzEtOWFkZmY2YjE5YjU5IiwidCI6IjI2MmY2MjExLTI5MGItNDhiNy04MWI4LWMzYjZiZDUwNTE1MyIsImMiOjl9";
-const casualtiesUrl = "https://app.powerbi.com/view?r=eyJrIjoiYmJhM2YxMTEtZTIyMy00YjRkLWE2YjktZGY5YjMyOTgwYjU5IiwidCI6IjI2MmY2MjExLTI5MGItNDhiNy04MWI4LWMzYjZiZDUwNTE1MyIsImMiOjl9";
+const casualtiesUrl = "https://app.powerbi.com/view?r=eyJrIjoiODAxNTYzMDYtMjQ3YS00OTMzLTkxMWQtOTU1NWEwMzE5NTMwIiwidCI6ImY2MTBjMGI3LWJkMjQtNGIzOS04MTBiLTNkYzI4MGFmYjU5MCIsImMiOjh9";
+const demolitionsUrl = "https://app.powerbi.com/view?r=eyJrIjoiMmJkZGRhYWQtODk0MS00MWJkLWI2NTktMDg1NGJlMGNiY2Y3IiwidCI6IjBmOWUzNWRiLTU0NGYtNGY2MC1iZGNjLTVlYTQxNmU2ZGM3MCIsImMiOjh9";
 
 export default function StatisticsPage() {
 
@@ -39,8 +39,8 @@ export default function StatisticsPage() {
           Occupied Palestinian Territory Data
         </h1>
         <div className="grid gap-8 lg:grid-cols-1">
-          {renderDashboard("West Bank Demolitions & Displacement", demolitionsUrl)}
           {renderDashboard("Casualties", casualtiesUrl)}
+          {renderDashboard("West Bank Demolitions & Displacement", demolitionsUrl)}
         </div>
       </div>
     </AppLayout>
