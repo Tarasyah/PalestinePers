@@ -20,7 +20,7 @@ export function InteractiveGallery({ items, onImageSelect }: InteractiveGalleryP
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const animationId = useRef<number>();
     const shapes = useRef<Shape[]>([]);
-    const preloadedImages = useRef<HTMLImageElement[]>([]);
+    const preloadedImagePairs = useRef<{img: HTMLImageElement, item: MediaItem}[]>([]);
     
     const dimensions = useRef({ width: 0, height: 0 });
     const radius = useRef(0);
@@ -111,15 +111,16 @@ export function InteractiveGallery({ items, onImageSelect }: InteractiveGalleryP
         
         for (let x = 0; x < numberOfShape; x++) {
             for (let y = 0; y < numberOfShape; y++) {
-                const imageIndex = Math.floor(Math.random() * preloadedImages.current.length);
+                const pairIndex = Math.floor(Math.random() * preloadedImagePairs.current.length);
+                const { img, item } = preloadedImagePairs.current[pairIndex];
                 const params = {
                     x, y,
                     c: ctx,
                     s: size.current,
                     r: radius.current,
                     n: numberOfShape,
-                    img: preloadedImages.current[imageIndex],
-                    item: items[imageIndex],
+                    img: img,
+                    item: item,
                 };
                 shapes.current.push(new Shape(params));
             }
@@ -190,7 +191,7 @@ export function InteractiveGallery({ items, onImageSelect }: InteractiveGalleryP
     useEffect(() => {
         let loadedCount = 0;
         const imagesToLoad = items.length;
-        preloadedImages.current = []; // Clear previous images
+        preloadedImagePairs.current = []; // Clear previous images
         
         items.forEach(item => {
             const img = new Image();
@@ -198,7 +199,7 @@ export function InteractiveGallery({ items, onImageSelect }: InteractiveGalleryP
             img.src = item.src;
             img.onload = () => {
                 loadedCount++;
-                preloadedImages.current.push(img);
+                preloadedImagePairs.current.push({ img, item });
                 if (loadedCount === imagesToLoad) {
                     const canvas = canvasRef.current;
                     if (!canvas) return;
