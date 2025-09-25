@@ -25,9 +25,6 @@ export default function StatisticsPage() {
             allowFullScreen={true}
           ></iframe>
         </div>
-        <p className="text-xs text-muted-foreground mt-2">
-            Source: <a href="https://www.ochaopt.org/" target="_blank" rel="noopener noreferrer" className="underline">UN OCHA-OPT</a> via Power BI
-        </p>
       </CardContent>
     </Card>
   );
